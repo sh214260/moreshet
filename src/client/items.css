@@ -1,0 +1,9 @@
+#content{
+    display:grid;
+}
+#imgItem{
+    grid-column: 1;
+}
+#imgDetails{
+    grid-column: 2;
+}

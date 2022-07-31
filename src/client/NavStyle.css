@@ -1,0 +1,30 @@
+*{
+    direction: rtl;
+    margin-top: 0px;
+}
+#home{
+    margin: 0px;
+}
+#menu{
+    display: flex;
+    justify-content: flex-start;
+    list-style-type: none;
+    padding-right: 0px;
+}
+#menu>li{
+    
+    flex-grow: 1;
+    padding: 2px;
+    text-align: center;
+    color: green;
+}
+#menu>li:not(:first-child){
+    border-right:2px solid blue;
+
+}
+#stick{
+    
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+}

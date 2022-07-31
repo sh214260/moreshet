@@ -1,0 +1,21 @@
+#all {
+    display: grid;
+    margin: 50px; 
+}
+
+#table {
+    grid-column: 1;
+}
+#confirm {
+    grid-column: 2;
+    margin-left: 50px;
+    text-align: center;
+}
+
+table,th,td {
+    border: 1px solid blue;
+    border-collapse: collapse;
+}
+th,td {
+    background-color: bisque;
+}

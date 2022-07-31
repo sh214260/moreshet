@@ -1,0 +1,25 @@
+#name{
+    text-align: center;
+}
+#front{
+    display: grid;
+}
+#sort{
+    grid-column: 1;
+    margin-top: 20%;
+  
+}
+.images{
+    grid-column: 2;
+    display: flex;
+}
+#title{
+    text-align: center;
+}
+
+#table{
+    grid-column: 1;
+}
+#payment{
+    grid-column: 2;
+}
