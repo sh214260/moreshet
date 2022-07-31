@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './loginStyle.css'
+import './styles/loginStyle.css'
 //import { Link } from "react-router-dom";
 
 function Singup() {
