@@ -1,47 +1,62 @@
 import React from "react";
-import { useState, useEffect,useParams } from "react";
-//import { useNavigate } from "react-router-dom";
-import './items.css'
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { DataContext } from './data-context';
+
+import './styles/items.css'
 
 function Item() {
   const params = useParams()
-  //משתנה בשביל רשימת המוצרים המתאימה לקטגוריה
-  const [products, setProducts] = useState([])
-  //פונקציה המרחשת בכל שינוי ובפנים שולפת מהשרת נתונים מתאימים
-  //הנתונים שחוזרים מהשרת נכנסים לרשימה
+  const navigate = useNavigate()
+  const context = useContext(DataContext)
+  const [item, setItem] = useState(null)
+  const [date, setDate] = useState('')
   useEffect(() => {
     console.log(params)
-    fetch(`http://localhost:3500/products/${params.category}`)
+    fetch(`http://localhost:3500/products/item/${params.productId}`)
       .then(response => response.json()).then(data => {
         console.log(data)
-        setProducts(data.details)
-        
-      })
-}, [])
+        setItem(data[0])
 
-return (
+      })
+  }, [])
+  const check = () => {
+    fetch(`http://localhost:3500/products/item/${params.productId}/${date}`)
+      .then(res => res.json()).then(res => {
+        console.log(res)
+        if (res.length > 0) {
+          alert("המוצר תפוס")
+        } else {
+          alert("המוצר נוסף בהצלחה!")
+          context.addItem({ item: item, date: date, price: item.price });
+        }
+      })
+  }
+  return (
     <>
-    <h1>item</h1>
-      <div id="content">
-        <div id="imgItem">
-          <img>תמונה</img>
-        </div>
-        <div id="imgDetails">
-        {
-        products.map((details, i) => {
-              <div  key={i}>
-                <img />
-                <p>{details.name}</p>
-                <p>{details.description}</p>
-                <p>{details.size}</p>
-                <p>{details.price} ש"ח</p>
-              </div>
-            })
-          }
-          <label for="date">בתאריך:</label>
-          <input type="date" name="date"></input>
-        </div>
-       </div>
+      {item != null ?
+        <>
+          <h1 id="nameP">{item.productsName}</h1>
+          <div id="content">
+
+            <div id="imgItem">
+              <img id="img" src={`http://localhost:3500/image/${item.image}`} alt={item.name} />
+            </div>
+            <div id="imgDetails">{
+              item.products_id===1 ? <>
+            
+              <p>תאור: <span> {item.descrip} </span></p>
+              <p>גובה: <span> {item.width} על {item.height} מטרים</span></p>
+           </>   :<></>}<p>מחיר: 
+              <span> {item.price} ₪ </span></p>
+              <label for="date">בתאריך:</label>
+              <input type="date" name="date" onChange={(ev) => setDate(ev.target.value)}></input>
+              <br></br>   <input type="submit" value="הוסף להזמנה" onClick={check}></input>
+            </div>
+          </div>
+        </>
+        : <div>Loading... please wait</div>
+      }
     </>
   )
 }

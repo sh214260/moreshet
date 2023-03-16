@@ -5,12 +5,13 @@ import HomePage from './client/HomePage';
 import Login from './client/Login'
 import Products from './client/Products';
 import Orders from './client/Orders';
-//import { createContext } from 'react';
 import Singup from './client/Singup';
 import Item from './client/Item'
 //admin
 import HomeAd from './admin/HomeAd';
 import AddProducts from './admin/AddProducts';
+import MyClient from './admin/MyClients';
+import Video from './client/Video';
 
 function App() {
 
@@ -19,20 +20,19 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} >
-          <Route path="products/:category" element={<Products />} >
-            {/* <Route path="Item" element={<Item />}></Route>   */}
-          </Route>
+          <Route path="/" exact element={<Video />} />
+          <Route path="products/:category" element={<Products />} />
+          <Route path="products/:category/:productId" element={<Item />} />
+
           <Route path="orders" element={<Orders />} > </Route>
           <Route path="login" element={<Login />} />
           <Route path="singup" element={<Singup />} />
-          <Route path="homeAd" element={<HomeAd />}>
-            <Route path="addProducts" element={<AddProducts />} />
-
-          </Route>
-          <Route>
-            
-          </Route>
-        </Route>
+         
+          <Route path="homeAd" element={<HomeAd />}></Route>
+            <Route path="addProducts" element={<AddProducts />} /> 
+            <Route path="myclients" element={<MyClient />} />
+          
+        </Route>{/**/}
       </Routes>
     </Router>
   </div>

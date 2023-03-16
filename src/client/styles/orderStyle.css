@@ -9,13 +9,36 @@
 #confirm {
     grid-column: 2;
     margin-left: 50px;
-    text-align: center;
+    /* text-align: center; */
 }
-
+.td{
+    padding-right: 10px;
+    padding-left: 10px;
+    }
 table,th,td {
     border: 1px solid blue;
     border-collapse: collapse;
 }
 th,td {
-    background-color: bisque;
+    background-color: rgb(243, 243, 243);
+}
+#delivery1,#Pickup{
+    width: 30px;
+}
+#adress{
+    width: 80px;
+    margin: 10px;
+}
+#empty{
+    text-align: center;
+}
+.agree{
+    margin:0vw;
+}
+#addDelivery{
+   color: red;
+    font-size: xx-small;
+}
+#remove{
+width: 2rem;
 }

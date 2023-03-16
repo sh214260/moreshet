@@ -1,18 +1,30 @@
-
-#content{
+#content {
     margin-top: 30px;
     margin-left: 300px;
-    
-}
-input{
-    width: 150px;
 
-    
 }
-#submit{
+
+input {
+    width: 150px;
+}
+
+.submit {
     width: 50px;
-   margin-right: 300px;
+    margin-right: 360px;
+    margin-bottom: 10px;
 }
-.p{
-    text-align:end;
+
+.tosingup {
+    margin-right: 300px;
+}
+
+.p {
+    text-align: end;
+}
+
+::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: red;
+    opacity: 10;
+    /* Firefox */
 }
