@@ -7,6 +7,7 @@ import video from '../pictures/video.mp4'
 function Nav() {
   return (<div>
     <nav id="stick">
+      
       <ul id="menu">
         <li><Link to="/products/1">מתנפחים</Link></li>
         <li><Link to="/products/2">מכונות מזון</Link></li>
