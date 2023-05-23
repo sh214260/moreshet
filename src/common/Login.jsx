@@ -1,16 +1,19 @@
 import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import {DataContext} from './data-context';
+import {DataContext} from '../client/data-context';
 import { Link } from "react-router-dom";
-import './styles/loginStyle.css'
+import axios from 'axios';
+import Catalog from "./Catalog";
+// import './styles/loginStyle.css'
 function Login() {
     const navigate = useNavigate()
     const context = useContext(DataContext)
-    const [email, setEmail] = useState({})
-    const [userpassword, setUserpassword] = useState({})
+    const [email, setEmail] = useState("")
+    const [userpassword, setUserpassword] = useState("")
     const signin = () => {
-        
+        setEmail("")
+        setUserpassword("")
         const option = {
             method: 'POST',
             headers: {
@@ -20,27 +23,36 @@ function Login() {
                 email, userpassword
             })
         }
-        fetch('http://localhost:3500/login', option)
-            .then(res => res.json())
+        axios.get('https://localhost:7128/api/User', option)
             .then(ans => {
-                setEmail(ans)
-                setUserpassword(ans)
-                console.log(ans)
-                if (ans.length > 0) {
-                    context.setUser(ans[0]);
-                    if (ans[0].useradmin == 1) {
-                        navigate('/HomeAd')
+                console.log(ans.data)               
+                if (ans.data.length > 0) {
+                    let visit=ans.data.find(it=> it.mail==email && it.password==userpassword)
+                    console.log(visit)
+                    let index=ans.data.indexOf(visit)
+                    console.log(index)
+                    if (index!=-1) {
+                        alert("משתמש קיים")
+                        context.setUser(ans.data[index]); 
+                        if(ans.data[index].type!=0)                                               
+                            navigate('/HomeAd')
+                        else
+                        {
+                            navigate('/Catalog')
+                        }
                     }
                     else {
-                        console.log(ans)
-                        navigate('/')
+                        alert("משתמש לא קיים")
+                        navigate('/singup')
                     }
                 }
-                else {
-                    alert("משתמש לא קיים")
-                    navigate('/singup')
+                else{
+                    alert("לא קיימים משתמשים")
                 }
+                
             })
+            setEmail("")
+            setUserpassword("")
     }
     return (
         <div id="content">

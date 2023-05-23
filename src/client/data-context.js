@@ -5,6 +5,16 @@ const DataContextProvider = (props) => {
     const [user, setUser] = useState(null);
     const [items, setItems] = useState([]);
 
+    // const addUser = (userToAdd) =>{
+    //     const tmp = [...user, userToAdd];
+    //     console.log(user);
+    //     setItems(tmp);
+    // }
+    // const removeUser=(userToRemove)=>{
+    //     let after=[...user]
+    //     after.splice(after.indexOf(userToRemove),1)
+    //     setItems(after);
+    // }
     const addItem = (item) =>{
         const tmp = [...items, item];
         console.log(tmp);
@@ -12,7 +22,7 @@ const DataContextProvider = (props) => {
     }
     const removeItem=(itemToRemove)=>{
         let after=[...items]
-       after.splice(after.indexOf(itemToRemove),1)
+        after.splice(after.indexOf(itemToRemove),1)
         setItems(after);
     }
     return (

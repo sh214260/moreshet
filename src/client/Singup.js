@@ -2,6 +2,7 @@ import React, { useState,useContext } from "react";
 import {DataContext} from './data-context';
 import { Navigate, useNavigate } from "react-router-dom";
 import './styles/loginStyle.css'
+import axios from "axios";
 //import { Link } from "react-router-dom";
 
 function Singup() {
@@ -12,6 +13,7 @@ function Singup() {
     const [phone, setPhone] = useState('')
     const [email, setEmail] = useState('')
     const [userpassword, setUserpassword] = useState('')
+    const [adress, setAdress] = useState('')
     const validate = (field) =>{
         if(field.length === 0){
             alert(`please enter all fields`);
@@ -24,6 +26,7 @@ function Singup() {
         if(validate(phone) === false) return;
         if(validate(email) === false) return;
         if(validate(userpassword) === false) return;
+        if(validate(adress) === false) return;
 
         if(phone.length > 10){
             alert("phone number too long");
@@ -39,13 +42,15 @@ function Singup() {
                 email, userpassword, username, phone
             })
         }
-        fetch('http://localhost:3500/login/signup', option)
-        .then(res => res.json())
+       
+        axios.post('https://localhost:7128/api/User', option)
+       // .then(res => res.json())
         .then(ans => {
                 setUsername(ans)
                 setPhone(ans)
                 setEmail(ans)
                 setUserpassword(ans)
+                setAdress(ans)
                 console.log(email);
                 console.log(ans)
                 if (ans !==null) {
@@ -78,6 +83,10 @@ function Singup() {
                     <label for="pass">סיסמה: </label>
                     <input name="pass" type="password"  onChange={(ev) => setUserpassword(ev.target.value)} placeholder="*שדה חובה"></input>
                 </p> 
+                <p className="p">
+                    <label for="adress">כתובת: </label>
+                    <input name="adress" type="text"  onChange={(ev) => setAdress(ev.target.value)} placeholder="*שדה חובה"></input>
+                </p>
                 <input className="submit" type="submit" value="הרשם" onClick={singup}></input>
 
             </div>

@@ -21,16 +21,16 @@ function HomePage() {
   }
   return (
     <div id="home" height="400px">
-      {/* <h1>השכרת ציוד ומתנפחים</h1> */}
-      <img src={Background} width="770px" height="150px"/>
+      <h1>השכרת ציוד ומתנפחים</h1>
+      {/* <img src={Background} width="770px" height="150px"/> */}
       <Nav />
       {context.user == null ?
         <Link to={"/login"}>התחבר</Link>
       :
-        <><span>שלום {context.user.username}!</span><br></br><button id="out" onClick={out}>התנתק</button> 
+        <><span>שלום {context.user.name}!</span><br></br><button id="out" onClick={out}>התנתק</button> 
       </>}
       
-      
+       
       <Outlet />
       <br></br>
       
