@@ -42,7 +42,8 @@ function Products() {
                 { <Link to={`/products/${category}/${it.category}`}><img className="images" width="150px" src={`http://localhost:3500/image/${it.image}`} /></Link> }
                 <div className="desc">
                   <p>{it.name}</p>
-                  <p>{it.price} ₪</p></div>
+                  <p>{it.price} ₪</p>
+                </div>
               </div>
           )})
         }

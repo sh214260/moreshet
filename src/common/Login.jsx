@@ -1,11 +1,10 @@
 import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import {DataContext} from '../client/data-context';
+import { DataContext } from '../client/data-context';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import Catalog from "./Catalog";
-// import './styles/loginStyle.css'
 function Login() {
     const navigate = useNavigate()
     const context = useContext(DataContext)
@@ -15,7 +14,7 @@ function Login() {
         setEmail("")
         setUserpassword("")
         const option = {
-            method: 'POST',
+            method: 'Get',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -23,45 +22,35 @@ function Login() {
                 email, userpassword
             })
         }
-        axios.get('https://localhost:7128/api/User', option)
+        console.log(option)
+        axios.get(`https://localhost:7128/api/User/GetUser/${email}/${userpassword}`, option)
             .then(ans => {
-                console.log(ans.data)               
-                if (ans.data.length > 0) {
-                    let visit=ans.data.find(it=> it.mail==email && it.password==userpassword)
-                    console.log(visit)
-                    let index=ans.data.indexOf(visit)
-                    console.log(index)
-                    if (index!=-1) {
-                        alert("משתמש קיים")
-                        context.setUser(ans.data[index]); 
-                        if(ans.data[index].type!=0)                                               
-                            navigate('/HomeAd')
-                        else
-                        {
-                            navigate('/Catalog')
-                        }
-                    }
+                console.log(ans.data)
+                if (ans.data) {
+                    alert("משתמש קיים")
+                    context.setUser(ans.data[0]);
+                    if (ans.data.type != 0)
+                        navigate('/HomeAd')
                     else {
-                        alert("משתמש לא קיים")
-                        navigate('/singup')
+                        navigate('/Catalog')
                     }
                 }
-                else{
-                    alert("לא קיימים משתמשים")
+                else {
+                    alert("לא קיים משתמש כזה")
+                    navigate('/singup')
                 }
-                
             })
-            setEmail("")
-            setUserpassword("")
+        setEmail("")
+        setUserpassword("")
     }
     return (
         <div id="content">
-            <p className="p">
+            <p>
                 <label for="email">  מייל: </label>
                 <input name="email" type="email" onChange={(ev) => setEmail(ev.target.value)}></input>
             </p>
             <br></br>
-            <p className="p">
+            <p>
                 <label for="pass">סיסמה: </label>
                 <input name="pass" type="password" onChange={(ev) => setUserpassword(ev.target.value)}></input>
                 <br></br>
