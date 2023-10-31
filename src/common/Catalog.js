@@ -23,7 +23,7 @@ function Catalog() {
                     _categoryId = 0
             }
             console.log(category)
-            const response = await axios.get('https://localhost:7128/api/Product')
+            const response = await axios.get('https://localhost:7128/api/Product/getall')
             const data = await response.data
             console.log(data)
             setProducts(data)

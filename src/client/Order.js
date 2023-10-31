@@ -5,11 +5,15 @@ import { DataContext } from "./data-context";
 // import { useNavigate } from "react-router-dom";
 import './styles/orderStyle.css'
 
-function Orders() {
+function Order() {
   const context = useContext(DataContext)
   const [address, setAdress] = useState('')
   const [delivery, setDelivery] = useState(false)
   const [totalPrice, setTotalPrice] = useState(0)
+
+  function calculateDelivery(){
+    
+  }
 
   const calculatePrice=()=>{
     let totalPrice = context.items.reduce((sum, item) => sum += item.price, 0);
@@ -119,4 +123,4 @@ function Orders() {
     </>
   )
 }
-export default Orders
+export default Order

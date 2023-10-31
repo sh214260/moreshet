@@ -23,7 +23,9 @@ function MyClient() {
             <th>סיסמה</th>
             <th>סוג</th>
             <th>כתובת</th>
-            <th>פלפון</th>
+            <th>טלפון1</th>
+            <th>טלפון 2</th>
+            {/* <th>הזמנות קודמות</th> */}
           </tr></thead>
         <tbody>
           {clients.map(user => {
@@ -31,11 +33,13 @@ function MyClient() {
               <tr>
                 <td>{user.id}</td>
                 <td>{user.name}</td>
-                <td>{user.mail}</td>
+                <td>{user.email}</td>
                 <td>{user.password}</td>
                 <td>{user.type}</td>
                 <td>{user.adress}</td>
-                <td>{user.phoneNumber}</td>
+                <td>{user.phoneNumber1}</td>
+                <td>{user.phoneNumber2}</td>
+                <td><button>לצפייה בהזמנות קודמות</button></td>
               </tr>
             )
           })}          

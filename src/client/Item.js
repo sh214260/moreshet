@@ -26,7 +26,8 @@ function Item() {
         console.log(res)
         if (res.length > 0) {
           alert("המוצר תפוס")
-        } else {
+        } 
+        else {
           alert("המוצר נוסף בהצלחה!")
           context.addItem({ item: item, date: date, price: item.price });
         }
@@ -38,17 +39,15 @@ function Item() {
         <>
           <h1 id="nameP">{item.productsName}</h1>
           <div id="content">
-
             <div id="imgItem">
               <img id="img" src={`http://localhost:3500/image/${item.image}`} alt={item.name} />
             </div>
             <div id="imgDetails">{
-              item.products_id===1 ? <>
-            
-              <p>תאור: <span> {item.descrip} </span></p>
-              <p>גובה: <span> {item.width} על {item.height} מטרים</span></p>
-           </>   :<></>}<p>מחיר: 
-              <span> {item.price} ₪ </span></p>
+              item.products_id === 1 ? <>
+                <p>תאור: <span> {item.descrip} </span></p>
+                <p>גובה: <span> {item.width} על {item.height} מטרים</span></p>
+              </> : <></>}<p>מחיר:
+                <span> {item.price} ₪ </span></p>
               <label for="date">בתאריך:</label>
               <input type="date" name="date" onChange={(ev) => setDate(ev.target.value)}></input>
               <br></br>   <input type="submit" value="הוסף להזמנה" onClick={check}></input>

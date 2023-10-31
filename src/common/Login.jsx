@@ -11,10 +11,8 @@ function Login() {
     const [email, setEmail] = useState("")
     const [userpassword, setUserpassword] = useState("")
     const signin = () => {
-        setEmail("")
-        setUserpassword("")
         const option = {
-            method: 'Get',
+            method: 'Post',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -23,8 +21,9 @@ function Login() {
             })
         }
         console.log(option)
-        axios.get(`https://localhost:7128/api/User/GetUser/${email}/${userpassword}`, option)
-            .then(ans => {
+        // axios.post(`https://localhost:7128/api/User/GetUser/${email}/${userpassword}`, option)
+        axios.post(`https://localhost:7128/api/User/Singin`, {email, userpassword})
+        .then(ans => {
                 console.log(ans.data)
                 if (ans.data) {
                     alert("משתמש קיים")
@@ -61,3 +60,5 @@ function Login() {
     );
 }
 export default Login;
+
+

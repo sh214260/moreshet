@@ -1,59 +1,66 @@
 import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { DataContext } from '../client/data-context'
 import axios from 'axios';
-// import './styles/items.css'
+import dayjs from "dayjs";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 function Product() {
   const params = useParams()
   const navigate = useNavigate()
-  const context = useContext(DataContext)
+  // const context = useContext(DataContext)
   const [item, setItem] = useState(null)
-  const [date, setDate] = useState('')
+  const [fromDate, setFromDate] = useState(dayjs('2023-10-17T15:30'));
+  const [toDate, setToDate] = useState(dayjs('2022-04-17T15:30'));
   useEffect(() => {
     console.log(params)
-    axios.get(`https://localhost:7128/api/Product/${params.id}`)
+    axios.get(`https://localhost:7128/api/Product/getbyid/${params.id}`)
       .then(res => {
         console.log(res.data)
         setItem(res.data)
-
       })
   }, [])
-  const check = () => {
-    // fetch(`'https://localhost:7128/api/Product'${params.productId}/${date}`)
-    //   .then(res => res.json()).then(res => {
-    //     console.log(res)
-    //     if (res.length > 0) {
-    //       alert("המוצר תפוס")
-    //     } else {
-    //       alert("המוצר נוסף בהצלחה!")
-    //       context.addItem({ item: item, date: date, price: item.price });
-    //     }
-    //   })
-  }
-  const add=()=>{
-    context.addItem({ item: item, date: date, price: item.price });
 
-    // Navigate to the cart component
-    navigate('/cart');
+  function check() {
+    axios.get(`https://localhost:7128/api/CartContoller/productisavialible`, { params: { Type: item.type, from: fromDate.format("YYYY-MM-DDTHH:mm"), to: toDate.format("YYYY-MM-DDTHH:mm") } })
+      .then(res => {
+        console.log(res.data); 
+        return res.data
+      })
   }
+  const add = () => {
+    if (check) {
+      axios.put(`https://localhost:7128/api/CartContoller/${params.id}`, { Id: 2, Name: "", Email: "", Password: "", Address: "", PhoneNumber1: "", PhoneNumber2: "", Type: 1 })
+        .then(res => {
+          console.log(res.data)
+          navigate(`/cart/${res.data.id}`)
+        })
+    }
+    else{
+      return false;
+    }
+  }
+
   return (
     <>
       {item != null ?
         <>
           <h1 id="nameP">{item.name}</h1>
           <div id="content">
-            {/* <div id="imgItem">
-              <img id="img" src={`http://localhost:3500/image/${item.image}`} alt={item.name} />
-            </div> */}
             <div id="imgDetails">{
               item.id === 1 ? <>
               </> : <></>}<p>מחיר:
                 <span> {item.price} ₪ </span></p>
+              <p>{item.type}</p>
               <label for="date">בתאריך:</label>
-              <input type="date" name="date" onChange={(ev) => setDate(ev.target.value)}></input>
-              <br></br>   <input type="submit" value="הוסף להזמנה" onClick={add}></input>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker label={"from date"} value={fromDate} onChange={(ev) => setFromDate(ev)} />
+                <DateTimePicker label={"to date"} value={toDate} onChange={(ev) => setToDate(ev)} />
+              </LocalizationProvider>
+              <br></br>
+              <input type="submit" value="הוסף להזמנה" onClick={add}></input>
             </div>
           </div>
         </>

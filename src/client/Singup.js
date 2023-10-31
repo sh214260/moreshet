@@ -3,17 +3,18 @@ import {DataContext} from './data-context';
 import { Navigate, useNavigate } from "react-router-dom";
 import './styles/loginStyle.css'
 import axios from "axios";
+import { Button, Input } from "@mui/material";
 //import { Link } from "react-router-dom";
 
 function Singup() {
       // const navigate=useNavigate()
     const context = useContext(DataContext)
     const navigate = useNavigate()
-    const [username, setUsername] = useState('')
-    const [phone, setPhone] = useState('')
+    const [name, setName] = useState('')
+    const [phonenumber, setPhoneNumber] = useState('')
     const [email, setEmail] = useState('')
-    const [userpassword, setUserpassword] = useState('')
-    const [adress, setAdress] = useState('')
+    const [password, setPassword] = useState('')
+    const [address, setAddress] = useState('')
     const validate = (field) =>{
         if(field.length === 0){
             alert(`please enter all fields`);
@@ -22,13 +23,13 @@ function Singup() {
         return true;
     }
     const singup = () => {
-        if(validate(username) === false) return;
-        if(validate(phone) === false) return;
+        if(validate(name) === false) return;
+        if(validate(phonenumber) === false) return;
         if(validate(email) === false) return;
-        if(validate(userpassword) === false) return;
-        if(validate(adress) === false) return;
+        if(validate(password) === false) return;
+        if(validate(address) === false) return;
 
-        if(phone.length > 10){
+        if(phonenumber.length > 10){
             alert("phone number too long");
             return;
         }
@@ -39,18 +40,18 @@ function Singup() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email, userpassword, username, phone
+                email, password, name, phonenumber,address
             })
         }
-       
-        axios.post('https://localhost:7128/api/User', option)
+       const singupBody={email, password, name, phonenumber, address}
+        axios.post('https://localhost:7128/api/User/Singup', singupBody)
        // .then(res => res.json())
         .then(ans => {
-                setUsername(ans)
-                setPhone(ans)
+                setName(ans)
+                setPhoneNumber(ans)
                 setEmail(ans)
-                setUserpassword(ans)
-                setAdress(ans)
+                setPassword(ans)
+                setAddress(ans)
                 console.log(email);
                 console.log(ans)
                 if (ans !==null) {
@@ -65,15 +66,16 @@ function Singup() {
 
     return (
         <>
+        <Input>הכנס</Input>
             <h1>הרשמה</h1>
             <div id="content">
                 <p className="p">
                     <label for="username">שם: </label>
-                    <input name="username" type="text" onChange={(ev) => setUsername(ev.target.value)}></input>
+                    <input name="username" type="text" onChange={(ev) => setName(ev.target.value)}></input>
                 </p><br></br>
                 <p className="p">
                     <label for="phone">טלפון: </label>
-                    <input name="phone" type="text" onChange={(ev) => setPhone(ev.target.value)}></input>
+                    <input name="phone" type="text" onChange={(ev) => setPhoneNumber(ev.target.value)}></input>
                 </p><br></br>
                 <p className="p">
                     <label for="email">מייל: </label>
@@ -81,11 +83,11 @@ function Singup() {
                 </p><br></br>
                 <p className="p">
                     <label for="pass">סיסמה: </label>
-                    <input name="pass" type="password"  onChange={(ev) => setUserpassword(ev.target.value)} placeholder="*שדה חובה"></input>
+                    <input name="pass" type="password"  onChange={(ev) => setPassword(ev.target.value)} placeholder="*שדה חובה"></input>
                 </p> 
                 <p className="p">
-                    <label for="adress">כתובת: </label>
-                    <input name="adress" type="text"  onChange={(ev) => setAdress(ev.target.value)} placeholder="*שדה חובה"></input>
+                    <label for="address">כתובת: </label>
+                    <input name="address" type="text"  onChange={(ev) => setAddress(ev.target.value)} placeholder="*שדה חובה"></input>
                 </p>
                 <input className="submit" type="submit" value="הרשם" onClick={singup}></input>
 

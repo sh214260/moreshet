@@ -1,50 +1,52 @@
 import React, { useContext, useState, useEffect } from "react";
-import { DataContext } from '../client/data-context';
-
+import axios from 'axios';
+import { useParams } from "react-router-dom";
 const Cart = () => {
-  const context = useContext(DataContext);
-  const cartItems = context.items;
+  const params = useParams()
+  const [cartItems, setCartItems] = useState()
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    // עדכון המחיר הסופי בכל שינוי ברשימת המוצרים בעגלה
+    axios.get(`https://localhost:7128/api/Product/getbyid/${params.id}`)
     const calculateTotalPrice = () => {
-      let total = 0;
-      cartItems.forEach((item) => {
-        total += item.item.price;
-      });
-      setTotalPrice(total);
+
     };
 
     calculateTotalPrice();
   }, [cartItems]);
 
   return (
-    <div>
-      <h2>Shopping Cart</h2>     
-      {cartItems.length === 0 ? (
-        <p>Cart is empty</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>שם</th>
-              <th>מחיר</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cartItems.map((item, index) => (
-              <tr key={index}>
-                <td>{item.item.name}</td>
-                <td>{item.item.price}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      <p>Total Price: {totalPrice}</p>
-    </div>
+    <></>
+    // <div>
+    //   <h2>Shopping Cart</h2>     
+    //   {cartItems.length === 0 ? (
+    //     <p>Cart is empty</p>
+    //   ) : (
+    //     <table>
+    //       <thead>
+    //         <tr>
+    //           <th>שם</th>
+    //           <th>מחיר</th>
+    //         </tr>
+    //       </thead>
+    //       <tbody>
+    //         {cartItems.map((item, index) => (
+    //           <tr key={index}>
+    //             <td>hi</td>
+    //             {/* <td>{item.item.name}</td>
+    //             <td>{item.item.price}</td> */}
+    //           </tr>
+    //         ))}
+    //       </tbody>
+    //     </table>
+    //   )}
+    //   <p>Total Price: {totalPrice}</p>
+    // </div>
   );
 };
 
 export default Cart;
+
+
+
+

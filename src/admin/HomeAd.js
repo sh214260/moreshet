@@ -1,7 +1,8 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
-// import '../client/styles/NavStyle.css'
 function HomeAd() {
   const navigate = useNavigate();
   let navi = (name) => {
@@ -9,12 +10,16 @@ function HomeAd() {
 
   }
   return (
-    <div id="home">
-      <input type="button" value="הוספת מוצר" onClick={() => navi(`addProducts`)}></input>
-      <input type="button" value="הלקוחות שלי" onClick={() => navi(`myclients`)}></input>
-      <input type="button" value="הזמנות" onClick={() => navi(`allorders`)}></input>
-    </div>
-  );
+    <>
+      <div id="home">
+        <h1>פעולות למנהל</h1>
+        <ButtonGroup margin="0 px" size="large" variant="contained" aria-label="outlined primary button group">
+          <Button    onClick={() => navi(`addProducts`)}>הוספת מוצר</Button>
+          <Button  onClick={() => navi(`myclients`)}>הלקוחות שלי</Button>
+          <Button onClick={() => navi(`allorders`)}>צפייה בהזמנות</Button>
+        </ButtonGroup>
+      </div>
+    </>);
 }
 
 export default HomeAd;

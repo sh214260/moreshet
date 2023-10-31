@@ -1,52 +1,74 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+
+import Select from '@mui/material/Select';
+
+const ariaLabel = { 'aria-label': 'description' };
+
 function AddProducts() {
-  const [category, setCategory] = useState('');
   const [name, setName] = useState('');
+  const [categorys, setCategorys] = useState([]);
+  const [categoryId, setCategoryId]=useState()
   const [price, setPrice] = useState('');
+  useEffect(() => {
+    axios.get('https://localhost:7128/api/Category/Get')
+      .then(res => {
+        console.log(res.data)
+        setCategorys(res.data)
+
+      })
+  }, [])
+
+
   const add = () => {
-   let _categoryId=0
-    switch(category) {
-      case "trampoline":
-        _categoryId=0
-        break;
-      case "foodMachine":
-        _categoryId=1
-        break;
-      case "evreything":
-        _categoryId=2
-        break;
-      default:
-        _categoryId=0
-    }
-    const dataforsend={Id:0,Name: name, CategoryId:_categoryId, Price:price};
+
+    const dataforsend = { Id: 0, Name: name, CategoryId: categoryId, Price: price };
     const option = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body:  JSON.stringify(dataforsend)
+      body: JSON.stringify(dataforsend)
     }
     console.log(option.body)
-    axios.post('https://localhost:7128/api/Product', dataforsend)
-      .then(ans => console.log(ans))
+    axios.post('https://localhost:7128/api/Product/addproduct', dataforsend)
+      .then(ans => {
+        console.log(ans);
+        if (ans.data) {
+          alert("המוצר נוסף בהצלחה!")
+          setCategorys('')
+          setName('')
+          setPrice('')
+          Input.value = ''
+        }
+        else {
+          alert("כבר קיים מוצר עם אותו שם")
+        }
+      })
+
   }
   return (
     <div >
       <h1>הוספת מוצר</h1>
-      <label for="chooseCategory">בחר קטגוריה</label>
-      <select name="chooseCategory" onChange={(ev) => setCategory(ev.target.value)}>
-        <option value="trampoline">מתנפחים</option>
-        <option value="foodMachine">מכונות מזון</option>
-        <option value="evreything">הכל לאירוע</option>
-      </select>
+      <Input placeholder="שם המוצר" inputProps={ariaLabel} onChange={(ev) => setName(ev.target.value)} />
       <br></br>
-      <label for="nameOfProducts">הזן שם מוצר</label>
-      <input name="nameOfProducts" type="text" onChange={(ev) => setName(ev.target.value)}></input>
-      <br></br>
-      <label for="price">מחיר</label>
-      <input name="price" type="text" onChange={(ev) => setPrice(ev.target.value)}></input>
+      <Input placeholder="מחיר" inputProps={ariaLabel} onChange={(ev) => setPrice(ev.target.value)} />
+      <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
+      <Select 
+        labelId="demo-simple-select-filled-label"
+        id="demo-simple-select-filled"
+        value={categoryId}
+        onChange={(ev) => setCategoryId(ev.target.value)}
+      >
+
+        {categorys.map((cat) => (
+          <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+        ))}
+      </Select>
       <br></br>
       <label>צרף תמונה</label>
       <br></br>
