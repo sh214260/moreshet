@@ -37,7 +37,7 @@ function App() {
         <Route path="allorders" element={<AllOrders />} />
         {/* <Route path="singup" element={<Singup />} /> */}
         <Route path="signup" element={<SignUp />} />
-        {/* <Route path="catalog" element={<Catalog />} /> */}
+        <Route path="catalog" element={<Catalog />} />
         <Route path="/album" element={<Album />} />
         <Route path='product/:id' element={<Product />} />   
         <Route path='cart/:id' element={<Cart />} /> 

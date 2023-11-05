@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import dayjs from "dayjs";
@@ -10,7 +10,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 function Product() {
   const params = useParams()
   const navigate = useNavigate()
-  // const context = useContext(DataContext)
   const [item, setItem] = useState(null)
   const [fromDate, setFromDate] = useState(dayjs('2023-10-17T15:30'));
   const [toDate, setToDate] = useState(dayjs('2022-04-17T15:30'));
