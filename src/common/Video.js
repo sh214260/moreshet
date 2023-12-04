@@ -1,3 +1,4 @@
+import React from 'react';
 import video from '../pictures/video.mp4'
 
 const Video = () => {

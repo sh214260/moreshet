@@ -4,7 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { DataContext } from '../client/data-context';
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import Catalog from "./Catalog";
+import Catalog from "./Cata";
 function Login() {
     const navigate = useNavigate()
     const context = useContext(DataContext)

@@ -103,7 +103,10 @@ function Order() {
           <input type="radio" id="delivery1" name="delivery" onChange={(ev) => { setDelivery(true); setTotalPrice(totalPrice + 25) }}></input>
           <label htmlFor="delivery1">משלוח</label>
 
-          <input type="radio" id="Pickup" name="delivery" onChange={(ev) => { setDelivery(false); { totalPrice !== 0 ? setTotalPrice(totalPrice - 25) : <></> } }}></input>
+
+
+
+          {/* <input type="radio" id="Pickup" name="delivery" onChange={(ev) => { setDelivery(false); { totalPrice !== 0 ? setTotalPrice(totalPrice - 25) : <></> } }}></input> */}
           <label htmlFor="Pickup">איסוף עצמי</label>
 
           <br></br>

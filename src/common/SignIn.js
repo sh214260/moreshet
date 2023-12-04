@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { DataContext } from '../client/data-context';
-import { useState, useContext } from "react";
+import { useState, useContext,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 function Copyright(props) {
@@ -34,59 +34,77 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-    const navigate = useNavigate()
-    const context = useContext(DataContext)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    
-    const handleSubmit = (event) => {
+  const navigate = useNavigate()
+  const context = useContext(DataContext)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
     });
-
-        const option = {
-            method: 'Post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email, password
-            })
+    
+    axios.post(`https://localhost:7128/api/User/Signin`, { email: email, password: password })
+      .then(ans => {
+        console.log(ans.data)
+        if (ans.data) {
+          alert("משתמש קיים")
+          context.setUser(ans.data.user);
+          context.setCart(ans.data.cart)
+          context.setCartProducts(ans.data.cartProducts)
+          console.log(context.cart)
+          console.log(context.cartProducts)
+          if (ans.data.user.type != 0)
+            navigate('/HomeAd')
+          else {
+            navigate('/')
+          }
         }
-        console.log(option)
-        // axios.post(`https://localhost:7128/api/User/GetUser/${email}/${userpassword}`, option)
-        axios.post(`https://localhost:7128/api/User/Signin`, {email, password})
-        .then(ans => {
-                console.log(ans.data)
-                if (ans.data) {
-                    alert("משתמש קיים")
-                    context.setUser(ans.data[0]);
-                    if (ans.data.type != 0)
-                        navigate('/HomeAd')
-                    else {
-                        navigate('/Catalog')
-                    }
-                }
-                else {
-                    alert("לא קיים משתמש כזה")
-                    navigate('/signup')
-                }
-            })
-        setEmail("")
-        setPassword("")
+        else {
+          alert("לא קיים משתמש כזה")
+          navigate('/signup')
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        
+        if (err.response) {
+          // Server responded with a status code
+          if (err.response.status === 401) {
+            // Unauthorized error
+            alert("Invalid username or password");
+          } else if (err.response.status === 404) {
+            // Not found error
+            alert("Cart not found");
+          } else {
+            // Other status code errors
+            alert("An error occurred");
+          }
+        } else if (err.request) {
+          // Request was made but no response was received
+          console.log(err.request);
+          alert("No response received");
+        } else {
+          // Other errors
+          console.log(err);
+          alert("An error occurred");
+        }
+      });
+      
+    setEmail("")
+    setPassword("")
   };
-
-
+  
   return (
     <ThemeProvider theme={defaultTheme} >
-      <Container direction= 'rtl' component="main" maxWidth="xs">
+      <Container direction='rtl' component="main" maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
-            
+
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
@@ -99,9 +117,9 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             התחברות
           </Typography>
-          <Box component="form"   onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField 
-            onChange={(ev) => setEmail(ev.target.value)}
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              onChange={(ev) => setEmail(ev.target.value)}
               margin="normal"
               required
               fullWidth
@@ -111,9 +129,9 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
             />
-            <TextField 
-            onChange={(ev) => setPassword(ev.target.value)}
-            margin="normal"
+            <TextField
+              onChange={(ev) => setPassword(ev.target.value)}
+              margin="normal"
               required
               fullWidth
               name="password"
@@ -122,7 +140,7 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel 
+            <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="זכור אותי"
             />

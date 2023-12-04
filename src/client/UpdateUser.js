@@ -13,9 +13,11 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from "axios";
-import { useState, useContext } from "react";
-import { DataContext } from './data-context';
-import { useNavigate } from "react-router-dom";
+import { useState,useContext } from "react";
+import {DataContext} from './data-context';
+import {useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -33,15 +35,15 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
-  const context = useContext(DataContext)
-  const navigate = useNavigate()
-  const [name, setName] = useState('')
-  const [phonenumber1, setPhoneNumber1] = useState('')
-  const [phonenumber2, setPhoneNumber2] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [address, setAddress] = useState('')
+export default function UpdateUser() {
+    const context = useContext(DataContext)
+    const navigate = useNavigate()
+    const [id, setId] = useState('')
+    const [name, setName] = useState('')
+    const [phoneNumber1, setPhoneNumber1] = useState('')
+    const [phoneNumber2, setPhoneNumber2] = useState('')
+    const [email, setEmail] = useState('')
+    const [address, setAddress] = useState('')
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -49,39 +51,43 @@ export default function SignUp() {
       email: data.get('email'),
       password: data.get('password'),
     });
-
-
-    const validate = (field) => {
-      if (field.length === 0) {
-        alert(`please enter all fields`);
-        return false;
-      }
-      return true;
-    }
-
-    if (validate(name) === false) return;
-    if (validate(phonenumber1) === false) return;
-    if (validate(phonenumber2) === false) return;
-    if (validate(email) === false) return;
-    if (validate(password) === false) return;
-    if (validate(address) == false) return
-    if (phonenumber1.length > 10 || phonenumber2.length > 10) {
-      alert("phone number too long");
-      return;
-    }
-
-    const newUser = { name:name, email:email,address:address, phonenumber1:phonenumber1, phonenumber2:phonenumber2 }
-    axios.post(`https://localhost:7128/api/User/Signup/${password}`, newUser)
-      .then(ans => {
-        if (ans.data) {
-          alert("נרשמת בהצלחה!")
-          navigate('/signin')
-
+    
+    
+    const validate = (field) =>{
+        if(field.length === 0){
+            alert(`please enter all fields`);
+            return false;
         }
-      })
+        return true;
+    }
 
+        if(validate(name) === false) return;
+        if(validate(phoneNumber1) === false) return;
+        if(validate(phoneNumber2) === false) return;
+        if(validate(email) === false) return;
+        if(validate(address) === false) return;
+        if(phoneNumber1.length > 10 || phoneNumber2.length > 10){
+            alert("phone number too long");
+            return;
+        }
+       const user={id,name, email,address, phoneNumber1, phoneNumber2}
+        axios.post('https://localhost:7128/api/User/updateuser', user)
+        .then(ans => {
+                if (ans !==null) {
+                    alert("הפרטים נשמרו בהצלחה!")
+                    context.setUser(ans[0]); 
+                }
+            })
+    
   };
-
+  useEffect(() => {
+    setId(context.user.id)
+setName(context.user.name)
+setEmail(context.user.email)
+setAddress(context.user.address)
+setPhoneNumber1(context.user.phoneNumber1)
+setPhoneNumber2(context.user.phoneNumber2)
+  },[])
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -93,18 +99,17 @@ export default function SignUp() {
             flexDirection: 'column',
             alignItems: 'center',
           }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
+        >        
           <Typography component="h1" variant="h5">
-            הרשמה
+          <EditIcon size="large"/>
+            עריכת פרופיל  
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} >
                 <TextField
-                  onChange={(ev) => setName(ev.target.value)}
+                value={name}
+                onChange={(ev) => setName(ev.target.value)}
                   autoComplete="given-name"
                   name="name"
                   required
@@ -114,10 +119,11 @@ export default function SignUp() {
                   autoFocus
                 />
               </Grid>
-
+              
               <Grid item xs={12}>
                 <TextField
-                  onChange={(ev) => setEmail(ev.target.value)}
+                value={email}
+                onChange={(ev) => setEmail(ev.target.value)}
                   required
                   fullWidth
                   id="email"
@@ -126,21 +132,11 @@ export default function SignUp() {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  onChange={(ev) => setPassword(ev.target.value)}
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
+             
               <Grid item xs={12} sm={6}>
                 <TextField
-                  onChange={(ev) => setPhoneNumber1(ev.target.value)}
+                value={phoneNumber1}
+                onChange={(ev) => setPhoneNumber1(ev.target.value)}
                   required
                   fullWidth
                   name="phone1"
@@ -152,7 +148,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  onChange={(ev) => setPhoneNumber2(ev.target.value)}
+                value={phoneNumber2}
+                onChange={(ev) => setPhoneNumber2(ev.target.value)}
                   required
                   fullWidth
                   name="phone2"
@@ -162,10 +159,10 @@ export default function SignUp() {
                   autoComplete="new-phone2"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  value={address}
-                  onChange={(ev) => setAddress(ev.target.value)}
+                value={address}
+                onChange={(ev) => setAddress(ev.target.value)}
                   required
                   fullWidth
                   name="address"
@@ -174,6 +171,8 @@ export default function SignUp() {
                   id="address"
                 />
               </Grid>
+              <Grid item xs={12}>              
+              </Grid>
             </Grid>
             <Button
               type="submit"
@@ -181,15 +180,8 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              הרשם
+              שמור
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/signin" variant="body2">
-                  כבר יש לך חשבון? התחבר
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />

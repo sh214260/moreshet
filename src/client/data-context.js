@@ -1,32 +1,26 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 export const DataContext = React.createContext({});
 
 const DataContextProvider = (props) => {
     const [user, setUser] = useState(null);
-    const [items, setItems] = useState([]);
-
-    const addUser = (userToAdd) =>{
-        const tmp = [...user, userToAdd];
-        console.log(user);
-        setItems(tmp);
+    const [cart, setCart] = useState(null);
+    const [cartProducts, setCartProducts] = useState([{}])
+    const [deliveryPrice, setDeliveryPrice] = useState(0)
+    const updateFrom = (fromValue) => {
+        const newCart = { ...cart };
+        newCart.fromDate = fromValue; // Replace 'propertyName' with the actual property name you want to update and 'newValue' with the new value you want to assign
+        setCart(newCart);
     }
-    const removeUser=(userToRemove)=>{
-        let after=[...user]
-        after.splice(after.indexOf(userToRemove),1)
-        setItems(after);
-    }
-    const addItem = (item) =>{
-        const tmp = [...items, item];
-        console.log(tmp);
-        setItems(tmp);
-    }
-    const removeItem=(itemToRemove)=>{
-        let after=[...items]
-        after.splice(after.indexOf(itemToRemove),1)
-        setItems(after);
+    const updateTo= (toValue) => {
+        const newCart = { ...cart };
+        newCart.toDate = toValue;
+        setCart(newCart);
     }
     return (
-        <DataContext.Provider value={{user, items, setUser,setItems, addItem,removeItem}}>
+        <DataContext.Provider
+            value={{
+                user, setUser, cart, setCart,updateFrom,updateTo, cartProducts, setCartProducts, deliveryPrice, setDeliveryPrice
+            }}>
             {props.children}
         </DataContext.Provider>
     )
