@@ -16,7 +16,7 @@ function HomeAd() {
         <ButtonGroup margin="0 px" size="large" variant="contained" aria-label="outlined primary button group">
           <Button    onClick={() => navi(`addProducts`)}>הוספת מוצר</Button>
           <Button  onClick={() => navi(`myclients`)}>הלקוחות שלי</Button>
-          <Button onClick={() => navi(`allorders`)}>צפייה בהזמנות</Button>
+          <Button onClick={() => navi(`allorders/-1`)}>צפייה בהזמנות</Button>
         </ButtonGroup>
       </div>
     </>);

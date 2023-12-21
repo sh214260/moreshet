@@ -17,8 +17,10 @@ import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid';
 import { useContext } from "react";
-import { DataContext } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context'
 import MainPage from "./MainPage";
+import Nav from "./Nav";
+import { Copyright } from "@mui/icons-material";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -35,7 +37,7 @@ const Cart = () => {
     const ctx = useContext(DataContext)
     // ctx.setCartId(params.id)
     function DeleteProduct(productId) {
-        axios.post(`https://localhost:7128/api/CartProduct/delete/${ctx.cart.id}/${productId}`)
+        axios.post(`${SERVERURL}/api/CartProduct/delete/${ctx.cart.id}/${productId}`)
             .then(res => {
                 console.log(res.data)
                 if (res.data) {
@@ -47,11 +49,11 @@ const Cart = () => {
             })   
     }
     useEffect(() => {
-        axios.get(`https://localhost:7128/api/CartProduct/getproducts/${ctx.cart.id}`)
+        axios.get(`${SERVERURL}/api/CartProduct/getproducts/${ctx.cart.id}`)
         .then(ans=>{
             console.log(ans.data)
             ctx.setCartProducts(ans.data)})
-        axios.get(`https://localhost:7128/api/Cart/getbyid/${ctx.cart.id}`)
+        axios.get(`${SERVERURL}/api/Cart/getbyid/${ctx.cart.id}`)
         .then(res => {
         console.log(res.data)
         ctx.setCart(res.data)
@@ -60,7 +62,8 @@ const Cart = () => {
     }, [flag])
 
     return (
-        <><MainPage/>
+        <>
+        <Nav/>
         <Box sx={{ margin: 2 }} >
             
             <AppBar sx={{ width: '50%', marginTop: 1, marginBottom: 1 }} position="sticky">
@@ -147,7 +150,9 @@ const Cart = () => {
                     </Card>
                 </Box>
             </Box>
-        </Box></>);
+        </Box>
+        <Copyright/>
+        </>);
 };
 
 export default Cart;

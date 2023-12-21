@@ -1,51 +1,62 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Button, Paper } from '@mui/material';
+
 function MyClient() {
-  const [clients, setClients] = useState([])
+  const [clients, setClients] = useState([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     let start = async () => {
       console.log("data")
-      const response = await axios.get(`https://localhost:7128/api/User`)
-      console.log(response.data)
+      const response = await axios.get(`https://localhost:7128/api/User`);
+      console.log(response.data);
       setClients(response.data);
     }
-    start()
-  }, [])
+    start();
+  }, []);
+
   return (
-    <div >
-      <h1>הלקוחות שלי</h1>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>שם</th>
-            <th>מייל</th>
-            <th>סיסמה</th>
-            <th>סוג</th>
-            <th>כתובת</th>
-            <th>טלפון1</th>
-            <th>טלפון 2</th>
-            {/* <th>הזמנות קודמות</th> */}
-          </tr></thead>
-        <tbody>
-          {clients.map(user => {
-            return (
-              <tr>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.password}</td>
-                <td>{user.type}</td>
-                <td>{user.adress}</td>
-                <td>{user.phoneNumber1}</td>
-                <td>{user.phoneNumber2}</td>
-                <td><button>לצפייה בהזמנות קודמות</button></td>
-              </tr>
-            )
-          })}          
-        </tbody>
-      </table>
-    </div>
+    <Paper>
+      <Typography variant="h3">הלקוחות שלי</Typography>
+      <Table >
+        <TableHead >
+          <TableRow >
+            <TableCell style={{textAlign:"right"}}>מספר לקוח</TableCell>
+            <TableCell style={{textAlign:"right"}}>שם</TableCell>
+            <TableCell style={{textAlign:"right"}}>מייל</TableCell>
+            <TableCell style={{textAlign:"right"}}>סוג</TableCell>
+            <TableCell style={{textAlign:"right"}}>כתובת</TableCell>
+            <TableCell style={{textAlign:"right"}}>טלפון1</TableCell>
+            <TableCell style={{textAlign:"right"}}>טלפון 2</TableCell>
+            <TableCell style={{textAlign:"right"}}>פעולות</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {clients.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell style={{textAlign:"right"}}>{user.id}</TableCell>
+              <TableCell style={{textAlign:"right"}}>{user.name}</TableCell>
+              <TableCell style={{textAlign:"right"}}>{user.email}</TableCell>
+              <TableCell style={{textAlign:"right"}}>{user.type}</TableCell>
+              <TableCell style={{textAlign:"right"}}>{user.address}</TableCell>
+              <TableCell style={{textAlign:"right"}}>{user.phoneNumber1}</TableCell>
+              <TableCell style={{textAlign:"right"}}>{user.phoneNumber2}</TableCell>
+              <TableCell style={{textAlign:"right"}}>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate(`/allorders/${user.id}`)}
+                 >
+                  לצפייה בהזמנות קודמות
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Paper>
   );
 }
+
 export default MyClient;

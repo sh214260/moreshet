@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Link as A } from 'react-router-dom';
-import { Link } from '@mui/material'
+import { ClickAwayListener, Link, Paper, Popper } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,25 +22,17 @@ import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
-import { DataContext } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context'
 import { useContext } from "react";
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import MainPage from './MainPage';
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { TextField, List, ListItem, ListItemText } from '@mui/material';
+import { Directions } from '@mui/icons-material';
+import Nav from './Nav';
+import Copyright from './Copyright';
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -51,37 +43,80 @@ export default function Album() {
   const ctx = useContext(DataContext)
   const [openAlert, setOpenAlert] = useState(false);
   const [products, setProducts] = useState([{}])
-  const [displayedProducts, setDisplayedProducts] = useState(6);
+  const [displayedProducts, setDisplayedProducts] = useState(2);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loadProducts, setLoadProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
+  const [from, setFrom] = useState(null)
+  const [to, setTo] = useState(null)
   const [categorys, setCategorys] = useState([]);
   const [categoryId, setCategoryId] = useState('')
-
-  let filterByDate = async () => {
-    const response = await axios.get(`https://localhost:7128/api/Product/getavailable/${ctx.cart.fromDate}/${ctx.cart.toDate}`)
-    const data = await response.data
-    console.log(data)
-    setFilteredProducts(data)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  
+  async function fetchAvailableProducts() {
+    const ans = await axios.get(`${SERVERURL}/api/Product/getavailable/${from}/${to}`);
+    const data = await ans.data;
+    console.log(data);
+    return data;
   }
 
+  
   function filter() {
-
-    let filtered = products.slice(0, displayedProducts);
-
-    if (categoryId === "") {
-      filtered = products;
+    if (onlyAvailable && from !== null && to !== null) {
+      fetchAvailableProducts()
+        .then(products => {
+          let filtered = [...products];
+          filtered = filtered
+            .filter(product => categoryId ? product.categoryId === categoryId : true)
+            .sort((p1, p2) => sortOrder === 'asc' ? p1.price - p2.price : p2.price - p1.price);
+          setFilteredProducts(filtered.slice(0,displayedProducts));
+          setLoadProducts(filtered)
+        })
+        .catch(error => {
+          console.log(error);
+        });
     } else {
-      filtered = products.filter((product) => product.categoryId === categoryId);
-    }
+      let filtered = [...products];
+      filtered = filtered
+        .filter(product => categoryId ? product.categoryId === categoryId : true)
+        .sort((p1, p2) => sortOrder === 'asc' ? p1.price - p2.price : p2.price - p1.price);
+      setFilteredProducts(filtered.slice(0, displayedProducts));
+      setLoadProducts(filtered)
 
-    if (sortOrder === 'asc') {
-      filtered = filtered.sort((a, b) => a.price - b.price);
-    } else if (sortOrder === 'desc') {
-      filtered = filtered.sort((a, b) => b.price - a.price);
     }
-
-    setFilteredProducts(filtered);
   }
+
+  const handleSearch = () => {
+    setFilteredProducts(searchResults.slice(0, displayedProducts))
+    setLoadProducts(searchResults)
+
+  }
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    const filteredProducts = products.filter((product) =>
+      product.name.includes(value)
+    );
+    setSearchResults(filteredProducts);
+    if (value.length > 1) {
+      setAnchorEl(e.currentTarget);
+    } else {
+      setAnchorEl(null);
+    }
+  };
+
+  const handleListItemClick = (selectedProduct) => {
+    setSearchTerm(selectedProduct.name);
+    const filteredProducts = products.filter((product) =>
+      product.name.includes(selectedProduct.name)
+    );
+    setSearchResults(filteredProducts);
+    setAnchorEl(null);
+
+  };
 
   useEffect(() => {
     if (ctx.user == null) {
@@ -90,95 +125,130 @@ export default function Album() {
         , phoneNumber1: '', phoneNumber2: '', type: 0
       }
     }
-    if (ctx.cart?.toDate == null || ctx.cart?.fromDate == null) {
-      setOpenAlert(true)
-    }
-    else {
-      setOpenAlert(false)
-    }
-    let start = async () => {
-      const response = await axios.get('https://localhost:7128/api/Product/getall')
-      const data = await response.data
-      console.log(data)
-      setProducts(data)
-      setFilteredProducts(data.slice(0, displayedProducts))
-    }
-    start()
-    axios.get('https://localhost:7128/api/Category/Get')
+    axios.get(`${SERVERURL}/api/Category/Get`)
       .then(res => {
         console.log(res.data)
         setCategorys(res.data)
       })
+    let start = async () => {
+      const response = await axios.get(`${SERVERURL}/api/Product/getall`)
+      const data = await response.data
+      setProducts(data)
+      console.log(data);
+      setFilteredProducts(data.slice(0, displayedProducts))
+      setLoadProducts(data)
+    }
+    start()
+    console.log(products);
 
-  }, [ctx.cart?.toDate])
+  }, [])
+
   return (<>
-  <MainPage/>
-    <Collapse in={openAlert} sx={{
-      height: "80%",
-      width: "80%"
-    }}>
-      <Alert severity="info"
-        action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            size="small"
-            onClick={() => {
-              setOpenAlert(false);
-            }}
-          >
-            <CloseIcon fontSize="inherit" />
-          </IconButton>
-        }
-        sx={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 9999,
-          mb: 2,
-
-        }}
-      >
-        שים לב, לא בחרת תאריך להזמנה!
-      </Alert>
-    </Collapse>
     <CssBaseline />
     <Grid>
       {/* Hero unit */}
       <Box sx={{ bgcolor: 'background.paper', pt: 8, pb: 6, }}>
-        <Container maxWidth="sm">
+        <Container maxWidth="lg">
           <Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>
             קטלוג מוצרים
           </Typography>
+          <Grid container spacing={2}>
+            <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+              <TextField
+                label="חפש מוצר"
+                value={searchTerm}
+                onChange={handleInputChange}
+              />
+            </ClickAwayListener>
+            {searchResults.length > 0 && (
+              <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-end">
+                <Paper>
+                  <List >
+                    {searchResults.map((product) => (
+                      <ListItem key={product.id} button onClick={() => handleListItemClick(product)}>
+                        <ListItemText style={{ textAlign: 'right' }} primary={product.name} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              </Popper>
+            )}
 
-          <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
-          <Select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            displayEmpty
-            fullWidth
-          >
-            <MenuItem value="" >
-              הכל
-            </MenuItem>
-            {categorys.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <InputLabel id="demo-simple-select-filled-label">מחיר</InputLabel>
-          <Button size="small" onClick={() => setSortOrder('asc')}>מהנמוך לגבוה</Button>
-          <Button size="small" onClick={() => setSortOrder('desc')}>מהגבוה לנמוך</Button>
-          <Button size="small" onClick={filter}>בצע סינון</Button>
+            <Button variant="contained" onClick={handleSearch}>
+              חפש
+            </Button>
+          </Grid>
+          <Grid display="flex" flexDirection="row" alignItems="center" container spacing={2} >
+            <Grid display="flex" flexDirection="column" item lg={2} >
+              <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
+              <Select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value="" >
+                  הכל
+                </MenuItem>
+                {categorys.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+
+            <Grid display="flex" flexDirection="column" item lg={2}>
+              <InputLabel id="demo-simple-select-filled-label">מחיר</InputLabel>
+              <Select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value='asc'>מהנמוך לגבוה</MenuItem>
+                <MenuItem value='des'>מהגבוה לנמוך</MenuItem>
+              </Select>
+            </Grid>
+            <Grid display="flex" flexDirection="column" item lg={2}>
+              <InputLabel id="demo-simple-select-filled-label">תאריך</InputLabel>
+              <Select
+                value={onlyAvailable}
+                onChange={(e) => setOnlyAvailable(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value={false} >כל המוצרים</MenuItem>
+                <MenuItem value={true}>הצג רק מוצרים זמינים</MenuItem>
+              </Select>
+            </Grid>
+
+            {onlyAvailable == true &&
+              <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                <Grid display="flex" flexDirection="column" item lg={2}>
+                  <InputLabel>מ</InputLabel>
+                  <DateTimePicker ampm={false} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} />
+                </Grid>                  <Grid display="flex" flexDirection="column" item lg={2}>
+
+                  <InputLabel>עד</InputLabel>
+                  <DateTimePicker ampm={false} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} />
+                </Grid>
+              </LocalizationProvider>
+            }
+            <Grid display="flex" flexDirection="column" >
+
+              <Button
+                sx={{ height: '70%', width: '100%', fontSize: '1rem', marginTop: 5 }}
+                onClick={filter} variant="contained">בצע סינון
+              </Button>
+            </Grid>
+
+          </Grid>
+
         </Container>
       </Box>
       <Container sx={{ py: 8 }} maxWidth="md">
         {/* End hero unit */}
         <Grid container spacing={4}>
           {filteredProducts.map((card) => (
-            // <A key={card.id} to={`/product/${card.id}`}>
+            
             <Grid key={card.id} item xs={12} sm={6} md={4}>
               <Card
                 sx={{ display: 'flex', flexDirection: 'column' }}
@@ -190,7 +260,7 @@ export default function Album() {
                     // pt: '56.25%',
                   }}>
                   <A to={`/product/${card.id}`}>
-                    <img height={200} src="https://source.unsplash.com/random?wallpapers" />
+                    <img  height={200} src={`${SERVERURL}/Static/${card.image}.png`} />
                   </A>
                 </CardMedia>
                 <CardContent sx={{ flexGrow: 1 }}>
@@ -206,19 +276,19 @@ export default function Album() {
                   <Typography style={{ order: 1, margin: 14 }}>
                     {card.price} ₪
                   </Typography>
-                  <Button onClick={() => navigate(`/product/${card.id}`)} size="small" style={{ order: 2, margin: 4 }}>הצג</Button>
+                  <Button onClick={() => {if(ctx.user!=null)navigate(`/product/${card.id}`);else alert("התחבר קודם")}} size="small" style={{ order: 2, margin: 4 }}>הצג</Button>
                 </CardActions>
-
               </Card>
             </Grid>
 
           ))}
         </Grid>
-        <Button style={{ margin: 'auto', display: 'block', fontSize: '1.2em' }} onClick={() => {
-          const updatedDisplayedProducts = displayedProducts + 3;
-          setDisplayedProducts(updatedDisplayedProducts);
-          setFilteredProducts(products.slice(0, updatedDisplayedProducts))
-        }}>טען עוד</Button>
+        <Button variant="contained" disabled={displayedProducts != filteredProducts.length}
+          style={{ margin: 'auto', marginTop: 30, display: 'block', fontSize: '1.2em' }} onClick={() => {
+            const updatedDisplayedProducts = displayedProducts + 3;
+            setDisplayedProducts(updatedDisplayedProducts);
+            setFilteredProducts(loadProducts.slice(0, updatedDisplayedProducts))
+          }}>טען עוד</Button>
       </Container>
 
     </Grid>
@@ -235,7 +305,6 @@ export default function Album() {
       >
         Something here to give the footer a purpose!
       </Typography>
-      <Copyright />
     </Box>
     {/* End footer */}
   </>)

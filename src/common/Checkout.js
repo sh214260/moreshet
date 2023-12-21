@@ -16,7 +16,7 @@ import AddressForm from './AdressForm';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
 import { useContext ,useState} from "react";
-import { DataContext } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context'
 import dayjs from "dayjs";
 import { useEffect } from 'react';
 import moment from 'moment';
@@ -69,7 +69,7 @@ export default function Checkout() {
         FromDate: moment(ctx.cart.fromDate).format("YYYY-MM-DDTHH:mm"), ToDate: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm"), PaidUp: true, Receipt: true, TotalPrice: ctx.deliveryPrice + ctx.cart.totalPrice, CartId: ctx.cart.id
       }
       console.log(order)
-      axios.post('https://localhost:7128/api/Order/addorder', order)
+      axios.post(`${SERVERURL}/api/Order/addorder`, order)
         .then(ans => {
           console.log(ans);
           if (ans.data!=1) {

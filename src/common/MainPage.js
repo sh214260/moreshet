@@ -16,7 +16,9 @@ import { useNavigate } from "react-router-dom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useContext } from "react";
 import { DataContext } from '../client/data-context'
-
+import ImageSlider from '../client/SliderImgs';
+import Contact from '../client/Contact';
+import Nav from './Nav';
 export default function MainPage() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const navigation = useNavigate()
@@ -26,65 +28,15 @@ export default function MainPage() {
     };
 
     const handleClose = () => {
+        cotx.logOut()
         setAnchorEl(null);
     };
-    
+const img=["https://source.unsplash.com/random?wallpapers","https://source.unsplash.com/random?wallpapers",
+"https://source.unsplash.com/random?wallpapers","https://source.unsplash.com/random?wallpapers"]
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Button variant="contained" disableElevation onClick={() => { navigation('/album') }}>
-                        קטלוג
-                    </Button>
-                    <IconButton>
-                        <ShoppingCartIcon fontSize="large"
-                            onClick={() => { navigation(`/cart/${cotx.cart.id}`) }} />
-                    </IconButton>
-                    <div>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="inherit"
-                        >
-                            <Box display="flex" flexDirection="row">
-    <AccountCircle />
-    {cotx.user!=null?<Typography>{cotx.user.name}</Typography>:<Typography>אורח</Typography>}
-  </Box>
-                        </IconButton>
-
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            {cotx.user != null ? <>
-                                <MenuItem onClick={() => navigation('/updateuser')}>עריכת פרופיל</MenuItem>
-                                <MenuItem onClick={handleClose}>התנתק</MenuItem></> :
-                                <>
-                                    <MenuItem onClick={() => {
-                                        setAnchorEl(null);
-                                        navigation('/signin')
-                                    }}>התחבר</MenuItem>
-                                </>}
-
-
-                        </Menu>
-                    </div>
-                </Toolbar>
-            </AppBar>
+            <ImageSlider images={img}/>
+            <Contact/>
         </Box>
     );
 }

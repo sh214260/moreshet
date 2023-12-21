@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { DataContext } from '../client/data-context';
+import { DataContext, SERVERURL } from '../client/data-context';
 import { useState, useContext,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -47,7 +47,7 @@ export default function SignIn() {
       password: data.get('password'),
     });
     
-    axios.post(`https://localhost:7128/api/User/Signin`, { email: email, password: password })
+    axios.post(`${SERVERURL}/api/User/Signin`, { email: email, password: password })
       .then(ans => {
         console.log(ans.data)
         if (ans.data) {
@@ -57,7 +57,7 @@ export default function SignIn() {
           context.setCartProducts(ans.data.cartProducts)
           console.log(context.cart)
           console.log(context.cartProducts)
-          if (ans.data.user.type != 0)
+          if (ans.data.user.type == 1)
             navigate('/HomeAd')
           else {
             navigate('/')

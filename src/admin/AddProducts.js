@@ -6,6 +6,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 
 import Select from '@mui/material/Select';
+import { SERVERURL } from "../client/data-context";
+import { Button, TextField, Typography } from "@mui/material";
 
 const ariaLabel = { 'aria-label': 'description' };
 
@@ -14,8 +16,9 @@ function AddProducts() {
   const [categorys, setCategorys] = useState([]);
   const [categoryId, setCategoryId]=useState()
   const [price, setPrice] = useState('');
+  const [image, setImage]=useState('')
   useEffect(() => {
-    axios.get('https://localhost:7128/api/Category/Get')
+    axios.get(`${SERVERURL}/api/Category/Get`)
       .then(res => {
         console.log(res.data)
         setCategorys(res.data)
@@ -25,7 +28,7 @@ function AddProducts() {
 
 
   const add = () => {
-
+console.log(image)
     const dataforsend = { Id: 0, Name: name, CategoryId: categoryId, Price: price };
     const option = {
       method: 'POST',
@@ -35,7 +38,7 @@ function AddProducts() {
       body: JSON.stringify(dataforsend)
     }
     console.log(option.body)
-    axios.post('https://localhost:7128/api/Product/addproduct', dataforsend)
+    axios.post(`${SERVERURL}/api/Product/addproduct`, dataforsend)
       .then(ans => {
         console.log(ans);
         if (ans.data) {
@@ -53,10 +56,10 @@ function AddProducts() {
   }
   return (
     <div >
-      <h1>הוספת מוצר</h1>
-      <Input placeholder="שם המוצר" inputProps={ariaLabel} onChange={(ev) => setName(ev.target.value)} />
-      <br></br>
-      <Input placeholder="מחיר" inputProps={ariaLabel} onChange={(ev) => setPrice(ev.target.value)} />
+     <Typography>הוספת מוצר</Typography>
+      <TextField
+      placeholder="שם המוצר" inputProps={ariaLabel} onChange={(ev) => setName(ev.target.value)} />
+      <TextField placeholder="מחיר" inputProps={ariaLabel} onChange={(ev) => setPrice(ev.target.value)} />
       <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
       <Select 
         labelId="demo-simple-select-filled-label"
@@ -69,10 +72,9 @@ function AddProducts() {
           <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
         ))}
       </Select>
-      <br></br>
-      <label>צרף תמונה</label>
-      <br></br>
-      <input className="submit" type="submit" value="הוסף" onClick={add}></input>
+      <InputLabel>צרף תמונה</InputLabel>
+      <Input type="file" onChange={(ev) => setImage(ev.target.files)}/>
+      <Button variant="contained" onClick={add}>הוסף</Button>
     </div>
   );
 }
