@@ -28,16 +28,22 @@ export default function Review() {
         <List sx={{ display: 'flex', flexDirection: 'column' }}>
           {ctx.cartProducts.map((product) => (
             <ListItem key={product.id} >
-              <ListItemSecondaryAction>
-                <ListItemText variant="body2" primary={product.name} secondary={product.description} />
-              </ListItemSecondaryAction>
-              <Typography >{product.price}</Typography>
+              <ListItemText primary={product.name} />
+              <ListItemText >{product.price}</ListItemText>
             </ListItem>
           ))}
           <ListItem >
             <ListItemText primary=" מחיר סופי " />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {ctx.cart.totalPrice}
+            </Typography>
+            <ListItem primary="מחיר משלוח" />
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              {ctx.deliveryPrice}
+            </Typography>
+            <ListItem primary='סה"כ לתשלום' />
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              {ctx.deliveryPrice + ctx.cart.totalPrice}
             </Typography>
           </ListItem>
         </List>

@@ -21,7 +21,6 @@ export default function Nav() {
     };
 
     const handleClose = () => {
-        cotx.logOut()
         setAnchorEl(null);
     };
 
@@ -33,9 +32,8 @@ export default function Nav() {
                 </Button>
                 <Button variant="contained" disableElevation onClick={() => navigation('/contact')}>
                     צור קשר</Button>
-                <IconButton>
-                    <ShoppingCartIcon fontSize="large"
-                        onClick={() => { navigation(`/cart/${cotx.cart.id}`) }} />
+                <IconButton onClick={() => { navigation(`/cart/${cotx.cart.id}`) }} >
+                    <ShoppingCartIcon fontSize="large"/>
                 </IconButton>
                 <div>
                     <IconButton
@@ -43,8 +41,8 @@ export default function Nav() {
                         aria-label="account of current user"
                         aria-controls="menu-appbar"
                         aria-haspopup="true"
-                        onClick={handleMenu}
                         color="inherit"
+                        onClick={handleMenu}
                     >
                         <Box display="flex" flexDirection="row">
                             <AccountCircle />
@@ -68,7 +66,7 @@ export default function Nav() {
                         onClose={handleClose}
                     >
                         {cotx.user != null ? <MenuList>
-                            <MenuItem onClick={handleClose}>התנתק</MenuItem>
+                            <MenuItem onClick={()=>{handleClose(); cotx.logOut(); navigation('/')}}>התנתק</MenuItem>
                             <MenuItem onClick={() => navigation('/updateuser')}>עריכת פרופיל</MenuItem>
                             <MenuItem onClick={() => navigation(`../allorders/${cotx.user.id}`)}>ההזמנות שלי</MenuItem>
                         </MenuList>

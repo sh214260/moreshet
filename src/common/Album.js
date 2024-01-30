@@ -43,7 +43,7 @@ export default function Album() {
   const ctx = useContext(DataContext)
   const [openAlert, setOpenAlert] = useState(false);
   const [products, setProducts] = useState([{}])
-  const [displayedProducts, setDisplayedProducts] = useState(2);
+  const [displayedProducts, setDisplayedProducts] = useState(8);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loadProducts, setLoadProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
@@ -89,10 +89,9 @@ export default function Album() {
     }
   }
 
-  const handleSearch = () => {
+  const handleSearch = () => { 
     setFilteredProducts(searchResults.slice(0, displayedProducts))
     setLoadProducts(searchResults)
-
   }
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -160,8 +159,8 @@ export default function Album() {
                 onChange={handleInputChange}
               />
             </ClickAwayListener>
-            {searchResults.length > 0 && (
-              <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-end">
+            {searchResults.length > 0&&(
+                            <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-end">
                 <Paper>
                   <List >
                     {searchResults.map((product) => (
@@ -246,11 +245,11 @@ export default function Album() {
       </Box>
       <Container sx={{ py: 8 }} maxWidth="md">
         {/* End hero unit */}
-        <Grid container spacing={4}>
+        {filteredProducts.length>0 ?
+        <Grid container spacing={4}>  
           {filteredProducts.map((card) => (
-            
             <Grid key={card.id} item xs={12} sm={6} md={4}>
-              <Card
+                <Card
                 sx={{ display: 'flex', flexDirection: 'column' }}
               >
                 <CardMedia
@@ -278,11 +277,9 @@ export default function Album() {
                   </Typography>
                   <Button onClick={() => {if(ctx.user!=null)navigate(`/product/${card.id}`);else alert("התחבר קודם")}} size="small" style={{ order: 2, margin: 4 }}>הצג</Button>
                 </CardActions>
-              </Card>
-            </Grid>
-
-          ))}
-        </Grid>
+              </Card>            
+            </Grid>))}  
+        </Grid>:(<Typography>לא נמצאו מוצרים</Typography>)}
         <Button variant="contained" disabled={displayedProducts != filteredProducts.length}
           style={{ margin: 'auto', marginTop: 30, display: 'block', fontSize: '1.2em' }} onClick={() => {
             const updatedDisplayedProducts = displayedProducts + 3;
@@ -290,22 +287,6 @@ export default function Album() {
             setFilteredProducts(loadProducts.slice(0, updatedDisplayedProducts))
           }}>טען עוד</Button>
       </Container>
-
     </Grid>
-    {/* Footer */}
-    <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-      <Typography variant="h6" align="center" gutterBottom>
-        Footer
-      </Typography>
-      <Typography
-        variant="subtitle1"
-        align="center"
-        color="text.secondary"
-        component="p"
-      >
-        Something here to give the footer a purpose!
-      </Typography>
-    </Box>
-    {/* End footer */}
   </>)
 }

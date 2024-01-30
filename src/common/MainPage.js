@@ -15,30 +15,47 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useContext } from "react";
-import { DataContext } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context'
 import ImageSlider from '../client/SliderImgs';
 import Contact from '../client/Contact';
 import Nav from './Nav';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 export default function MainPage() {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const navigation = useNavigate()
-    const cotx = useContext(DataContext)
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [pictures, setPictures] = useState([]);
+    const navigation = useNavigate();
+    const cotx = useContext(DataContext);
+
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
-        cotx.logOut()
+        cotx.logOut();
         setAnchorEl(null);
     };
-const img=["https://source.unsplash.com/random?wallpapers","https://source.unsplash.com/random?wallpapers",
-"https://source.unsplash.com/random?wallpapers","https://source.unsplash.com/random?wallpapers"]
+
+    const MapNames = (data) => {
+        return data.map((name) => `${SERVERURL}/Static/${name}.png`);
+    };
+
+    useEffect(() => {
+        axios.get(`${SERVERURL}/api/Product/getimages`)
+            .then((response) => {
+                const images = response.data;
+                const mappedImages = MapNames(images);
+                setPictures(mappedImages);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <ImageSlider images={img}/>
-            <Contact/>
+            <ImageSlider images={pictures} />
+            <Contact />
         </Box>
     );
 }
-
-

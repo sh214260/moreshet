@@ -39,8 +39,7 @@ function Product() {
       .then(ans => {
         console.log(ans.data);
         if (ans.data) {
-          ctx.updateFrom(from)
-          ctx.updateTo(to)
+          ctx.updateDateOrder(from, to)
         }
         else
           alert("השינוי לא התבצע כראוי, נסה שוב")
@@ -89,15 +88,15 @@ function Product() {
   return (
     <Grid item xs={12} sm={6} md={4}>
       {ctx.cart?.toDate != "0001-01-01T00:00:00" && ctx.cart?.fromDate != "0001-01-01T00:00:00" ? (
-        <Box>
+        <Box >
           <Typography>ההזמנה לתאריך</Typography>
           <Typography>מ {moment(ctx.cart.fromDate).format("DD.MM HH:mm")}</Typography>
           <Typography>עד ל {moment(ctx.cart.toDate).format("DD.MM HH:mm")}</Typography>
           <Typography>
             סה"כ מספר שעות בשימוש: {moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours')} שעות
           </Typography>
-          <IconButton>
-            <EditIcon onClick={() => setOpenEdit(true)} />
+          <IconButton onClick={() => setOpenEdit(true)}>
+            <EditIcon  />
           </IconButton>
           <Dialog open={openEdit} onClose={() => setOpenEdit(false)} maxWidth="sm" fullWidth={true}>
             <DialogTitle sx={{ textAlign: 'center' }}>
@@ -107,9 +106,9 @@ function Product() {
               <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}  >
                   <Typography>מ</Typography>
-                  <DateTimePicker ampm={false} value={from} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} minDate={currentDate} />
+                  <DateTimePicker ampm={false} value={dayjs(from)} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} minDate={currentDate} />
                   <Typography>עד</Typography>
-                  <DateTimePicker ampm={false} value={to} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} minDate={currentDate} />
+                  <DateTimePicker ampm={false} value={dayjs(to)} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} minDate={currentDate} />
                 </LocalizationProvider>
               </Box>
             </DialogContent>
@@ -125,7 +124,7 @@ function Product() {
         </Box>
       ) : <Box>
         <Typography>בחר תאריך להזמנה!</Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', margin:'3'}}>
           <LocalizationProvider dateAdapter={AdapterDayjs}  >
             <Typography>מ</Typography>
             <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => ctx.updateFrom(value.format("YYYY-MM-DDTHH:mm"))} />
@@ -159,7 +158,7 @@ function Product() {
             <CardMedia
               component="img"
               sx={{ width: 300 }}
-              image="https://source.unsplash.com/random?wallpapers"
+              image={`${SERVERURL}/Static/${item.image}.png`}
               alt="Live from space album cover"
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -176,7 +175,6 @@ function Product() {
               </Box>
             </Box>
           </Card>
-
         </Grid> : <></>}
     </Grid>
   )

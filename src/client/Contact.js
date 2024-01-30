@@ -102,14 +102,14 @@ const Contact = () => {
 
                 </Box>
             </Grid>
-            <Grid maxWidth="xs" container spacing={2}
+            <Grid maxWidth="xs" container item spacing={2}
                 sx={{
                     pt: 16, pb: 6, pr: 20,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',
                 }} >
-                <Typography item component="h1" variant="h8">
+                <Typography  component="h1" variant="h8">
                     מורשת החוויה המושלמת!      </Typography>
                 <Grid item>
                     <PhoneEnabledIcon />

@@ -59,13 +59,11 @@ const Cart = () => {
         ctx.setCart(res.data)
         params.id=ctx.cart.id
       })
-    }, [flag])
+    }, [ctx.cart.fromDate ,flag])
 
     return (
         <>
-        <Nav/>
-        <Box sx={{ margin: 2 }} >
-            
+        <Box sx={{ margin: 2 }} >      
             <AppBar sx={{ width: '50%', marginTop: 1, marginBottom: 1 }} position="sticky">
                 <Toolbar sx={{ width: 550, display: 'flex', flexDirection: 'row' }}>
                     <Typography variant="h5" marginLeft={2}>המוצרים בהזמנה</Typography>
@@ -79,12 +77,12 @@ const Cart = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 {ctx.cartProducts.length > 0 ? (
                     ctx.cartProducts.map(product => (
-                        <Card sx={{ width: '50%', marginTop: 2, marginBottom: 2 }} variant="outlined">
+                        <Card key={product.id} sx={{ width: '50%', marginTop: 2, marginBottom: 2 }} variant="outlined">
                             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                 <CardMedia
                                     component="img"
                                     sx={{ width: 151 }}
-                                    image="/static/images/cards/live-from-space.jpg"
+                                    image={`${SERVERURL}/Static/${product.image}.png`}
                                     alt="Live from space album cover"
                                 />
                                 <CardContent sx={{ flex: '1 0 auto' }}>
@@ -104,8 +102,8 @@ const Cart = () => {
                                     </Typography>
                                 </CardContent>
                                 <CardContent sx={{ flex: '1 0 ', display: 'flex', flexDirection: 'row' }}>
-                                    <IconButton >
-                                        <CloseIcon onClick={() => DeleteProduct(product.id)} fontSize="large" />
+                                    <IconButton onClick={() => DeleteProduct(product.id)}>
+                                        <CloseIcon  fontSize="large" />
                                     </IconButton>
                                 </CardContent>
                             </Box>
@@ -151,7 +149,6 @@ const Cart = () => {
                 </Box>
             </Box>
         </Box>
-        <Copyright/>
         </>);
 };
 

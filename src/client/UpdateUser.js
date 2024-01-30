@@ -184,7 +184,6 @@ setPhoneNumber2(context.user.phoneNumber2)
             </Button>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );

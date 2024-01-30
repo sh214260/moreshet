@@ -17,7 +17,7 @@ export default function PaymentForm() {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Payment method
+        אופן התשלום
       </Typography>
       <RadioGroup
         aria-label="paymentMethod"

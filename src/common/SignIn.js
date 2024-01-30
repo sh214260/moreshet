@@ -16,18 +16,6 @@ import { DataContext, SERVERURL } from '../client/data-context';
 import { useState, useContext,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -46,7 +34,16 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
-    
+    const validate = (field) => {
+      if (field.length === 0) {
+        alert(`please enter all fields`);
+        return false;
+      }
+      return true;
+    }
+
+    if (validate(email) === false) return;
+    if (validate(password) === false) return;
     axios.post(`${SERVERURL}/api/User/Signin`, { email: email, password: password })
       .then(ans => {
         console.log(ans.data)
@@ -104,7 +101,6 @@ export default function SignIn() {
         <CssBaseline />
         <Box
           sx={{
-
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
@@ -141,7 +137,7 @@ export default function SignIn() {
               autoComplete="current-password"
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox value="remember" color="primary"  />}
               label="זכור אותי"
             />
             <Button
@@ -166,7 +162,6 @@ export default function SignIn() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
