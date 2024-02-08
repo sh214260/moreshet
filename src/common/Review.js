@@ -25,27 +25,31 @@ export default function Review() {
       <Typography variant="h6" gutterBottom>
         סיכום הזמנה      </Typography>
       <Grid container >
-        <List sx={{ display: 'flex', flexDirection: 'column' }}>
+        <List sx={{ display: 'flex', flexDirection: 'column', }}>
           {ctx.cartProducts.map((product) => (
             <ListItem key={product.id} >
-              <ListItemText primary={product.name} />
+              <ListItemText primary={product.name} sx={{textAlign:'right', paddingLeft:1}}/>
               <ListItemText >{product.price}</ListItemText>
             </ListItem>
           ))}
           <ListItem >
-            <ListItemText primary=" מחיר סופי " />
+            <ListItemText primary=" מחיר כולל " sx={{textAlign:'right'}} />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {ctx.cart.totalPrice}
             </Typography>
-            <ListItem primary="מחיר משלוח" />
+            </ListItem>
+            <ListItem>
+            <ListItemText primary="מחיר משלוח" sx={{textAlign:'right'}}/>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {ctx.deliveryPrice}
             </Typography>
-            <ListItem primary='סה"כ לתשלום' />
+            </ListItem>
+            <ListItem>
+            <ListItemText primary='סה"כ לתשלום' sx={{textAlign:'right'}}/>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {ctx.deliveryPrice + ctx.cart.totalPrice}
             </Typography>
-          </ListItem>
+            </ListItem>
         </List>
       </Grid>
       <Grid container spacing={2}>

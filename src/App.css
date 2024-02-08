@@ -17,14 +17,4 @@
 }
 *{
   direction: rtl;
-  
-  font-family: Varela Round;
-}
-#home{
-  margin:10px;
-  text-align: center;
-  color: blue;
-}
-.but{
-  margin: 20px;
 }

@@ -11,7 +11,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Link as A } from 'react-router-dom';
 import { ClickAwayListener, Link, Paper, Popper } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -28,15 +27,10 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import moment from 'moment';
-import MainPage from './MainPage';
 import { TextField, List, ListItem, ListItemText } from '@mui/material';
-import { Directions } from '@mui/icons-material';
-import Nav from './Nav';
-import Copyright from './Copyright';
-
+import { green } from '@mui/material/colors';
 
 // TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
 export default function Album() {
   const currentDate = dayjs(); // Get the current date
   const navigate = useNavigate()
@@ -55,7 +49,7 @@ export default function Album() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
-  
+
   async function fetchAvailableProducts() {
     const ans = await axios.get(`${SERVERURL}/api/Product/getavailable/${from}/${to}`);
     const data = await ans.data;
@@ -63,7 +57,7 @@ export default function Album() {
     return data;
   }
 
-  
+
   function filter() {
     if (onlyAvailable && from !== null && to !== null) {
       fetchAvailableProducts()
@@ -72,7 +66,7 @@ export default function Album() {
           filtered = filtered
             .filter(product => categoryId ? product.categoryId === categoryId : true)
             .sort((p1, p2) => sortOrder === 'asc' ? p1.price - p2.price : p2.price - p1.price);
-          setFilteredProducts(filtered.slice(0,displayedProducts));
+          setFilteredProducts(filtered.slice(0, displayedProducts));
           setLoadProducts(filtered)
         })
         .catch(error => {
@@ -89,7 +83,7 @@ export default function Album() {
     }
   }
 
-  const handleSearch = () => { 
+  const handleSearch = () => {
     setFilteredProducts(searchResults.slice(0, displayedProducts))
     setLoadProducts(searchResults)
   }
@@ -144,28 +138,30 @@ export default function Album() {
 
   return (<>
     <CssBaseline />
-    <Grid>
+    <Grid >
       {/* Hero unit */}
-      <Box sx={{ bgcolor: 'background.paper', pt: 8, pb: 6, }}>
-        <Container maxWidth="lg">
-          <Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>
+      <Container sx={{ pt: 2, pb: 6, }}>
+        <Container maxWidth="lg" >
+          <Typography padding={0} component="h1" variant="h2" align="center" color={green[700]} gutterBottom>
             קטלוג מוצרים
           </Typography>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
               <TextField
+                size='small'
+                style={{ width: 150 }}
                 label="חפש מוצר"
                 value={searchTerm}
                 onChange={handleInputChange}
               />
             </ClickAwayListener>
-            {searchResults.length > 0&&(
-                            <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-end">
+            {searchResults.length > 0 && (
+              <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-end">
                 <Paper>
                   <List >
                     {searchResults.map((product) => (
                       <ListItem key={product.id} button onClick={() => handleListItemClick(product)}>
-                        <ListItemText style={{ textAlign: 'right' }} primary={product.name} />
+                        <ListItemText style={{ textAlign: 'right', width: 150 }} primary={product.name} />
                       </ListItem>
                     ))}
                   </List>
@@ -184,6 +180,7 @@ export default function Album() {
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
                 displayEmpty
+                size='small'
               >
                 <MenuItem value="" >
                   הכל
@@ -199,6 +196,7 @@ export default function Album() {
             <Grid display="flex" flexDirection="column" item lg={2}>
               <InputLabel id="demo-simple-select-filled-label">מחיר</InputLabel>
               <Select
+                size='small'
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
                 displayEmpty
@@ -210,6 +208,7 @@ export default function Album() {
             <Grid display="flex" flexDirection="column" item lg={2}>
               <InputLabel id="demo-simple-select-filled-label">תאריך</InputLabel>
               <Select
+                size='small'
                 value={onlyAvailable}
                 onChange={(e) => setOnlyAvailable(e.target.value)}
                 displayEmpty
@@ -221,65 +220,63 @@ export default function Album() {
 
             {onlyAvailable == true &&
               <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                <Grid display="flex" flexDirection="column" item lg={2}>
+                <Grid display="flex" flexDirection="column" item sm={2}>
                   <InputLabel>מ</InputLabel>
                   <DateTimePicker ampm={false} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} />
-                </Grid>                  <Grid display="flex" flexDirection="column" item lg={2}>
-
+                </Grid>
+                <Grid display="flex" flexDirection="column" item sm={2}>
                   <InputLabel>עד</InputLabel>
                   <DateTimePicker ampm={false} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} />
                 </Grid>
               </LocalizationProvider>
             }
             <Grid display="flex" flexDirection="column" >
-
               <Button
                 sx={{ height: '70%', width: '100%', fontSize: '1rem', marginTop: 5 }}
                 onClick={filter} variant="contained">בצע סינון
               </Button>
             </Grid>
-
           </Grid>
 
         </Container>
-      </Box>
-      <Container sx={{ py: 8 }} maxWidth="md">
+      </Container>
+      <Container sx={{ py: 2 }} maxWidth="md">
         {/* End hero unit */}
-        {filteredProducts.length>0 ?
-        <Grid container spacing={4}>  
-          {filteredProducts.map((card) => (
-            <Grid key={card.id} item xs={12} sm={6} md={4}>
+        {filteredProducts.length > 0 ?
+          <Grid container spacing={4}>
+            {filteredProducts.map((card) => (
+              <Grid key={card.id} item xs={12} sm={6} md={4}>
                 <Card
-                sx={{ display: 'flex', flexDirection: 'column' }}
-              >
-                <CardMedia
-                  component="div"
-                  sx={{
-                    // 16:9
-                    // pt: '56.25%',
-                  }}>
-                  <A to={`/product/${card.id}`}>
-                    <img  height={200} src={`${SERVERURL}/Static/${card.image}.png`} />
-                  </A>
-                </CardMedia>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {card.name}
-                  </Typography>
-                  <Typography>
-                    {card.description}
-                  </Typography>
+                  sx={{ display: 'flex', flexDirection: 'column' }}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      // 16:9
+                      // pt: '56.25%',
+                    }}>
+                    <A to={`/product/${card.id}`}>
+                      <img height={200} src={`${SERVERURL}/Static/${card.image}.png`} />
+                    </A>
+                  </CardMedia>
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {card.name}
+                    </Typography>
+                    <Typography>
+                      {card.description}
+                    </Typography>
 
-                </CardContent>
-                <CardActions style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography style={{ order: 1, margin: 14 }}>
-                    {card.price} ₪
-                  </Typography>
-                  <Button onClick={() => {if(ctx.user!=null)navigate(`/product/${card.id}`);else alert("התחבר קודם")}} size="small" style={{ order: 2, margin: 4 }}>הצג</Button>
-                </CardActions>
-              </Card>            
-            </Grid>))}  
-        </Grid>:(<Typography>לא נמצאו מוצרים</Typography>)}
+                  </CardContent>
+                  <CardActions style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography style={{ order: 1, margin: 14 }}>
+                      {card.price} ₪
+                    </Typography>
+                    <Button onClick={() => { if (ctx.user != null) navigate(`/product/${card.id}`); else alert("התחבר קודם") }} size="small" style={{ order: 2, margin: 4 }}>הצג</Button>
+                  </CardActions>
+                </Card>
+              </Grid>))}
+          </Grid> : (<Typography>לא נמצאו מוצרים</Typography>)}
         <Button variant="contained" disabled={displayedProducts != filteredProducts.length}
           style={{ margin: 'auto', marginTop: 30, display: 'block', fontSize: '1.2em' }} onClick={() => {
             const updatedDisplayedProducts = displayedProducts + 3;

@@ -1,0 +1,29 @@
+:root {
+    --colors-green-green-5: rgba(204, 235, 226, 1);
+    --grey-1-color: rgba(184, 184, 184, 1);
+    --grey-2-color: rgba(134, 134, 134, 1);
+    --primary-color: rgba(0, 147, 121, 1);
+    --secondary-color: rgba(1, 109, 90, 1);
+    --white-color: rgba(255, 255, 255, 1);
+  }
+  
+  /*
+  
+  To enable a theme in your HTML, simply add one of the following data attributes to an HTML element, like so:
+  
+  <body data-colors-mode="light">
+      <!-- the rest of your content -->
+  </body>
+  
+  You can apply the theme on any DOM node, not just the `body`
+  
+  */
+  
+  [data-colors-mode="light"] {
+    --colors-green-green-5: rgba(204, 235, 226, 1);
+  }
+  
+  [data-colors-mode="dark"] {
+    --colors-green-green-5: rgba(19, 57, 47, 1);
+  }
+  

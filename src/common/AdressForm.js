@@ -15,29 +15,31 @@ import { Card, CardContent } from "@mui/material";
 import axios from "axios";
 export default function AddressForm() {
   const [deliveryOption, setDeliveryOption] = useState('pickup');
-  const [basicBg, setBasicBg] = useState(35)
+  const [delPrice, setDelPrice] = useState(35)
   const [smItems, setSmItems] = useState(0)
   const [bgItems, setBgItems] = useState(0)
   const ctx = useContext(DataContext)
   const handleDeliveryOptionChange = (event) => {
     setDeliveryOption(event.target.value);
-    console.log(ctx.cartProducts)
+    console.log(deliveryOption);
+    if(event.target.value==='pickup'){
+      ctx.setDeliveryPrice(0);
+      console.log(ctx.deliveryPrice);
+    }
+    if(event.target.value==='delivery'){
+      ctx.setDeliveryPrice(delPrice)
+    }
+
   };
 
   useEffect(() => {
-    axios.get(`${SERVERURL}/api/Order/getdeliveryprice/${ctx.cart.id}`)
+    axios.get(`${SERVERURL}/api/Order/getdeliveryprice/${ctx.cart.id}`
+    ,{headers: { Authorization: `Bearer ${ctx.token}`}}
+    )
     .then(ans=>{
       console.log(ans.data);
-      ctx.setDeliveryPrice(ans.data)})
-    // setBasicBg(ctx.cartProducts.some(it => it.weight == true) ? 50 : 35)
-    // if (basicBg == 50) {
-    //   setBgItems(ctx.cartProducts.filter(it => it.weight === true).length - 1)
-    //   setSmItems(ctx.cartProducts.filter(it => it.weight === false).length)
-    // }
-    // else {
-    //   setSmItems(ctx.cartProducts.filter(it => it.weight === false).length - 1)
-    // }
-    // ctx.setDeliveryPrice(basicBg + smItems * 15 + bgItems * 50)
+      setDelPrice(ans.data)
+      })
   }, [])
 
   return (
@@ -57,29 +59,8 @@ export default function AddressForm() {
       {deliveryOption === 'delivery' && (
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            {/* {basicBg == 50 ?
-              <Box>
-                <Typography>
-                  מחיר בסיס-50
-                </Typography>
-                <Typography >
-                  מספר הפריטים הגדולים הנוספים
-                  {bgItems}
-                </Typography>
-                <Typography>
-                  מספר הפריטים הקטנים הנוספים
-                  {smItems}
-                </Typography>
-              </Box>
-              : <Box>
-                <Typography>מחיר בסיס-35</Typography>
-                <Typography>
-                  מספר הפריטים הקטנים הנוספים
-                  {smItems}
-                </Typography>
-              </Box>} */}
-            <Typography>מחיר סופי:
-              {ctx.deliveryPrice}
+            <Typography>מחיר משלוח:
+              {delPrice} לצד אחד
             </Typography>
           </Grid>
         </Grid>

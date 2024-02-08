@@ -62,7 +62,9 @@ export default function Checkout() {
           console.log(ans);
           if (ans.data!=1) {
             setOrderId(ans.data)
+            ctx.addOrder()
           }
+          
         })
     }
   },[activeStep])
@@ -86,7 +88,7 @@ export default function Checkout() {
               <Typography variant="h5" gutterBottom>
                 תודה על ההזמנה!
               </Typography>
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" >
                 ההזמנה הושלמה בהצלחה!
                 מספר הזמנה: {orderId}
 שמור את מספר ההזמנה למקרה הצורך!

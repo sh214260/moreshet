@@ -1,0 +1,30 @@
+.social-links {
+    align-items: flex-start;
+    display: inline-flex;
+    gap: 20px;
+    position: relative;
+  }
+  
+  .social-links .img {
+    display: block;
+    height: 32px;
+    position: relative;
+    width: 32px;
+  }
+  
+  .social-links .github {
+    background-color: var(--colors-green-green-5);
+    border-radius: 16px;
+    height: 32px;
+    position: relative;
+    width: 32px;
+  }
+  
+  .social-links .vector {
+    height: 24px;
+    left: 4px;
+    position: absolute;
+    top: 4px;
+    width: 24px;
+  }
+  

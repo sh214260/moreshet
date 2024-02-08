@@ -7,11 +7,13 @@ import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { Button, MenuList } from '@mui/material';
+import { Button, Link, MenuList } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useContext } from "react";
-import { DataContext } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context'
+import { Padding } from '@mui/icons-material';
+import { green, red } from '@mui/material/colors';
 export default function Nav() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const navigation = useNavigate()
@@ -25,12 +27,15 @@ export default function Nav() {
     };
 
     return (
-        <AppBar position="sticky">
-            <Toolbar>
-                <Button variant="contained" disableElevation onClick={() => { navigation('/album') }}>
+        <AppBar position="sticky" style={{backgroundColor:green[100]}} >
+            <Toolbar sx={{height:70}}>
+                <Link href="./">
+            <img alt='logo'  src={`${SERVERURL}/Static/logo.png`} width={120} style={{paddingTop:2}}/>
+            </Link> 
+            <Button variant="text" sx={{fontSize:"large", }} disableElevation onClick={() => { navigation('/album') }}>
                     קטלוג
                 </Button>
-                <Button variant="contained" disableElevation onClick={() => navigation('/contact')}>
+                <Button variant="text" sx={{fontSize:"large", }} disableElevation onClick={() => navigation('/contact')}>
                     צור קשר</Button>
                 <IconButton onClick={() => { navigation(`/cart/${cotx.cart.id}`) }} >
                     <ShoppingCartIcon fontSize="large"/>
@@ -41,12 +46,12 @@ export default function Nav() {
                         aria-label="account of current user"
                         aria-controls="menu-appbar"
                         aria-haspopup="true"
-                        color="inherit"
+                        color={red[500]}
                         onClick={handleMenu}
                     >
                         <Box display="flex" flexDirection="row">
                             <AccountCircle />
-                            {cotx.user != null ? <Typography>{cotx.user.name}</Typography> : <Typography>אורח</Typography>}
+                            {cotx.user != null ? <Typography sx={{fontSize:"large", }}>{cotx.user.name}</Typography> : <Typography sx={{fontSize:"large"}}>התחבר</Typography>}
 
                         </Box>
                     </IconButton>
@@ -67,8 +72,9 @@ export default function Nav() {
                     >
                         {cotx.user != null ? <MenuList>
                             <MenuItem onClick={()=>{handleClose(); cotx.logOut(); navigation('/')}}>התנתק</MenuItem>
-                            <MenuItem onClick={() => navigation('/updateuser')}>עריכת פרופיל</MenuItem>
-                            <MenuItem onClick={() => navigation(`../allorders/${cotx.user.id}`)}>ההזמנות שלי</MenuItem>
+                            <MenuItem onClick={() =>{handleClose(); navigation('/updateuser')}}>עריכת פרופיל</MenuItem>
+                            <MenuItem onClick={() =>{handleClose(); navigation(`../allorders/${cotx.user.id}`)}}>ההזמנות שלי</MenuItem>
+                            {/* <MenuItem onClick={() =>{handleClose(); navigation(`../tasks`)}}>tasks</MenuItem> */}
                         </MenuList>
                             :
                             <MenuList>

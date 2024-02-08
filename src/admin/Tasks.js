@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { DataContext, SERVERURL } from '../client/data-context'
 
 const Table = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const ctx = useContext(DataContext)
 
   useEffect(() => {
     fetchData();
@@ -12,8 +14,9 @@ const Table = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://api.example.com/table-data');
-      setData(response.data);
+      // const response = await axios.get('https://api.example.com/table-data');
+      // setData(response.data);
+      setData()
     } catch (error) {
       setError(error.message);
     } finally {

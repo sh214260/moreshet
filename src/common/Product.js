@@ -23,19 +23,20 @@ import EditIcon from '@mui/icons-material/Edit';
 function Product() {
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
-  const [to, setTo] = useState(dayjs());
   const [from, setFrom] = useState(dayjs());
+  const [to, setTo] = useState(dayjs());
 
   const handleClose = () => {
     setOpen(false);
   };
   const navigate = useNavigate()
   const params = useParams()
-  const currentDate = dayjs(); // Get the current date
+  const currentDate = dayjs(); 
   const ctx = useContext(DataContext)
   const [item, setItem] = useState({})
   function editAddress() {
-    axios.post(`${SERVERURL}/api/Cart/updatedate/${ctx.cart.id}/${to}/${from}`)
+    axios.post(`${SERVERURL}/api/Cart/updatedate/${ctx.cart.id}/${from}/${to}`
+    ,{}, { headers: { Authorization: `Bearer ${ctx.token}` } })
       .then(ans => {
         console.log(ans.data);
         if (ans.data) {
@@ -46,7 +47,8 @@ function Product() {
       }).then(setOpenEdit(false))
   }
   const productPossible = {
-    UserId: 1,
+    UserId: ctx.user.id,
+    ProductId: item.id,
     ProductType: item.type,
     From: moment(ctx.cart.fromDate).format("YYYY-MM-DDTHH:mm"),
     To: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm")
@@ -54,7 +56,8 @@ function Product() {
   async function check() {
     console.log(item)
     console.log(productPossible)
-    const res = await axios.get(`${SERVERURL}/api/Cart/productisavialible`, { params: productPossible });
+    const res = await axios.get(`${SERVERURL}/api/Cart/productisavialible`, { params: productPossible }
+      , { headers: { Authorization: `Bearer ${ctx.token}` } })
     console.log(res.data);
     return res.data;
   }
@@ -77,13 +80,14 @@ function Product() {
   }
   useEffect(() => {
     console.log(params)
-    axios.get(`${SERVERURL}/api/Product/getbyid/${params.id}`)
+    axios.get(`${SERVERURL}/api/Product/getbyid/${params.id}`
+      , { headers: { Authorization: `Bearer ${ctx.token}` } })
       .then(res => {
         console.log(res.data)
         setItem(res.data)
       })
-      console.log(ctx.cart.fromDate)
-      console.log(ctx.cart.toDate)
+    console.log(ctx.cart.fromDate)
+    console.log(ctx.cart.toDate)
   }, [ctx.cart])
   return (
     <Grid item xs={12} sm={6} md={4}>
@@ -96,7 +100,7 @@ function Product() {
             סה"כ מספר שעות בשימוש: {moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours')} שעות
           </Typography>
           <IconButton onClick={() => setOpenEdit(true)}>
-            <EditIcon  />
+            <EditIcon />
           </IconButton>
           <Dialog open={openEdit} onClose={() => setOpenEdit(false)} maxWidth="sm" fullWidth={true}>
             <DialogTitle sx={{ textAlign: 'center' }}>
@@ -124,13 +128,14 @@ function Product() {
         </Box>
       ) : <Box>
         <Typography>בחר תאריך להזמנה!</Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row', margin:'3'}}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', margin: '3' }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}  >
             <Typography>מ</Typography>
-            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => ctx.updateFrom(value.format("YYYY-MM-DDTHH:mm"))} />
+            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} />
             <Typography>עד</Typography>
-            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => ctx.updateTo(value.format("YYYY-MM-DDTHH:mm"))} />
+            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} />
           </LocalizationProvider>
+          <Button onClick={editAddress}>בצע</Button>
         </Box>
       </Box>}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth={true}>

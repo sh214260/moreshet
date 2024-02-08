@@ -28,7 +28,7 @@ const ImageSlider = ({ images }) => {
         ) : (
           <KeyboardArrowRight />
         )}
-        Next
+      חזור
       </Button>
       <Box display="flex" flexDirection="column" alignItems="center" margin={5}>
       <img width={400} height={300} src={displayedImages[activeStep]} alt={`Image ${activeStep + 1}`} />
@@ -47,7 +47,7 @@ const ImageSlider = ({ images }) => {
         onClick={handleNext}
         disabled={activeStep === displayedImages.length - 1}
       >
-        Back
+        הבא
         {theme.direction === 'rtl' ? (
           <KeyboardArrowRight />
         ) : (

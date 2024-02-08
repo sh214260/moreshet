@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Button, Paper } from '@mui/material';
+import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Button, Paper, CssBaseline, Grid, colors } from '@mui/material';
+import { blue } from "@mui/material/colors";
 
 function MyClient() {
   const [clients, setClients] = useState([]);
@@ -18,9 +19,10 @@ function MyClient() {
   }, []);
 
   return (
-    <Paper>
+    <>
+    <Grid>
       <Typography variant="h3">הלקוחות שלי</Typography>
-      <Table >
+      <Table component='table' >
         <TableHead >
           <TableRow >
             <TableCell style={{textAlign:"right"}}>מספר לקוח</TableCell>
@@ -55,8 +57,8 @@ function MyClient() {
           ))}
         </TableBody>
       </Table>
-    </Paper>
-  );
+    </Grid>
+    </>);
 }
 
 export default MyClient;
