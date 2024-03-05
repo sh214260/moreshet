@@ -41,8 +41,7 @@ export default function SignUp() {
     phonenumber2: yup
       .string('Enter your phone')
       .min(10, 'Phone should be of minimum 10 characters length')
-      .max(10, 'You cannot enter more than 10 letters')
-      .required('phone number is required'),
+      .max(10, 'You cannot enter more than 10 letters'),
     password: yup
       .string('Enter your password')
       .min(8, 'Password should be of minimum 8 characters length')

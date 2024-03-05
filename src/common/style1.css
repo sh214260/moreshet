@@ -1,0 +1,16 @@
+.component {
+    background-color: #d9d9d9;
+    border-radius: 27px;
+    height: 54px;
+    width: 54px;
+}
+
+.component .ellipse {
+    background-color: #000000;
+    border-radius: 13.5px;
+    height: 27px;
+    left: 14px;
+    position: relative;
+    top: 13px;
+    width: 27px;
+}

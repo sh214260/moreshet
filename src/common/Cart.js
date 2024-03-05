@@ -7,8 +7,6 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import ModeIcon from '@mui/icons-material/Mode';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Badge from '@mui/material/Badge';
@@ -18,11 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid';
 import { useContext } from "react";
 import { DataContext, SERVERURL } from '../client/data-context'
-import MainPage from "./MainPage";
-import Nav from "./Nav";
-import { Copyright } from "@mui/icons-material";
-import { PickersLayout } from "@mui/x-date-pickers";
-
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
         right: -2,
@@ -39,7 +33,7 @@ const Cart = () => {
     // ctx.setCartId(params.id)
     function DeleteProduct(productId) {
         axios.post(`${SERVERURL}/api/CartProduct/delete/${ctx.cart.id}/${productId}`
-        ,{headers: { Authorization: `Bearer ${ctx.token}`}}
+       ,{} ,{headers: { Authorization: `Bearer ${ctx.token}`}}
         )
             .then(res => {
                 console.log(res.data)

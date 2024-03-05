@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { DataContext, SERVERURL } from '../client/data-context';
-import { useState, useContext, useEffect } from "react";
+import {  useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { green } from '@mui/material/colors';
@@ -41,7 +41,7 @@ export default function SignIn() {
     onSubmit: (values) => { handleLogIn(values) },
   });
   const handleLogIn = (values) => {
-    axios.post(`${SERVERURL}/api/User/Signin`, { email: values.email, password: values.password })
+    axios.post(`${SERVERURL}/api/User/Signin`, {by:"client", email: values.email, password: values.password, phonenumber:'' })
       .then(ans => {
         console.log(ans, ans.data);
         context.setUser(ans.data.user);
@@ -50,13 +50,13 @@ export default function SignIn() {
         context.saveToken(ans.data.token)
         console.log(context.cart)
         console.log(context.cartProducts)
-        if (ans.data && ans.data.user.type == 1) {
+        if (ans.data && ans.data.user.type === 1) {
           navigate('/HomeAd')
         }else if(ans.status > 201){
-          let res = window.confirm('Incorrect user or password')
+          window.confirm('Incorrect user or password')
         }
         else {
-          //navigate('/')
+          navigate('/')
         }
        
       }).catch(err => {

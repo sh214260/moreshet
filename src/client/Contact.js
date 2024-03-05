@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { Grid, TextField, Button, IconButton, CssBaseline } from '@mui/material';
+import { Grid, TextField, Button, CssBaseline } from '@mui/material';
 import { Typography, Link } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Nav from '../common/Nav';
-import sendEmail from '../admin/sendEmail';
 import axios from 'axios';
 import { SERVERURL } from './data-context';
-const defaultTheme = createTheme();
 
 const Contact = () => {
     const [name, setName] = useState('');

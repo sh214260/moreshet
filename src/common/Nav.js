@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useContext } from "react";
 import { DataContext, SERVERURL } from '../client/data-context'
-import { Padding } from '@mui/icons-material';
 import { green, red } from '@mui/material/colors';
 export default function Nav() {
     const [anchorEl, setAnchorEl] = React.useState(null);

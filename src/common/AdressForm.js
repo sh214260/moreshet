@@ -11,34 +11,34 @@ import { DataContext, SERVERURL } from '../client/data-context'
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import ModeIcon from '@mui/icons-material/Mode';
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, InputLabel, List, ListItemText, MenuItem, Select } from "@mui/material";
 import axios from "axios";
 export default function AddressForm() {
-  const [deliveryOption, setDeliveryOption] = useState('pickup');
-  const [delPrice, setDelPrice] = useState(35)
-  const [smItems, setSmItems] = useState(0)
-  const [bgItems, setBgItems] = useState(0)
+  const [deliveryOption1, setDeliveryOption1] = useState(0);
+  const [deliveryOption2, setDeliveryOption2] = useState(0);
+  const [delPrice, setDelPrice] = useState(0)
+  const [stairs, setStairs] = useState(false)
   const ctx = useContext(DataContext)
-  const handleDeliveryOptionChange = (event) => {
-    setDeliveryOption(event.target.value);
-    console.log(deliveryOption);
-    if(event.target.value==='pickup'){
-      ctx.setDeliveryPrice(0);
-      console.log(ctx.deliveryPrice);
-    }
-    if(event.target.value==='delivery'){
-      ctx.setDeliveryPrice(delPrice)
-    }
 
-  };
+
+  useEffect(() => {
+    console.log(deliveryOption1);
+    console.log(deliveryOption2);
+    if (stairs)
+      ctx.setDeliveryPrice(30 + deliveryOption1 + deliveryOption2)
+    else
+      ctx.setDeliveryPrice(deliveryOption1 + deliveryOption2)
+
+
+  }, [deliveryOption1, deliveryOption2, stairs])
 
   useEffect(() => {
     axios.get(`${SERVERURL}/api/Order/getdeliveryprice/${ctx.cart.id}`
-    ,{headers: { Authorization: `Bearer ${ctx.token}`}}
+      , { headers: { Authorization: `Bearer ${ctx.token}` } }
     )
-    .then(ans=>{
-      console.log(ans.data);
-      setDelPrice(ans.data)
+      .then(ans => {
+        console.log(ans.data);
+        setDelPrice(ans.data)
       })
   }, [])
 
@@ -47,24 +47,33 @@ export default function AddressForm() {
       <Typography variant="h6" gutterBottom>
         אופן המשלוח
       </Typography>
-      <RadioGroup
-        aria-label="deliveryOption"
-        name="deliveryOption"
-        value={deliveryOption}
-        onChange={handleDeliveryOptionChange}>
-        <FormControlLabel value="pickup" control={<Radio />} label="איסוף עצמי" />
-        <FormControlLabel value="delivery" control={<Radio />} label="משלוח" />
-      </RadioGroup>
-
-      {deliveryOption === 'delivery' && (
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <Typography>מחיר משלוח:
-              {delPrice} לצד אחד
-            </Typography>
-          </Grid>
-        </Grid>
-      )}
+      <Box display="flex" flexDirection="row" >
+        <InputLabel >הלוך</InputLabel>
+        <Select
+          size='small'
+          value={deliveryOption1}
+          onChange={(event) => { setDeliveryOption1(event.target.value) }}
+          displayEmpty
+        >
+          <MenuItem value={0}>איסוף עצמי, מחיר:0</MenuItem>
+          <MenuItem value={delPrice}>משלוח, מחיר: {delPrice}</MenuItem>
+        </Select>
+      </Box>
+      <Box display="flex" flexDirection="row" >
+        <InputLabel >חזור</InputLabel>
+        <Select
+          size='small'
+          value={deliveryOption2}
+          onChange={(event) => { setDeliveryOption2(event.target.value) }}
+          displayEmpty
+        >
+          <MenuItem value={0}>החזרה עצמית, מחיר:0</MenuItem>
+          <MenuItem value={delPrice}>משלוח, מחיר: {delPrice}</MenuItem>
+        </Select>
+      </Box>
+      <FormControlLabel control={
+        <Checkbox checked={stairs} onChange={(event) => setStairs(event.target.checked)} />} label='כולל מדרגות- תוספת 30 ש"ח ' />
+      {/* <Typography>סה"כ למשלוח: {ctx.setDeliveryPrice}</Typography> */}
     </React.Fragment>
   );
 }

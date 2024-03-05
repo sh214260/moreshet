@@ -8,7 +8,6 @@ import Video from './common/Video';
 // Example import statement
 import Album from './common/Album';
 import Cart from './common/Cart';
-import Orders from './client/Order';
 import SignUp from './client/SignUp';
 import Contact from './client/Contact';
 // import SimpleSlider from './client/SliderImgs';//admin
@@ -18,7 +17,6 @@ import MyClient from './admin/MyClients';
 import AllOrders from './admin/AllOrders';
 import Product from './common/Product';
 import SignIn from './common/SignIn';
-import Order from './client/Order';
 import Checkout from './common/Checkout';
 import UpdateUser from './client/UpdateUser';
 import { useEffect } from 'react';
@@ -34,6 +32,8 @@ import { yellow } from '@mui/material/colors';
 import '@fontsource/varela-round';
 import Image from "./pictures/background.png"
 import { SocialLinks } from './SocialLinks';
+import { Dashboard } from './common';
+import LoginForUser from './admin/LoginForUser';
 const yellowColor = yellow[50]
 const styles = {
   paperContainer: {
@@ -52,7 +52,8 @@ const theme = createTheme({
 
 function App() {
 
-  return (<div style={styles.paperContainer}>
+  return (
+  <div style={styles.paperContainer}>
     <ThemeProvider theme={theme}>
       <Router>
         <Nav />
@@ -60,6 +61,7 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="signin" element={<SignIn />} />
           <Route path="homeAd" element={<HomeAd />} />
+          <Route path='loginforuser' element={<LoginForUser/>}/>
           <Route path="addProducts" element={<AddProducts />} />
           <Route path="myclients" element={<MyClient />} />
           <Route path="allorders/:id" element={<AllOrders />} />
@@ -70,13 +72,13 @@ function App() {
           <Route path='cart/:id' element={<Cart />} />
           <Route path='checkout' element={<Checkout />} />
           <Route path='contact' element={<Contact />} />
-          <Route path='tasks' element={<Tasks />} />
-          <Route path='day' element={<Day />} />
+         
         </Routes>
         <Copyright />
       </Router>
     </ThemeProvider>
   </div>
+  // <Dashboard/>
   )
 }
 

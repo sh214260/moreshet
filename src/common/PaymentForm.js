@@ -6,12 +6,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import { useContext } from "react";
+import { DataContext } from '../client/data-context'
 
 export default function PaymentForm() {
-  const [paymentMethod, setPaymentMethod] = React.useState('cash');
+  const ctx = useContext(DataContext)
+  const [paymentMethod, setPaymentMethod] = React.useState('מזומן');
 
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
+    ctx.setPaymentWay(event.target.value)
   };
 
   return (
@@ -25,11 +29,18 @@ export default function PaymentForm() {
         value={paymentMethod}
         onChange={handlePaymentMethodChange}
       >
-        <FormControlLabel value="cash" control={<Radio />} label="תשלום במקום" />
-        <FormControlLabel value="creditCard" control={<Radio />} label="מספר כרטיס אשראי" />
+        <FormControlLabel value="מזומן" control={<Radio />} label="תשלום במזומן למשלוחן במקום" />
+        <FormControlLabel value="ביט" control={<Radio />} label="תשלום בביט למספר-0587614964" />
+        <FormControlLabel value="העברה בנקאית" control={<Radio />} label={<Typography>העברה בנקאית
+          ע"ש מורשת החויה המושלמת
+          בנק הפועלים-12
+          סניף 446 
+          מספר חשבון- 215929
+          נא לשלוח אסמכתא</Typography>} ></FormControlLabel>
+        <FormControlLabel value="כרטיס אשראי" control={<Radio />} label="מספר כרטיס אשראי" />
       </RadioGroup>
 
-      {paymentMethod === 'creditCard' && (
+      {paymentMethod === 'כרטיס אשראי' && (
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <TextField

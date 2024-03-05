@@ -71,7 +71,8 @@ export default function UpdateUser() {
       return;
     }
     const user = {id, name, email, address, phoneNumber1, phoneNumber2 }
-    axios.post('https://localhost:7128/api/User/updateuser', user)
+    axios.post('https://localhost:7128/api/User/updateuser', user
+    ,{headers: { Authorization: `Bearer ${context.token}`}})
       .then(ans => {
         if (ans) {
           alert("הפרטים נשמרו בהצלחה!")

@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import AddressForm from './AdressForm';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
-import { useContext ,useState} from "react";
+import { useContext, useState } from "react";
 import { DataContext, SERVERURL } from '../client/data-context'
 import dayjs from "dayjs";
 import { useEffect } from 'react';
@@ -57,17 +57,21 @@ export default function Checkout() {
         FromDate: moment(ctx.cart.fromDate).format("YYYY-MM-DDTHH:mm"), ToDate: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm"), PaidUp: true, Receipt: true, TotalPrice: ctx.deliveryPrice + ctx.cart.totalPrice, CartId: ctx.cart.id
       }
       console.log(order)
-      axios.post(`${SERVERURL}/api/Order/addorder`, order)
+      axios.post(`${SERVERURL}/api/Order/addorder`, order
+        , { headers: { Authorization: `Bearer ${ctx.token}` } })
         .then(ans => {
           console.log(ans);
-          if (ans.data!=1) {
+          if (ans.data != 1) {
             setOrderId(ans.data)
+            order.Id = ans.data
+            axios.post(`${SERVERURL}/api/Email/confirmorder`, { order: order, user: ctx.user }
+              , { headers: { Authorization: `Bearer ${ctx.token}` } })
             ctx.addOrder()
           }
-          
+
         })
     }
-  },[activeStep])
+  }, [activeStep])
   return (
     <React.Fragment>
       <CssBaseline />
@@ -91,8 +95,8 @@ export default function Checkout() {
               <Typography variant="subtitle1" >
                 ההזמנה הושלמה בהצלחה!
                 מספר הזמנה: {orderId}
-שמור את מספר ההזמנה למקרה הצורך!
-תודה שהזמנת מורשת ☺️
+                שמור את מספר ההזמנה למקרה הצורך!
+                תודה שהזמנת מורשת ☺️
               </Typography>
             </React.Fragment>
           ) : (
