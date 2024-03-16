@@ -23,14 +23,14 @@ export default function SignIn() {
 
   const validationSchema = yup.object({
     email: yup
-      .string('Enter your email')
-      .email('Enter a valid email')
-      .required('Email is required'),
+      .string('הכנס מייל')
+      .email('מייל לא תקין')
+      .required('שדה חובה'),
     password: yup
-      .string('Enter your password')
-      .min(2, 'Password should be of minimum 8 characters length')
-      .max(20, 'You cannot enter more than 20 letters')
-      .required('Password is required'),
+      .string('הכנס סיסמה')
+      .min(2, 'סיסמה צריכה להכיל לפחות 8 תויים')
+      .max(10, 'סיסמה יכולה להכיל עד 10 תווים')
+      .required('שדה חובה'),
     checked: yup
       .boolean(),
   });
@@ -51,11 +51,13 @@ export default function SignIn() {
         console.log(context.cart)
         console.log(context.cartProducts)
         if (ans.data && ans.data.user.type === 1) {
-          navigate('/HomeAd')
+          context.setRole("secretary")
+          navigate('/uploadProduct')
         }else if(ans.status > 201){
           window.confirm('Incorrect user or password')
         }
         else {
+          context.setRole("client")
           navigate('/')
         }
        
@@ -171,12 +173,11 @@ export default function SignIn() {
             value={formik.values.email}
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
-            // onChange={(ev) => setEmail(ev.target.value)}
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="מייל"
             name="email"
             autoComplete="email"
             autoFocus
@@ -187,17 +188,16 @@ export default function SignIn() {
             value={formik.values.password}
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
-            // onChange={(ev) => setPassword(ev.target.value)}
             margin="normal"
             required
             fullWidth
             name="password"
-            label="Password"
+            label="סיסמה"
             type="password"
             id="password"
             autoComplete="current-password"
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             checked={formik.values.checked}
             onChange={formik.handleChange}
             control={<Checkbox value="remember" />}
@@ -205,7 +205,7 @@ export default function SignIn() {
             id="checked"
             type="checked"
             name="checked"
-          />
+          /> */}
           {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary"  />}
               label="זכור אותי"

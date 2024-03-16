@@ -38,6 +38,7 @@ export default function SignIn() {
     axios.post(`${SERVERURL}/api/User/Signin`, { by:"secretary", email: "", password:"", phonenumber:values.phonenumber })
       .then(ans => {
         console.log(ans, ans.data);
+        context.setRole("secretary")
         context.setUser(ans.data.user);
         context.setCart(ans.data.cart)
         context.setCartProducts(ans.data.cartProducts)
@@ -50,7 +51,7 @@ export default function SignIn() {
           window.confirm('Incorrect user or password')
         }
         else {
-          navigate('/')
+          navigate('/catalog')
         }
        
       }).catch(err => {

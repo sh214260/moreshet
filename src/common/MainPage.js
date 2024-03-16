@@ -21,6 +21,7 @@ import Contact from '../client/Contact';
 import Nav from './Nav';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ClientAPI from '../client/addClient';
 export default function MainPage() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [pictures, setPictures] = useState([]);
@@ -54,6 +55,7 @@ export default function MainPage() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
+           {/* <ClientAPI/> */}
             <ImageSlider images={pictures} />
             <Contact />
         </Box>

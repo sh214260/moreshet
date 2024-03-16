@@ -4,6 +4,7 @@ export const DataContext = React.createContext({});
 export const SERVERURL = "https://localhost:7128"
 
 const DataContextProvider = (props) => {
+    const [role, setRole] = useState("client")
     const [user, setUser] = useState(null);
     const [cart, setCart] = useState(null);
     const [cartProducts, setCartProducts] = useState([{}])
@@ -55,7 +56,7 @@ const DataContextProvider = (props) => {
             value={{
                 user, setUser, logOut, cart, setCart, updateDateOrder, cartProducts, setCartProducts
                 , deliveryPrice, setDeliveryPrice
-                , addOrder, token, saveToken,paymentWay, setPaymentWay
+                , addOrder, token, saveToken, paymentWay, setPaymentWay,role, setRole
             }}>
             {props.children}
         </DataContext.Provider>

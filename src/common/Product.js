@@ -26,7 +26,6 @@ function Product() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [from, setFrom] = useState(dayjs());
   const [to, setTo] = useState(dayjs());
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -69,6 +68,7 @@ function Product() {
 
 
   async function check() {
+
     const productPossible = {
       UserId: ctx.user.id,
       ProductId: item.id,
@@ -86,8 +86,12 @@ function Product() {
 
   const add = async () => {
     if (ctx.cart.toDate == null || ctx.cart.fromDate == null) {
-      alert("You did not choose a date for the order!");
+      alert("לא נבחר תאריך להזמנה!");
       return;
+    }
+    if (ctx.cart?.toDate == "0001-01-01T00:00:00" && ctx.cart?.fromDate == "0001-01-01T00:00:00") {
+      alert("לא נבחר תאריך להזמנה!")
+      return
     }
     const isAvailable = await check();
     if (isAvailable === 0) {
@@ -103,14 +107,22 @@ function Product() {
 
   return (
     <Grid item xs={12} sm={6} md={4}>
+      <Box>
+      {ctx.role == "secretary" ? <Typography>ביצוע הזמנה ל {ctx.user.name}</Typography>:<Typography>ffff</Typography>}
+
+      </Box>
       {ctx.cart?.toDate !== "0001-01-01T00:00:00" && ctx.cart?.fromDate !== "0001-01-01T00:00:00" ? (
         <Box >
           <Typography>ההזמנה לתאריך</Typography>
           <Typography>מ {moment(ctx.cart.fromDate).format("DD.MM HH:mm")}</Typography>
           <Typography>עד ל {moment(ctx.cart.toDate).format("DD.MM HH:mm")}</Typography>
           <Typography>
-            סה"כ מספר שעות בשימוש: {moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours')+
-                moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'minutes')/60              } שעות
+            סה"כ מספר שעות בשימוש:
+            {moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours')}
+            {" "}
+            {(moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'minutes') % 60) >= 30 ? <>וחצי</> : <></>}
+            {" "}
+            שעות
           </Typography>
           <IconButton onClick={() => setOpenEdit(true)}>
             <EditIcon />

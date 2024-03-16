@@ -17,10 +17,6 @@ import axios from 'axios';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Alert from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
-import Collapse from '@mui/material/Collapse';
-import CloseIcon from '@mui/icons-material/Close';
 import { DataContext, SERVERURL } from '../client/data-context'
 import { useContext } from "react";
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -250,11 +246,7 @@ export default function Album() {
                   sx={{ display: 'flex', flexDirection: 'column' }}
                 >
                   <CardMedia
-                    component="div"
-                    sx={{
-                      // 16:9
-                      // pt: '56.25%',
-                    }}>
+                    component="div">
                     <A to={`/product/${card.id}`}>
                       <img height={200} src={`${SERVERURL}/Static/${card.image}.png`} />
                     </A>

@@ -28,7 +28,12 @@ export default function AddressForm() {
       ctx.setDeliveryPrice(30 + deliveryOption1 + deliveryOption2)
     else
       ctx.setDeliveryPrice(deliveryOption1 + deliveryOption2)
-
+    if (deliveryOption1 > 0 || deliveryOption2 > 0) {
+      if (ctx.user.phonenumber2 == '') {
+        alert("בעת שימוש במשלוח נדרש שני מספרי פלאפון")
+        navigator('/updateuser')
+      }
+    }
 
   }, [deliveryOption1, deliveryOption2, stairs])
 

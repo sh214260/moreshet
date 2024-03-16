@@ -23,54 +23,52 @@ import * as yup from 'yup';
 export default function SignUp() {
   const context = useContext(DataContext)
   const navigate = useNavigate()
-  
+
   const validationSchema = yup.object({
     name: yup
-      .string('Enter your firstName')
-      .max(20, 'You cannot enter more than 20 letters')
-      .required('Name is required'),
+      .string('הקלד שם')
+      .max(20, 'השם ארוך מידי')
+      .required('שדה חובה'),
     email: yup
-      .string('Enter your email')
-      .email('Enter a valid email')
-      .required('Email is required'),
+      .string('הקלד מייל')
+      .email('מייל לא תקין')
+      .required('שדה חובה'),
     phonenumber1: yup
-      .string('Enter your phone')
-      .min(10, 'Phone should be of minimum 10 characters length')
-      .max(10, 'You cannot enter more than 10 letters')
-      .required('phone number is required'),
+      .string('הקלד פלאפון')
+      .min(10, 'מספר לא תקין')
+      .max(10, 'מספר לא תקין')
+      .required('שדה חובה'),
     phonenumber2: yup
-      .string('Enter your phone')
-      .min(10, 'Phone should be of minimum 10 characters length')
-      .max(10, 'You cannot enter more than 10 letters'),
+      .string('הקלד פלאפון')
+      .min(10, 'מספר לא תקין')
+      .max(10, 'מספר לא תקין'),
     password: yup
-      .string('Enter your password')
-      .min(8, 'Password should be of minimum 8 characters length')
-      .max(10, 'You cannot enter more than 20 letters')
-      .required('Password is required'),
+      .string('הקלד סיסמה')
+      .min(8, 'סיסמה לפחות 8 תווין')
+      .max(10, 'סיסמה עד 10 תווים')
+      .required('שדה חובה'),
     address: yup
-      .string('Enter your password')
-      .min(8, 'address should be of minimum 8 characters length')
-      .max(25, 'You cannot enter more than 20 letters')
-      .required('Password is required'),
+      .string('הכנס כתובת')
+      .min(8, 'כתובת תכיל לפחות 8 תווים')
+      .max(25, 'כתובת ארוכה מידי')
+      .required('שדה חובה'),
     checked: yup
       .boolean(),
   });
   const formik = useFormik({
-    initialValues: {name:'', email: '', password: '',phonenumber1:'', phonenumber2:'',
-    address:'', checked: true },
+    initialValues: {
+      name: '', email: '', password: '', phonenumber1: '', phonenumber2: '',
+      address: '', checked: true
+    },
     validationSchema: validationSchema,
     onSubmit: (values) => { handleSignUp(values) },
   });
-  // const [name, setName] = useState('')
-  // const [phonenumber1, setPhoneNumber1] = useState('')
-  // const [phonenumber2, setPhoneNumber2] = useState('')
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
-  // const [address, setAddress] = useState('')
 
   const handleSignUp = (values) => {
-    const newUser = { name: values.name, email: values.email, address: values.address, 
-      phonenumber1: values.phonenumber1, phonenumber2: values.phonenumber2 }
+    const newUser = {
+      name: values.name, email: values.email, address: values.address,
+      phonenumber1: values.phonenumber1, phonenumber2: values.phonenumber2
+    }
     axios.post(`https://localhost:7128/api/User/Signup/${values.password}`, newUser)
       .then(ans => {
         if (ans.data) {
@@ -101,47 +99,44 @@ export default function SignUp() {
           <Grid container spacing={2}>
             <Grid item xs={12} >
               <TextField
-               error={formik.touched.name && Boolean(formik.errors.name)}
-               helperText={formik.touched.name && formik.errors.name}
-               value={formik.values.name}
-               onBlur={formik.handleBlur}
-               onChange={formik.handleChange}
-                // onChange={(ev) => setName(ev.target.value)}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
+                value={formik.values.name}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
                 autoComplete="given-name"
                 name="name"
                 fullWidth
                 id="name"
-                label="Name"
+                label="שם"
                 autoFocus
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-               error={formik.touched.email && Boolean(formik.errors.email)}
-               helperText={formik.touched.email && formik.errors.email}
-               value={formik.values.email}
-               onBlur={formik.handleBlur}
-               onChange={formik.handleChange}
-                // onChange={(ev) => setEmail(ev.target.value)}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+                value={formik.values.email}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
                 fullWidth
                 id="email"
-                label="Email"
+                label="כתובת אימייל"
                 name="email"
                 autoComplete="email"
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-              value={formik.values.password}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-                // onChange={(ev) => setPassword(ev.target.value)}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+                value={formik.values.password}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="בחר סיסמה"
                 type="password"
                 id="password"
                 autoComplete="new-password"
@@ -149,16 +144,15 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-              error={formik.touched.phonenumber1 && Boolean(formik.errors.phonenumber1)}
-              helperText={formik.touched.phonenumber1 && formik.errors.phonenumber1}
-              value={formik.values.phonenumber1}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-                // onChange={(ev) => setPhoneNumber1(ev.target.value)}
-                
+                error={formik.touched.phonenumber1 && Boolean(formik.errors.phonenumber1)}
+                helperText={formik.touched.phonenumber1 && formik.errors.phonenumber1}
+                value={formik.values.phonenumber1}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                required
                 fullWidth
                 name="phonenumber1"
-                label="Phone1"
+                label="מספר פלאפון"
                 type="phonenumber1"
                 id="phonenumber1"
                 autoComplete="new-phone1"
@@ -166,16 +160,14 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-              error={formik.touched.phonenumber2 && Boolean(formik.errors.phonenumber2)}
-              helperText={formik.touched.phonenumber2 && formik.errors.phonenumber2}
-              value={formik.values.phonenumber2}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-                // onChange={(ev) => setPhoneNumber2(ev.target.value)}
-                
+                error={formik.touched.phonenumber2 && Boolean(formik.errors.phonenumber2)}
+                helperText={formik.touched.phonenumber2 && formik.errors.phonenumber2}
+                value={formik.values.phonenumber2}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
                 fullWidth
                 name="phonenumber2"
-                label="Phone2"
+                label="מספר פלאפון נוסף"
                 type="phonenumber2"
                 id="phonenumber2"
                 autoComplete="new-phone2"
@@ -183,17 +175,15 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12} >
               <TextField
-               error={formik.touched.address && Boolean(formik.errors.address)}
-               helperText={formik.touched.address && formik.errors.address}
-               value={formik.values.address}
-               onBlur={formik.handleBlur}
-               onChange={formik.handleChange}
-                // value={address}
-                // onChange={(ev) => setAddress(ev.target.value)}
+                error={formik.touched.address && Boolean(formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
+                value={formik.values.address}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
                 required
                 fullWidth
                 name="address"
-                label="Address"
+                label="כתובת מדויקת"
                 type="address"
                 id="address"
               />
