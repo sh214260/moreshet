@@ -54,6 +54,10 @@ function Product() {
 
   }, [ctx.cart])
   function editAddress() {
+    if(from>to){
+      alert("שעות ההזמנה אינן תקינות")
+      return
+    }
     axios.post(`${SERVERURL}/api/Cart/updatedate/${ctx.cart.id}/${from}/${to}`
       , {}, { headers: { Authorization: `Bearer ${ctx.token}` } })
       .then(ans => {
@@ -158,9 +162,11 @@ function Product() {
         <Box sx={{ display: 'flex', flexDirection: 'row', margin: '3' }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}  >
             <Typography>מ</Typography>
-            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} />
+            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} 
+            timeSteps={{ minutes: 30 }}/>
             <Typography>עד</Typography>
-            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} />
+            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} 
+            timeSteps={{ minutes: 30 }}/>
           </LocalizationProvider>
           <Button onClick={editAddress}>בצע</Button>
         </Box>

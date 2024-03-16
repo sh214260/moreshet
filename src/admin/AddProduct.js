@@ -4,7 +4,6 @@ import axios from 'axios';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-
 import Select from '@mui/material/Select';
 import { SERVERURL } from "../client/data-context";
 import { Box, Button, Container, Grid, IconButton, InputAdornment, Paper, TextField, Typography, createTheme } from "@mui/material";
@@ -13,17 +12,19 @@ import cloud from '../pictures/upload-cloud.png'
 import { Delete } from "@mui/icons-material";
 const ariaLabel = { 'aria-label': 'description' };
 
-function AddProducts() {
+function AddProduct() {
   const theme = createTheme({
     palette: {
       customColor: 'rgba(242, 247, 255, 1)',
       blueColor: 'rgba(0, 84, 238, 1)'
     },
   });
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageFile, setImageFile] = useState();
+  const [imageData, setImageData] = useState('');
   const [categories, setCategories] = useState([])
   const [newProduct, setNewProduct] = useState({
     id: 0,
+    image: '',
     name: '',
     description: '',
     price: 0,
@@ -33,14 +34,16 @@ function AddProducts() {
     weight: false,
     comment: '',
     type: '',
-    image: ''
+
   });
 
-  const handleChange = (field, value) => {
+  function handleChange(field, value) {
+    console.log(field, value);
     setNewProduct(prevState => ({
       ...prevState,
       [field]: value
-    }));
+    }))
+    return true;
   };
   const reset = () => {
     setNewProduct(prevState => ({
@@ -59,17 +62,20 @@ function AddProducts() {
   }
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type === 'image/jpeg' || file.type === 'pdf') {
+    if (file && file.type === 'image/png') {
+      console.log(file)
+      setImageFile(file)
       const reader = new FileReader();
       reader.onload = () => {
-        setImageUrl(reader.result);
-        console.log(reader.result)
-      };
-      reader.readAsDataURL(file);
+        setImageData(reader.result)
+      }
+      reader.readAsDataURL(file)
     } else {
       alert('Please upload a JPG image file.');
     }
   };
+
+
   useEffect(() => {
     axios.get(`${SERVERURL}/api/Category/Get`)
       .then(res => {
@@ -87,21 +93,31 @@ function AddProducts() {
       body: JSON.stringify(newProduct)
     }
     console.log(option.body)
-    axios.post(`${SERVERURL}/api/Product/addproduct`, newProduct)
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    axios.post(`${SERVERURL}/api/Product/uploadImage`, formData)
+      .then(response => {
+        console.log(response.data.imageName);
+        return axios.post(`${SERVERURL}/api/Product/addproduct`, { ...newProduct, image: response.data.imageName });
+      })
       .then(ans => {
         console.log(ans);
         if (ans.data) {
-          alert("המוצר נוסף בהצלחה!")
-        }
-        else {
-          alert("כבר קיים מוצר עם אותו שם")
+          alert("The product has been successfully added!");
+        } else {
+          alert("There is already a product with the same name");
         }
       })
+      .catch(error => {
+        console.error('Error uploading image:', error);
+        alert(error.response.data);
+      });
+
   }
   return (
     <div style={{ display: "flex", justifyContent: "center", backgroundColor: theme.palette.customColor }}>
-      <Paper style={{ width: 1000, marginTop: 50, marginBottom: 20 }}>
-        <Grid display="flex" flexDirection="column" style={{width:800, marginTop: 10, marginBottom: 50, marginRight: 100, marginLeft: 100 }}>
+      <Paper sx={{ marginTop: 4, marginBottom: 2, marginRight: 4, marginLeft: 4 }}>
+        <Grid display="flex" flexDirection="column" style={{ width: 800, marginTop: 10, marginBottom: 50, marginRight: 170, marginLeft: 170 }}>
           <Typography variant="h4" align="right">הוספת מוצר</Typography>
           <Grid display="flex" flexDirection="row">
             <Box
@@ -135,7 +151,7 @@ function AddProducts() {
                 onChange={handleFileUpload}
               />
             </Box>
-            <Box >  {imageUrl && <img src={imageUrl} alt="Uploaded" style={{ marginRight: 20, width: 150, height: 150 }} />}
+            <Box >  {imageFile && <img src={imageData} alt="Uploaded" style={{ marginRight: 20, width: 150, height: 150 }} />}
             </Box></Grid>
           <Grid container spacing={5}>
             <Grid item xs={4} padding={0}>
@@ -178,7 +194,6 @@ function AddProducts() {
                     display: 'none', // Hides the default outline
                   },
                 }}
-                labelId="demo-simple-select-filled-label"
                 value={newProduct.categoryId}
                 size="small"
                 onChange={(ev) => handleChange('categoryId', ev.target.value)}
@@ -196,7 +211,6 @@ function AddProducts() {
                   },
                 }}
                 size="small"
-                labelId="demo-simple-select-filled-label"
                 value={newProduct.weight}
                 onChange={(ev) => handleChange('weight', ev.target.value)}
                 style={{ width: 180, backgroundColor: theme.palette.customColor }}>
@@ -207,7 +221,7 @@ function AddProducts() {
             <Grid item xs={4}>
               <InputLabel id="sizes">מידות</InputLabel>
               <Grid display="flex" flexDirection="row">
-                <TextField labelId="sizes"
+                <TextField
                   value={newProduct.length} size="small" sx={{
                     '& .MuiOutlinedInput-notchedOutline': {
                       display: 'none', // Hides the default outline
@@ -221,7 +235,7 @@ function AddProducts() {
                       display: 'none', // Hides the default outline
                     }, width: 50, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
                   }} />
-                <TextField labelId="sizes"
+                <TextField
                   value={newProduct.width} size="small" sx={{
                     '& .MuiOutlinedInput-notchedOutline': {
                       display: 'none', // Hides the default outline
@@ -254,4 +268,4 @@ function AddProducts() {
     </div>
   );
 }
-export default AddProducts;
+export default AddProduct;

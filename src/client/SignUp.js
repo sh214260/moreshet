@@ -75,6 +75,9 @@ export default function SignUp() {
           alert("נרשמת בהצלחה!")
           navigate('/signin')
         }
+        else{
+          alert ("איימיל זה כבר קיים במערכת")
+        }
       })
   };
 

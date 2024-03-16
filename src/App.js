@@ -12,7 +12,7 @@ import SignUp from './client/SignUp';
 import Contact from './client/Contact';
 // import SimpleSlider from './client/SliderImgs';//admin
 import HomeAd from './admin/HomeAd';
-import AddProducts from './admin/AddProducts';
+import AddProduct from './admin/AddProduct';
 import MyClient from './admin/MyClients';
 import AllOrders from './admin/AllOrders';
 import Product from './common/Product';
@@ -40,6 +40,8 @@ import { useNavigate } from "react-router-dom";
 import { AppBar, Avatar, Box, Grid, IconButton, Link, Paper, Toolbar, Typography } from "@mui/material";
 import OrderByDay from './admin/OrdersByDay';
 import OrderDetails from './admin/OrderDetails';
+import zIndex from '@mui/material/styles/zIndex';
+import ToolbarDash from './admin/ToolBarDash';
 const yellowColor = yellow[50]
 const styles = {
   paperContainer: {
@@ -55,71 +57,80 @@ const theme = createTheme({
     // fontFamily: 'Varela Round, sans-serif',
     direction: 'rtl',
   },
+  palette: {
+    customColor: 'rgba(242, 247, 255, 1)',
+    blueColor: 'rgba(0, 84, 238, 1)'
+  },
 });
 
 function App() {
   const color = indigo[50]
-  const ctx = useContext(DataContext)
-  console.log(ctx.role);
- 
+  const context = useContext(DataContext)
+  console.log(context.role);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log('token', token);
+    if (token) {
+      axios.get(`${SERVERURL}/api/User/Profile`
+        , { headers: { Authorization: `Bearer ${token}` } }) // Assuming this endpoint returns user data based on the token
+        .then(response => {
+          console.log(response.data);
+          // context.setUser(response.data.user);
+          // context.setCart(response.data.cart);
+          // context.setCartProducts(response.data.cartProducts);
+        })
+        .catch(error => {
+          console.error('Auto login failed:', error);
+        });
+    }
+  }, []);
   return (
     <div style={styles.paperContainer}>
       <ThemeProvider theme={theme}>
         <Router>
-          <Routes>
-            <Route path="/album" element={<Album />} />
-            <Route path="addProducts" element={<AddProducts />} />
-            <Route path="dashboard" element={<DashboardAdmin />} />
-            <Route path="orderByDate" element={<OrderByDay />} />
-            <Route path='orderdetails' element={<OrderDetails/>}/>
-          </Routes>
-          {/* {ctx.role === "client" && (
-            <Nav />
-          )}
-          {ctx.role === "secretary" && (
-            <DashboardAdmin />
-          )} */}
-          {/* <Routes>
-            {ctx.role === "client" && (
-              <>
-                <Route path="/" element={<MainPage />} exact />
-                <Route path="signin" element={<SignIn />} />
-                <Route path="signup" element={<SignUp />} />
-                <Route path="updateuser" element={<UpdateUser />} />
-                <Route path="/album" element={<Album />} />
-                <Route path='product/:id' element={<Product />} />
-                <Route path='cart/:id' element={<Cart />} />
-                <Route path='checkout' element={<Checkout />} />
-                <Route path='contact' element={<Contact />} />
-              </>
-            )}
-            {ctx.role === "secretary" && (
-              <>
-                <Route path="homeAd" element={<HomeAd />} />
-                <Route path='loginforuser' element={<LoginForUser />} />
-                <Route path='uploadProduct' element={<UploadProduct/>}/>
-                <Route path="addProducts" element={<AddProducts />} />
-                <Route path="myclients" element={<MyClient />} />
-                <Route path="allorders/:id" element={<AllOrders />} />
-                <Route path="catalog" element={<Album />} />
-              </>
-            )}
-
-          </Routes> */}
-          {/* admin */}
-          {/* <Routes>
-            <Route path="dashboard" element={<DashboardAdmin />} />
-            <Route path="homeAd" element={<HomeAd />} />
-            <Route path='loginforuser' element={<LoginForUser />} />
-            <Route path="addProducts" element={<AddProducts />} />
-            <Route path="myclients" element={<MyClient />} />
-            <Route path="allorders/:id" element={<AllOrders />} />
-            <Route path="catalog" element={<Album />} />
-          </Routes> */}
+          {context.role == "client" ?
+            <>
+              <Nav />
+              <Routes>
+                <>
+                  <Route path="/" element={<MainPage />} exact />
+                  <Route path="/album" element={<Album />} />
+                  <Route path="signin" element={<SignIn />} />
+                  <Route path="signup" element={<SignUp />} />
+                  <Route path="updateuser" element={<UpdateUser />} />
+                  <Route path='product/:id' element={<Product />} />
+                  <Route path='cart/:id' element={<Cart />} />
+                  <Route path='checkout' element={<Checkout />} />
+                  <Route path='contact' element={<Contact />} />
+                </>
+              </Routes>
+            </> :
+            <>
+              <DashboardAdmin />
+              <div style={{ display: "flex" }}>
+                <div style={{ flex: 1, width: "20%" }}>
+                  <ToolbarDash /></div>
+                <div style={{ flex: 1, backgroundColor: theme.palette.customColor }}>
+                  <Routes >
+                    <Route path='/' element={<HomeAd />} />
+                    <Route path='loginforuser' element={<LoginForUser />} />
+                    <Route path="addProduct" element={<AddProduct />} />
+                    <Route path='orderdetails/:id' element={<OrderDetails />} />
+                    <Route path="/orderByDate" element={<OrderByDay />} />
+                    <Route path="/album" element={<Album />} />
+                    <Route path="signin" element={<SignIn />} />
+                    <Route path="signup" element={<SignUp />} />
+                    <Route path="updateuser" element={<UpdateUser />} />
+                    <Route path='product/:id' element={<Product />} />
+                    <Route path='cart/:id' element={<Cart />} />
+                    <Route path='checkout' element={<Checkout />} />
+                  </Routes></div>
+              </div>
+            </>}
           <Copyright />
         </Router>
       </ThemeProvider>
-    </div>
+    </div >
   )
 }
 

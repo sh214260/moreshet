@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { DataContext, SERVERURL } from '../client/data-context';
-import {  useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { green } from '@mui/material/colors';
@@ -41,7 +41,7 @@ export default function SignIn() {
     onSubmit: (values) => { handleLogIn(values) },
   });
   const handleLogIn = (values) => {
-    axios.post(`${SERVERURL}/api/User/Signin`, {by:"client", email: values.email, password: values.password, phonenumber:'' })
+    axios.post(`${SERVERURL}/api/User/Signin`, { by: "client", email: values.email, password: values.password, phonenumber: '' })
       .then(ans => {
         console.log(ans, ans.data);
         context.setUser(ans.data.user);
@@ -52,15 +52,15 @@ export default function SignIn() {
         console.log(context.cartProducts)
         if (ans.data && ans.data.user.type === 1) {
           context.setRole("secretary")
-          navigate('/uploadProduct')
-        }else if(ans.status > 201){
+          navigate('/')
+        } else if (ans.status > 201) {
           window.confirm('Incorrect user or password')
         }
         else {
           context.setRole("client")
           navigate('/')
         }
-       
+
       }).catch(err => {
         console.log(err);
         if (err.response && err.response.status === 401) {
@@ -70,13 +70,12 @@ export default function SignIn() {
         }
         else if (err.response && err.response.status === 500)
           alert("Server error");
-        else
-        {
+        else {
           let res = window.confirm('User not found!, please proceed to registration')
           if (res)
             navigate('/signUp')
         }
-          //alert("Server is not availble...")
+        //alert("Server is not availble...")
       })
   }
   const context = useContext(DataContext)

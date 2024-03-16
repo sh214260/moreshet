@@ -36,20 +36,11 @@ const DataContextProvider = (props) => {
             })
     }
     const saveToken = (newToken) => {
-        localStorage.setItem('token', newToken)
         setToken(newToken)
+        localStorage.setItem('token', newToken);
     }
 
     useEffect(() => {
-        // const getTokenLS = localStorage.getItem('token')
-        // if (getTokenLS)
-        //     axios.get(`${SERVERURL}/api/User/${token}`)
-        //         .then(ans => {
-        //             console.log(ans.data);
-        //             setUser(ans.data.user);
-        //             setCart(ans.data.cart)
-        //             setCartProducts(ans.data.cartProducts)
-        //         })
     }, [])
     return (
         <DataContext.Provider

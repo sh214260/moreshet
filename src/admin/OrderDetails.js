@@ -3,6 +3,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SERVERURL } from "../client/data-context";
 import { Delete } from "@mui/icons-material";
+import { useParams } from "react-router-dom";
+import moment from "moment";
 export default function OrderDetails() {
     const theme = createTheme({
         palette: {
@@ -11,51 +13,62 @@ export default function OrderDetails() {
             pink: 'rgba(117, 37, 222, 0.1)'
         },
     });
-    const [orderId, setOrderId] = useState();
-    const [order, setOrder] = useState();
-    useEffect(() => {
-        axios.get(`${SERVERURL}/api/Order/getById/${orderId}`)
+    const [orderId, setOrderId] = useState(3043);
+    const [orderData, setOrderData] = useState({});
+    const [userData, setUserData] = useState({});
+    const [productsData, setProductsData] = useState([{}])
+    const params = useParams()
+    useEffect(() => { 
+        axios.get(`${SERVERURL}/api/Order/getAllData/${params.id}`)
+            .then(res => {
+                console.log(res.data);
+                setOrderData(res.data.order)
+                setUserData(res.data.user)
+                setProductsData(res.data.products)
+            }
+            )
     }, [])
     return (
         <div style={{ display: "flex", backgroundColor: theme.palette.customColor }}>
-            <Paper sx={{ marginTop: 3, marginRight: 4, width: "38%" }}>
-                <Grid sx={{ margin: 4 }}>
+            <Paper sx={{ marginTop: 4, marginRight: 4, }}>
+                <Grid sx={{ width: 250, marginLeft:7, marginRight:7, marginTop:4 }}>
                     <Grid display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
-                        <div >
+                        <div>
                             <Typography variant="h4">מוצרים בהזמנה</Typography>
-                            <Typography variant="h5">4 מוצרים</Typography></div>
-                        <Button variant="contained" sx={{ borderRadius: 3,height:40, width:100,fontSize:16 ,backgroundColor: theme.palette.blueColor }}>+ מוצר</Button>
+                            <Typography variant="h5">{productsData.length} מוצרים</Typography></div>
+                        <Button variant="contained" sx={{ borderRadius: 3, height: 40, width: 100, fontSize: 16, backgroundColor: theme.palette.blueColor }}>+ מוצר</Button>
                     </Grid>
                     <Grid>
-                        <Card sx={{ display: 'flex',marginTop:3, marginBottom:3, flexDirection: 'row', backgroundColor: theme.palette.pink, borderRadius: 3 }}>
-                            <CardMedia>
-                                <img height={100} alt="image" />
-                            </CardMedia>
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography fontWeight="bold" fontSize={20}>
-                                    מכונת סוכר
-                                </Typography>
-                                <Typography>
-                                    102
-                                </Typography>
-                                <Typography marginTop={1} fontSize={18}> 
-                                    170 ש"ח
-                                </Typography>
-                            </CardContent>
-                            <CardActions>
-                                <IconButton>
-                                    <Delete fontSize="large" />
-                                </IconButton>
-                            </CardActions>
-                        </Card>
+                        {productsData.map((product) => (
+                            <Card key={product.id - 1} sx={{ display: 'flex', marginTop: 3, marginBottom: 3, flexDirection: 'row', backgroundColor: theme.palette.pink, borderRadius: 3 }}>
+                                <CardMedia>
+                                    <img height={70} src={`${SERVERURL}/Static/${product.image}.png`} alt="image" />
+                                </CardMedia>
+                                <CardContent sx={{ flexGrow: 1 }}>
+                                    <Typography fontWeight="bold" fontSize={20}>
+                                        {product.name}
+                                    </Typography>
+                                    <Typography>
+                                        {product.id}
+                                    </Typography>
+                                    <Typography marginTop={1} fontSize={18}>
+                                        {product.price}
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <IconButton>
+                                        <Delete fontSize="large" />
+                                    </IconButton>
+                                </CardActions>
+                            </Card>
+                        ))}
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper sx={{ marginTop: 3, marginRight: 4, marginLeft: 4, width: "62%" }}>
-                <Grid sx={{ marginRight: 10, marginLeft: 7, marginTop: 4, marginBottom:4 }}>
+            <Paper sx={{ marginTop: 4, marginRight: 4, marginLeft: 4,  }}>
+                <Grid sx={{width: 600, marginRight: 10, marginLeft: 7, marginTop: 4, marginBottom: 4 }}>
                     <Box >
                         <Typography variant="h4">פרטי ההזמנה</Typography>
-                        
                         <Grid container spacing={2} paddingTop={1}>
                             <Grid item xs={6}>
                                 <InputLabel>מספר הזמנה</InputLabel>
@@ -63,19 +76,19 @@ export default function OrderDetails() {
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >1015</Typography>
+                                    }} >{orderData.id}</Typography>
                                 <InputLabel>בתאריך</InputLabel>
                                 <Typography size="small"
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >12.02.24</Typography>
+                                    }} >{moment(orderData.fromDate).format("DD-MM-YYYY")}</Typography>
                                 <InputLabel>זמן ביצוע ההזמנה</InputLabel>
                                 <Typography size="small"
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >10.02.24</Typography>
+                                    }} >{moment(orderData.dateOrder).format("DD-MM-YYYY")}</Typography>
                                 <InputLabel>אופן התשלום</InputLabel>
                                 <Grid display="flex" flexDirection="row" width="180">
                                     <Typography size="small" sx={{
@@ -91,23 +104,26 @@ export default function OrderDetails() {
                                 </Grid>
                             </Grid>
                             <Grid item xs={6}>
-                                <InputLabel>אופן האיסוף</InputLabel>
+                                <InputLabel>מחיר משלוח</InputLabel>
                                 <Typography size="small"
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >משלוח</Typography>
+                                    }} >{orderData.deliveryPrice}</Typography>
                                 <InputLabel>שעות</InputLabel>
                                 <Grid display="flex" flexDirection="row" width="180">
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >3</Typography>
+                                    }} > {moment(orderData.toDate).diff(orderData.fromDate, 'hours')}
+                                    {" "}
+                                    {(moment(orderData.toDate).diff(orderData.fromDate, 'minutes') % 60) >= 30 ? <>וחצי</> : <></>}
+                                    {" "}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
-                                    }}></Typography>
+                                    }}>מ {moment(orderData.fromDate).format("HH:mm")}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} ></Typography>
+                                    }} >עד {moment(orderData.toDate).format("HH:mm")}</Typography>
 
                                 </Grid>
                                 <InputLabel>סה"כ לתשלום</InputLabel>
@@ -115,7 +131,7 @@ export default function OrderDetails() {
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >1500</Typography>
+                                    }} >{orderData.totalPrice}</Typography>
                                 <InputLabel>קבלה</InputLabel>
                                 <Grid display="flex" flexDirection="row" width="180">
                                     <Typography size="small" sx={{
@@ -131,13 +147,12 @@ export default function OrderDetails() {
                                 </Grid>
                             </Grid>
                             <Grid item xs={6}>
-                            <InputLabel>הערות לקוח</InputLabel>
-                        <Typography size="small"
-                            sx={{
-                                height: 80, marginBottom: 2, backgroundColor: theme.palette.customColor
-                            }} >בלה בלה בלה</Typography></Grid>
+                                <InputLabel>הערות לקוח</InputLabel>
+                                <Typography size="small"
+                                    sx={{
+                                        height: 80, marginBottom: 2, backgroundColor: theme.palette.customColor
+                                    }} >בלה בלה בלה</Typography></Grid>
                         </Grid>
-                        
                     </Box>
                     <Box>
                         <Typography variant="h4">פרטי לקוח</Typography>
@@ -148,18 +163,18 @@ export default function OrderDetails() {
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >חנה כהן</Typography>
+                                    }} >{userData.name}</Typography>
                                 <InputLabel>פלאפון 1</InputLabel>
                                 <Typography size="small"
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >000</Typography>
+                                    }} >{userData.phoneNumber1}</Typography>
                                 <Typography size="small"
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >100024</Typography>
+                                    }} >{userData.phoneNumber2}</Typography>
                             </Grid>
                             <Grid item xs={6}>
                                 <InputLabel>מייל</InputLabel>
@@ -167,20 +182,20 @@ export default function OrderDetails() {
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >sh@</Typography>
+                                    }} >{userData.email}</Typography>
                                 <InputLabel>כתובת</InputLabel>
                                 <Typography size="small"
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >בית שמש</Typography>
+                                    }} >{userData.address}</Typography>
 
                             </Grid>
                         </Grid>
                     </Box>
-                    <IconButton sx={{marginRight:55,fontSize:16, fontWeight:"bold", color:theme.palette.blueColor}}>
-                            <Delete fontSize="small" />בטל הזמנה
-                        </IconButton>
+                    <IconButton sx={{ marginRight: 55, fontSize: 16, fontWeight: "bold", color: theme.palette.blueColor }}>
+                        <Delete fontSize="small" />בטל הזמנה
+                    </IconButton>
                 </Grid>
             </Paper>
 

@@ -51,7 +51,7 @@ export default function SignIn() {
           window.confirm('Incorrect user or password')
         }
         else {
-          navigate('/catalog')
+          navigate('/album')
         }
        
       }).catch(err => {

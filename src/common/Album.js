@@ -133,11 +133,10 @@ export default function Album() {
   }, [])
 
   return (<>
-    <CssBaseline />
-    <Grid >
+    <div >
       {/* Hero unit */}
-      <Container sx={{ pt: 2, pb: 6, }}>
-        <Container maxWidth="lg" >
+      <Container sx={{ pt: 2, pb: 6 }}>
+        <Container sx={{width:800}}  >
           <Typography padding={0} component="h1" variant="h2" align="center" color={green[700]} gutterBottom>
             קטלוג מוצרים
           </Typography>
@@ -276,6 +275,6 @@ export default function Album() {
             setFilteredProducts(loadProducts.slice(0, updatedDisplayedProducts))
           }}>טען עוד</Button>
       </Container>
-    </Grid>
+    </div>
   </>)
 }

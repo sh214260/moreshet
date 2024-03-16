@@ -10,6 +10,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import axios from 'axios';
 import { SERVERURL } from './data-context';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 const Contact = () => {
     const [name, setName] = useState('');
@@ -18,13 +20,39 @@ const Contact = () => {
     const [message, setMessage] = useState('');
     const [flag, setFlag] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const validationSchema = yup.object({
+        name: yup
+            .string('הקלד שם'),
+        email: yup
+            .string('הקלד מייל')
+            .email('מייל לא תקין')
+            .required('שדה חובה'),
+        phonenumber: yup
+            .string('הקלד פלאפון')
+            .min(10, 'מספר לא תקין')
+            .max(10, 'מספר לא תקין')
+            .required('שדה חובה')
+    })
+
+    const formik = useFormik({
+        initialValues: {
+            email: '', phonenumber: ''
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => { handleSubmit(values) },
+    });
+
+    const handleSubmit = (values) => {
+        values.preventDefault();
         // Perform form submission logic here
-        let details = { Name: name, Email: email, Phone: phone, Message: message }
+
+        let details = { Name: values.name, Email: values.email, Phone: values.phone, Message: values.message }
         axios.post(`${SERVERURL}/api/Email/submitcontactform`, details)
-            .then(ans => console.log(ans.data))
-        setFlag(true)
+            .then(ans => {console.log(ans.data)
+            if(ans.data)
+            setFlag(true)}
+            )
+        
     };
 
     return (
@@ -49,9 +77,11 @@ const Contact = () => {
                         <Grid container item xs={6}>
                             <Grid item xs={6} sm={12} marginBottom={2} >
                                 <TextField
-                                    value={name}
-                                    onChange={(ev) => setName(ev.target.value)}
-                                    autoComplete="given-name"
+                                    error={formik.touched.name && Boolean(formik.errors.name)}
+                                    helperText={formik.touched.name && formik.errors.name}
+                                    value={formik.values.name}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
                                     name="name"
                                     required
                                     fullWidth
@@ -62,8 +92,11 @@ const Contact = () => {
                             </Grid>
                             <Grid item xs={6} sm={12} marginBottom={2}>
                                 <TextField
-                                    value={email}
-                                    onChange={(ev) => setEmail(ev.target.value)}
+                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                    helperText={formik.touched.email && formik.errors.email}
+                                    value={formik.values.email}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
                                     required
                                     fullWidth
                                     id="email"
@@ -74,8 +107,11 @@ const Contact = () => {
                             </Grid>
                             <Grid item xs={6} sm={12} marginBottom={2}>
                                 <TextField
-                                    value={phone}
-                                    onChange={(ev) => setPhone(ev.target.value)}
+                                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                                    helperText={formik.touched.phone && formik.errors.phone}
+                                    value={formik.values.phone}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
                                     required
                                     fullWidth
                                     name="phone"
@@ -97,18 +133,18 @@ const Contact = () => {
                                 />
                             </Grid>
                             {flag ? <Button disabled
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}>
-                                ההודעה נשלחה למערכת</Button> 
-                            :<Button
-                                type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
-                                שלח
-                            </Button>}
+                                sx={{ mt: 3, mb: 2 }}>
+                                ההודעה נשלחה למערכת</Button>
+                                : <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                >
+                                    שלח
+                                </Button>}
                         </Grid>
                     </Box>
                 </Grid>
