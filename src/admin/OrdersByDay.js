@@ -1,10 +1,11 @@
-import { Avatar, Box, Button, Grid, Link, Paper, Tab, Tabs, Typography, createTheme } from "@mui/material";
+import { Avatar, Box, Button, Grid, Paper, Tab, Tabs, Typography, createTheme } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SERVERURL } from "../client/data-context";
 import dayjs from "dayjs";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { Link as A } from 'react-router-dom';
 export default function OrderByDay() {
 
     const [orders, setOrders] = useState([])
@@ -120,9 +121,9 @@ export default function OrderByDay() {
                             <Typography sx={{ width: 100, fontWeight: "bold" }}>מוצר 4</Typography>
                         </Box>
                         {orders.length > 0 ? orders.map((order, index) => (
-                            <Link key={index} href={`/orderdetails/${order.orderId}`} underline="none">
-                                <Box display="flex" flexDirection="row" paddingRight={2}
-                                    sx={{ border: "1px solid", borderRadius: 1, borderColor: theme.palette.lightBlue, borderRight: "5px solid", borderRightColor: theme.palette.lightBlue, borderTopRightRadius: 3, borderBottomRightRadius: 3 }}>
+                            <A key={index} to={`/orderdetails/${order.orderId}`} underline="none">
+                                <Box display="flex" flexDirection="row" paddingRight={2} 
+                                    sx={{height:50, border: "1px solid", borderRadius: 1, borderColor:order.deliveryPrice<0? theme.palette.lightBlue:theme.palette.purple, borderRight: "5px solid", borderRightColor:order.deliveryPrice<0? theme.palette.lightBlue:theme.palette.purple, borderTopRightRadius: 3, borderBottomRightRadius: 3 }}>
                                     <Typography sx={{ width: 100, color: "black", fontSize: "16px" }}>{getFormattedTime(order.fromDate)} - {getFormattedTime(order.toDate)}</Typography>
                                     <Typography sx={{ width: 100, color: "black" }}>{order.userName}</Typography>
                                     {order.productsName.slice(0, 4).map((product, index) => (
@@ -132,7 +133,7 @@ export default function OrderByDay() {
                                         <Button sx={{ width: 100, fontWeight: "bold", color: theme.palette.blueDark }}>+ {order.productsName.length - 4} מוצרים</Button>
                                     )}
                                 </Box>
-                            </Link>
+                            </A>
                         )) : <Typography>איו הזמנות ליום זה</Typography>}
                     </Grid>
                 </Grid>

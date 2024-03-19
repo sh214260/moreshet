@@ -117,6 +117,7 @@ function App() {
                     <Route path="addProduct" element={<AddProduct />} />
                     <Route path='orderdetails/:id' element={<OrderDetails />} />
                     <Route path="/orderByDate" element={<OrderByDay />} />
+                    <Route path='loginForUser' element={<LoginForUser/>}/>
                     <Route path="/album" element={<Album />} />
                     <Route path="signin" element={<SignIn />} />
                     <Route path="signup" element={<SignUp />} />

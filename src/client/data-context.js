@@ -10,6 +10,7 @@ const DataContextProvider = (props) => {
     const [cartProducts, setCartProducts] = useState([{}])
     const [token, setToken] = useState('')
     const [deliveryPrice, setDeliveryPrice] = useState(0)
+    const [additionHours, setAdditionHour] = useState(0);
     const [paymentWay, setPaymentWay] = useState('מזומן')
     const updateDateOrder = (fromValue, toValue) => {
         console.log(fromValue);
@@ -47,7 +48,8 @@ const DataContextProvider = (props) => {
             value={{
                 user, setUser, logOut, cart, setCart, updateDateOrder, cartProducts, setCartProducts
                 , deliveryPrice, setDeliveryPrice
-                , addOrder, token, saveToken, paymentWay, setPaymentWay,role, setRole
+                , addOrder, token, saveToken, paymentWay, setPaymentWay,role, setRole,
+                additionHours, setAdditionHour
             }}>
             {props.children}
         </DataContext.Provider>

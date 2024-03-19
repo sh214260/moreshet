@@ -64,14 +64,14 @@ export default function SignIn() {
       }).catch(err => {
         console.log(err);
         if (err.response && err.response.status === 401) {
-          let res = window.confirm('User not found!, please proceed to registration')
+          let res = window.confirm('משתמש לא נמצא, עבור להרשמה')
           if (res)
             navigate('/signUp')
         }
         else if (err.response && err.response.status === 500)
-          alert("Server error");
+          alert("שגיאה בהתחברות");
         else {
-          let res = window.confirm('User not found!, please proceed to registration')
+          let res = window.confirm('משתמש לא נמצא, עבור להרשמה')
           if (res)
             navigate('/signUp')
         }

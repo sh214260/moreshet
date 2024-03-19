@@ -28,28 +28,28 @@ export default function Review() {
         <List sx={{ display: 'flex', flexDirection: 'column', }}>
           {ctx.cartProducts.map((product) => (
             <ListItem key={product.id} >
-              <ListItemText primary={product.name} sx={{textAlign:'right', paddingLeft:1}}/>
-              <ListItemText >{product.price}</ListItemText>
+              <ListItemText primary={product.name} sx={{ textAlign: 'right', paddingLeft: 1 }} />
+              <ListItemText >{product.price} + {product.price / 8 * ctx.additionHours}</ListItemText>
             </ListItem>
           ))}
           <ListItem >
-            <ListItemText primary=" מחיר כולל " sx={{textAlign:'right'}} />
+            <ListItemText primary=" מחיר כולל " sx={{ textAlign: 'right' }} />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {ctx.cart.totalPrice}
             </Typography>
-            </ListItem>
-            <ListItem>
-            <ListItemText primary="מחיר משלוח" sx={{textAlign:'right'}}/>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary="מחיר משלוח" sx={{ textAlign: 'right' }} />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {ctx.deliveryPrice}
             </Typography>
-            </ListItem>
-            <ListItem>
-            <ListItemText primary='סה"כ לתשלום' sx={{textAlign:'right'}}/>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          </ListItem>
+          <ListItem>
+            <ListItemText variant="h5" primary='סה"כ לתשלום' sx={{ textAlign: 'right' }} />
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
               {ctx.deliveryPrice + ctx.cart.totalPrice}
             </Typography>
-            </ListItem>
+          </ListItem>
         </List>
       </Grid>
       <Grid container spacing={2}>

@@ -64,7 +64,7 @@ export default function Checkout() {
           if (ans.data != 1) {
             setOrderId(ans.data)
             order.Id = ans.data
-            axios.post(`${SERVERURL}/api/Email/confirmorder`, { order: order, user: ctx.user }
+            axios.post(`${SERVERURL}/api/Email/confirmorder`, { order: order, user: ctx.user, products: [] }
               , { headers: { Authorization: `Bearer ${ctx.token}` } })
             ctx.addOrder()
           }
@@ -94,8 +94,15 @@ export default function Checkout() {
               </Typography>
               <Typography variant="subtitle1" >
                 ההזמנה הושלמה בהצלחה!
+              </Typography>
+              <Typography>
                 מספר הזמנה: {orderId}
                 שמור את מספר ההזמנה למקרה הצורך!
+              </Typography>
+              <Typography>
+                אישור הזמנה למייל נשלח אליך בדקות הקרובות
+              </Typography>
+              <Typography>
                 תודה שהזמנת מורשת ☺️
               </Typography>
             </React.Fragment>

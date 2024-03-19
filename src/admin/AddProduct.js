@@ -162,7 +162,7 @@ function AddProduct() {
                   '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                   width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
                 }}
-                placeholder="992" onChange={(ev) => handleChange('name', ev.target.value)} />
+                placeholder="לדוגמא: מתנפח 9-ליצנים" onChange={(ev) => handleChange('name', ev.target.value)} />
               <InputLabel>תאור</InputLabel>
               <TextField multiline
                 value={newProduct.description}
@@ -171,7 +171,7 @@ function AddProduct() {
                     display: 'none', // Hides the default outline
                   }, width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
                 }}
-                placeholder="992" onChange={(ev) => handleChange('description', ev.target.value)} />
+                placeholder="לדוגמא: מתאים ליומולדת" onChange={(ev) => handleChange('description', ev.target.value)} />
 
             </Grid>
             <Grid item xs={4}>
@@ -251,7 +251,7 @@ function AddProduct() {
                     display: 'none', // Hides the default outline
                   }, width: 180, backgroundColor: theme.palette.customColor
                 }}
-                placeholder="992" onChange={(ev) => handleChange('comment', ev.target.value)} />
+                placeholder="לדוגמא: הוראות הפעלה" onChange={(ev) => handleChange('comment', ev.target.value)} />
             </Grid>
           </Grid>
           <Box display="flex" flexDirection="row" mt={3}>

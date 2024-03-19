@@ -1,10 +1,11 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Grid, IconButton, InputLabel, Paper, Typography, createTheme } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogTitle, Grid, IconButton, InputLabel, Paper, Typography, createTheme } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { SERVERURL } from "../client/data-context";
+import React, { useContext, useEffect, useState } from "react";
+import { DataContext, SERVERURL } from "../client/data-context";
 import { Delete } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+
 export default function OrderDetails() {
     const theme = createTheme({
         palette: {
@@ -13,25 +14,42 @@ export default function OrderDetails() {
             pink: 'rgba(117, 37, 222, 0.1)'
         },
     });
-    const [orderId, setOrderId] = useState(3043);
     const [orderData, setOrderData] = useState({});
     const [userData, setUserData] = useState({});
     const [productsData, setProductsData] = useState([{}])
     const params = useParams()
-    useEffect(() => { 
-        axios.get(`${SERVERURL}/api/Order/getAllData/${params.id}`)
+    const [open, setOpen] = React.useState(false);
+    const ctx = useContext(DataContext)
+
+    function handleDeleteOrder() {
+        console.log(orderData);
+        axios.delete(`${SERVERURL}/api/Order/${orderData.id}`
+            , { headers: { Authorization: `Bearer ${ctx.token}` } })
+            .then(ans=>{
+                console.log(ans.data);
+                if(ans.data){
+                    setOpen(false)
+                    alert("ההזמנה בוטלה")
+                }
+                else{
+                    alert("שגיאה בביטול ההזמנה")
+                }
+            })
+    }
+    useEffect(() => {
+        axios.get(`${SERVERURL}/api/Order/getAllData/${params.id}`
+            , { headers: { Authorization: `Bearer ${ctx.token}` } })
             .then(res => {
                 console.log(res.data);
                 setOrderData(res.data.order)
                 setUserData(res.data.user)
                 setProductsData(res.data.products)
-            }
-            )
+            })
     }, [])
     return (
         <div style={{ display: "flex", backgroundColor: theme.palette.customColor }}>
             <Paper sx={{ marginTop: 4, marginRight: 4, }}>
-                <Grid sx={{ width: 250, marginLeft:7, marginRight:7, marginTop:4 }}>
+                <Grid sx={{ width: 250, marginLeft: 7, marginRight: 7, marginTop: 4 }}>
                     <Grid display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
                         <div>
                             <Typography variant="h4">מוצרים בהזמנה</Typography>
@@ -65,8 +83,8 @@ export default function OrderDetails() {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper sx={{ marginTop: 4, marginRight: 4, marginLeft: 4,  }}>
-                <Grid sx={{width: 600, marginRight: 10, marginLeft: 7, marginTop: 4, marginBottom: 4 }}>
+            <Paper sx={{ marginTop: 4, marginRight: 4, marginLeft: 4, }}>
+                <Grid sx={{ width: 600, marginRight: 10, marginLeft: 7, marginTop: 4, marginBottom: 4 }}>
                     <Box >
                         <Typography variant="h4">פרטי ההזמנה</Typography>
                         <Grid container spacing={2} paddingTop={1}>
@@ -115,9 +133,9 @@ export default function OrderDetails() {
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
                                     }} > {moment(orderData.toDate).diff(orderData.fromDate, 'hours')}
-                                    {" "}
-                                    {(moment(orderData.toDate).diff(orderData.fromDate, 'minutes') % 60) >= 30 ? <>וחצי</> : <></>}
-                                    {" "}</Typography>
+                                        {" "}
+                                        {(moment(orderData.toDate).diff(orderData.fromDate, 'minutes') % 60) >= 30 ? <>וחצי</> : <></>}
+                                        {" "}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
                                     }}>מ {moment(orderData.fromDate).format("HH:mm")}</Typography>
@@ -151,7 +169,7 @@ export default function OrderDetails() {
                                 <Typography size="small"
                                     sx={{
                                         height: 80, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >בלה בלה בלה</Typography></Grid>
+                                    }} ></Typography></Grid>
                         </Grid>
                     </Box>
                     <Box>
@@ -193,9 +211,24 @@ export default function OrderDetails() {
                             </Grid>
                         </Grid>
                     </Box>
-                    <IconButton sx={{ marginRight: 55, fontSize: 16, fontWeight: "bold", color: theme.palette.blueColor }}>
+                    <IconButton
+                        onClick={() => setOpen(true)}
+                        sx={{ marginRight: 55, fontSize: 16, fontWeight: "bold", color: theme.palette.blueColor }}>
                         <Delete fontSize="small" />בטל הזמנה
                     </IconButton>
+                    <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth={true}>
+                        <DialogTitle sx={{ textAlign: 'center' }}>
+                            {"האם לבטל את ההזמנה לצמיתות?"}
+                        </DialogTitle>
+                        <DialogActions >
+                            <Button variant="contained" sx={{ width: '100%', marginTop: 2 }} onClick={handleDeleteOrder}>
+                                כן, אני בטוח
+                            </Button>
+                            <Button variant="outlined" sx={{ width: '100%', marginTop: 2, marginRight: 1 }} onClick={() => setOpen(false)}>
+                                לא, חזור
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Grid>
             </Paper>
 

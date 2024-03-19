@@ -17,6 +17,7 @@ import Grid from '@mui/material/Grid';
 import { useContext } from "react";
 import { DataContext, SERVERURL } from '../client/data-context'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import moment from 'moment';
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
         right: -2,
@@ -33,7 +34,7 @@ const Cart = () => {
     // ctx.setCartId(params.id)
     function DeleteProduct(productId) {
         axios.post(`${SERVERURL}/api/CartProduct/delete/${ctx.cart.id}/${productId}`
-       ,{} ,{headers: { Authorization: `Bearer ${ctx.token}`}}
+            , {}, { headers: { Authorization: `Bearer ${ctx.token}` } }
         )
             .then(res => {
                 console.log(res.data)
@@ -46,33 +47,29 @@ const Cart = () => {
             })
     }
     useEffect(() => {
-        // axios.interceptors.response.use(response => {
-        //     return response;
-        // }, error => {
-        //     console.log('error', error, error.response);
-        //     if(error.response.status == 401){
-        //         alert('please login')
-        //     }
-        // })
         axios.get(`${SERVERURL}/api/CartProduct/getproducts/${ctx.cart.id}`
-         ,{headers: { Authorization: `Bearer ${ctx.token}`}}
+            , { headers: { Authorization: `Bearer ${ctx.token}` } }
         )
             .then(ans => {
                 console.log(ans);
                 console.log(ans.data)
                 ctx.setCartProducts(ans.data)
-            }).catch(err=>{
+            }).catch(err => {
                 alert('please login');
                 navigate("/signin");
             })
         axios.get(`${SERVERURL}/api/Cart/getbyid/${ctx.cart.id}`
-             , { headers: { Authorization: `Bearer ${ctx.token}` } }
-            )
+            , { headers: { Authorization: `Bearer ${ctx.token}` } })
             .then(res => {
                 console.log(res.data)
                 ctx.setCart(res.data)
                 params.id = ctx.cart.id
             })
+        const addHours = moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours') + (moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'minutes') % 60) / 60
+        console.log(addHours);
+        if ((addHours) > 4) {
+            ctx.setAdditionHour(addHours - 4)
+        }
     }, [flag])
 
     return (
@@ -100,7 +97,6 @@ const Cart = () => {
                                             image={`${SERVERURL}/Static/${product.image}.png`}
                                             alt="Live from space album cover"
                                         />
-                                        
                                         <CardContent sx={{ flex: '1 0 auto' }}>
                                             <Typography component="div" variant="h6">
                                                 {product.name}
@@ -111,11 +107,11 @@ const Cart = () => {
                                         </CardContent>
                                         <CardContent sx={{ flex: '1 0 ', justifyItems: 'flex-end' }}>
                                             <Typography component="div" variant="h6">
-                                                {product.price}
+                                                {product.price} ₪
                                             </Typography>
-                                            {/* <Typography variant="subtitle1" color="text.secondary" component="div">
-                                        לפני הנחה
-                                    </Typography> */}
+                                            <Typography variant="subtitle1" color="text.secondary" component="div">
+                                                {product.price / 8} * {ctx.additionHours} ={product.price / 8 * ctx.additionHours}₪
+                                            </Typography>
                                         </CardContent>
                                         <CardContent sx={{ flex: '1 0 ', justifyItems: 'left' }}>
                                             <IconButton onClick={() => DeleteProduct(product.id)}>

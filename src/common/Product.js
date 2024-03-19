@@ -21,7 +21,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import moment from 'moment';
 import EditIcon from '@mui/icons-material/Edit';
 function Product() {
-
+  const [item, setItem] = useState({})
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [from, setFrom] = useState(dayjs());
@@ -33,7 +33,7 @@ function Product() {
   const params = useParams()
   const currentDate = dayjs();
   const ctx = useContext(DataContext)
-  const [item, setItem] = useState({})
+
   useEffect(() => {
     console.log(ctx.token);
     if (ctx) {
@@ -48,13 +48,12 @@ function Product() {
       console.log(ctx.cart.toDate)
     }
     else {
-      return
-        ;
+      return;
     }
 
   }, [ctx.cart])
   function editAddress() {
-    if(from>to){
+    if (from > to) {
       alert("שעות ההזמנה אינן תקינות")
       return
     }
@@ -72,17 +71,17 @@ function Product() {
 
 
   async function check() {
+    if (moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours') > 4) {
+      alert("שים לב, המחיר הוא ל4 שעות, כל שעה נוספת- תוספת תשלום")
+    }
 
     const productPossible = {
       UserId: ctx.user.id,
       ProductId: item.id,
       ProductType: item.type,
       From: moment(ctx.cart.fromDate).format("YYYY-MM-DDTHH:mm"),
-      To: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm")
+      To: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm"),
     };
-    console.log(item)
-    console.log(productPossible)
-    console.log('authorization', { headers: { Authorization: `Bearer ${ctx.token}` } })
     const res = await axios.get(`${SERVERURL}/api/Cart/productisavialible`, { params: productPossible, headers: { Authorization: `Bearer ${ctx.token}` } })
     console.log(res.data);
     return res.data;
@@ -99,11 +98,11 @@ function Product() {
     }
     const isAvailable = await check();
     if (isAvailable === 0) {
-      alert("The product is occupied");
+      alert("המוצר תפוס");
       return;
     }
     if (isAvailable === -1) {
-      alert("The same product cannot be added twice");
+      alert("לא ניתן להוסיף מוצר פעמיים");
       return;
     }
     setOpen(true);
@@ -112,7 +111,7 @@ function Product() {
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Box>
-      {ctx.role == "secretary" ? <Typography>ביצוע הזמנה ל {ctx.user.name}</Typography>:<Typography>ffff</Typography>}
+        {ctx.role == "secretary" ? <Typography>ביצוע הזמנה ל {ctx.user.name}</Typography> : <Typography></Typography>}
 
       </Box>
       {ctx.cart?.toDate !== "0001-01-01T00:00:00" && ctx.cart?.fromDate !== "0001-01-01T00:00:00" ? (
@@ -162,11 +161,11 @@ function Product() {
         <Box sx={{ display: 'flex', flexDirection: 'row', margin: '3' }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}  >
             <Typography>מ</Typography>
-            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} 
-            timeSteps={{ minutes: 30 }}/>
+            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))}
+              timeSteps={{ minutes: 30 }} />
             <Typography>עד</Typography>
-            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} 
-            timeSteps={{ minutes: 30 }}/>
+            <DateTimePicker ampm={false} minDate={currentDate} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))}
+              timeSteps={{ minutes: 30 }} />
           </LocalizationProvider>
           <Button onClick={editAddress}>בצע</Button>
         </Box>
@@ -205,7 +204,10 @@ function Product() {
                   {item.name}
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary" component="div">
-                  {item.price}
+                  {item.price} ₪ ל4 שעות
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary" component="div">
+                  {item.price/8}₪ לכל שעה נוספת  
                 </Typography>
               </CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
