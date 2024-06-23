@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,16 +10,12 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from "axios";
-import { useState, useContext } from "react";
-import { DataContext } from './data-context';
 import { useNavigate } from "react-router-dom";
 import { green } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-// TODO remove, this demo shouldn't need to reset the theme.
 
 export default function SignUp() {
-  const context = useContext(DataContext)
   const navigate = useNavigate()
 
   const validationSchema = yup.object({
@@ -52,13 +46,20 @@ export default function SignUp() {
       .min(8, 'כתובת תכיל לפחות 8 תווים')
       .max(25, 'כתובת ארוכה מידי')
       .required('שדה חובה'),
+    institutionalName: yup
+      .string('הקלד שם')
+      .max(20, 'השם ארוך מידי'),
+    receiptName: yup
+      .string('הקלד שם')
+      .max(20, 'השם ארוך מידי'),
     checked: yup
       .boolean(),
   });
   const formik = useFormik({
     initialValues: {
       name: '', email: '', password: '', phonenumber1: '', phonenumber2: '',
-      address: '', checked: true
+      address: '', institutionalName: ''
+      , receiptName: '', checked: true
     },
     validationSchema: validationSchema,
     onSubmit: (values) => { handleSignUp(values) },
@@ -75,8 +76,8 @@ export default function SignUp() {
           alert("נרשמת בהצלחה!")
           navigate('/signin')
         }
-        else{
-          alert ("איימיל זה כבר קיים במערכת")
+        else {
+          alert("איימיל זה כבר קיים במערכת")
         }
       })
   };
@@ -112,6 +113,34 @@ export default function SignUp() {
                 fullWidth
                 id="name"
                 label="שם"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12} >
+              <TextField
+                error={formik.touched.institutionalName && Boolean(formik.errors.institutionalName)}
+                helperText={formik.touched.institutionalName && formik.errors.institutionalName}
+                value={formik.values.institutionalName}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="name"
+                fullWidth
+                id="receiptName"
+                label="שם המוסד"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12} >
+              <TextField
+                error={formik.touched.receiptName && Boolean(formik.errors.receiptName)}
+                helperText={formik.touched.receiptName && formik.errors.receiptName}
+                value={formik.values.receiptName}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="receiptName"
+                fullWidth
+                id="receiptName"
+                label="על שם מי להוציא קבלה"
                 autoFocus
               />
             </Grid>

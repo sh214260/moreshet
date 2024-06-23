@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -44,10 +42,16 @@ export default function SignIn() {
     axios.post(`${SERVERURL}/api/User/Signin`, { by: "client", email: values.email, password: values.password, phonenumber: '' })
       .then(ans => {
         console.log(ans, ans.data);
-        context.setUser(ans.data.user);
-        context.setCart(ans.data.cart)
-        context.setCartProducts(ans.data.cartProducts)
+        if (ans.data.user.type == 1) {
+          context.setAdmin(ans.data.user)
+        }
+        else {
+          context.setUser(ans.data.user);
+          context.setCart(ans.data.cart)
+          context.setCartProducts(ans.data.cartProducts)
+        }
         context.saveToken(ans.data.token)
+        context.saveCache(ans.data)
         console.log(context.cart)
         console.log(context.cartProducts)
         if (ans.data && ans.data.user.type === 1) {
@@ -75,12 +79,9 @@ export default function SignIn() {
           if (res)
             navigate('/signUp')
         }
-        //alert("Server is not availble...")
       })
   }
   const context = useContext(DataContext)
-
-  // const handleSubmit = (event) => {
   //   event.preventDefault();
   //   const data = new FormData(event.currentTarget);
   //   console.log({
@@ -196,19 +197,6 @@ export default function SignIn() {
             id="password"
             autoComplete="current-password"
           />
-          {/* <FormControlLabel
-            checked={formik.values.checked}
-            onChange={formik.handleChange}
-            control={<Checkbox value="remember" />}
-            label="Remember me"
-            id="checked"
-            type="checked"
-            name="checked"
-          /> */}
-          {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary"  />}
-              label="זכור אותי"
-            /> */}
           <Button
             type="submit"
             fullWidth

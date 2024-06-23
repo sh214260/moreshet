@@ -17,6 +17,7 @@
         "axios": "^1.4.0",
         "dayjs": "^1.11.10",
         "formik": "^2.4.5",
+        "framer-motion": "^11.0.22",
         "moment": "^2.29.4",
         "nodemailer": "^6.9.7",
         "react": "^18.2.0",

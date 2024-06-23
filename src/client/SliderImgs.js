@@ -17,7 +17,6 @@ const ImageSlider = ({ images }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  // Take only the first 15 images
   const displayedImages = images.slice(0, 15);
 
   return (
@@ -28,19 +27,19 @@ const ImageSlider = ({ images }) => {
         ) : (
           <KeyboardArrowRight />
         )}
-      חזור
+        חזור
       </Button>
       <Box display="flex" flexDirection="column" alignItems="center" margin={5}>
-      <img width={400} height={300} src={displayedImages[activeStep]} alt={`Image ${activeStep + 1}`} />
-      <MobileStepper
-        variant="dots"
-        steps={displayedImages.length}
-        position="static"
-        activeStep={activeStep}
-        sx={{ maxWidth: 400, flexGrow: 1 }}
-        nextButton={null}
-        backButton={null}
-      />
+        <img width={400} height={300} src={displayedImages[activeStep]} alt={`Image ${activeStep + 1}`} />
+        <MobileStepper
+          variant="dots"
+          steps={displayedImages.length}
+          position="static"
+          activeStep={activeStep}
+          sx={{ maxWidth: 400, flexGrow: 1 }}
+          nextButton={null}
+          backButton={null}
+        />
       </Box>
       <Button
         size="small"
@@ -54,7 +53,6 @@ const ImageSlider = ({ images }) => {
           <KeyboardArrowLeft />
         )}
       </Button>
-     
     </Box>
   );
 };

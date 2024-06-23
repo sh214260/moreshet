@@ -1,22 +1,19 @@
 import * as React from 'react';
 import axios from 'axios';
 import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import AddressForm from './AdressForm';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
 import { useContext, useState } from "react";
-import { DataContext, SERVERURL } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context';
 import dayjs from "dayjs";
 import { useEffect } from 'react';
 import moment from 'moment';
@@ -51,10 +48,14 @@ export default function Checkout() {
     setActiveStep(activeStep - 1);
   };
   useEffect(() => {
+    alert("הנתונים נמחקו, אנא התחבר מחדש")
     if (activeStep === 3) {
       let order = {
         Id: 0, UserId: ctx.cart.userId, DeliveryPrice: ctx.deliveryPrice, DateOrder: currentDate,
-        FromDate: moment(ctx.cart.fromDate).format("YYYY-MM-DDTHH:mm"), ToDate: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm"), PaidUp: true, Receipt: true, TotalPrice: ctx.deliveryPrice + ctx.cart.totalPrice, CartId: ctx.cart.id
+        FromDate: moment(ctx.cart.fromDate).format("YYYY-MM-DDTHH:mm"), ToDate: moment(ctx.cart.toDate).format("YYYY-MM-DDTHH:mm"), 
+        PaidUp: false, Receipt: false, TotalPrice: ctx.deliveryPrice + ctx.cart.totalPrice, CartId: ctx.cart.id,
+        Notes:ctx.notesForOrder, UserName:ctx.user.name, PaymentWay:ctx.paymentWay
+
       }
       console.log(order)
       axios.post(`${SERVERURL}/api/Order/addorder`, order
@@ -74,7 +75,6 @@ export default function Checkout() {
   }, [activeStep])
   return (
     <React.Fragment>
-      <CssBaseline />
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">

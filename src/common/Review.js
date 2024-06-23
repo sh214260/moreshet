@@ -4,12 +4,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from "react-router-dom";
-import { DataContext } from '../client/data-context'
+import { DataContext } from '../client/data-context';
 import { useContext } from "react";
-import { ListItemSecondaryAction } from '@mui/material';
+import { TextField } from '@mui/material';
 const payments = [
   { name: 'Card type', detail: 'Visa' },
   { name: 'Card holder', detail: 'Mr John Smith' },
@@ -61,6 +58,17 @@ export default function Review() {
           <Typography gutterBottom>{ctx.user.address}</Typography>
           <Typography gutterBottom>{ctx.user.phoneNumber1}</Typography>
           <Typography gutterBottom>{ctx.user.phoneNumber2}</Typography>
+        </Grid>
+        <Grid>
+          <Typography>הערה</Typography>
+          <TextField multiline
+            value={ctx.notesForOrder}
+            rows={4} size="small" fullWidth sx={{
+              '& .MuiOutlinedInput-notchedOutline': {
+                display: 'none', // Hides the default outline
+              }, width: 180,
+            }}
+            placeholder="כאן תוכל לכתוב לנו הערות להזמנה" onChange={(ev) => ctx.setNotesForOrder(ev.target.value)} />
         </Grid>
         <Grid item container direction="column" xs={12} sm={6}>
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>

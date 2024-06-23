@@ -11,7 +11,7 @@ import { Button, Link, MenuList } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useContext } from "react";
-import { DataContext, SERVERURL } from '../client/data-context'
+import { DataContext, SERVERURL } from '../client/data-context';
 import { green, red } from '@mui/material/colors';
 export default function Nav() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -36,7 +36,7 @@ export default function Nav() {
                 </Button>
                 <Button variant="text" sx={{fontSize:"large", }} disableElevation onClick={() => navigation('/contact')}>
                     צור קשר</Button>
-                <IconButton onClick={() => { navigation(`/cart/${cotx.cart.id}`) }} >
+                <IconButton onClick={() => {if(cotx.cart!=null) navigation(`/cart/${cotx.cart.id}`); else alert('עליך להתחבר קודם') }} >
                     <ShoppingCartIcon fontSize="large"/>
                 </IconButton>
                 <div>
@@ -51,7 +51,6 @@ export default function Nav() {
                         <Box display="flex" flexDirection="row">
                             <AccountCircle />
                             {cotx.user != null ? <Typography sx={{fontSize:"large", }}>{cotx.user.name}</Typography> : <Typography sx={{fontSize:"large"}}>התחבר</Typography>}
-
                         </Box>
                     </IconButton>
                     <Menu

@@ -3,7 +3,6 @@ import { Grid, TextField, Button, CssBaseline } from '@mui/material';
 import { Typography, Link } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { createTheme } from '@mui/material/styles';
 import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailIcon from '@mui/icons-material/Email';
@@ -44,15 +43,15 @@ const Contact = () => {
 
     const handleSubmit = (values) => {
         values.preventDefault();
-        // Perform form submission logic here
-
         let details = { Name: values.name, Email: values.email, Phone: values.phone, Message: values.message }
         axios.post(`${SERVERURL}/api/Email/submitcontactform`, details)
-            .then(ans => {console.log(ans.data)
-            if(ans.data)
-            setFlag(true)}
+            .then(ans => {
+                console.log(ans.data)
+                if (ans.data)
+                    setFlag(true)
+            }
             )
-        
+
     };
 
     return (

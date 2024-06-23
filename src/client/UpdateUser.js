@@ -1,37 +1,21 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import axios from "axios";
 import { useState, useContext } from "react";
 import { DataContext } from './data-context';
 import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
-// TODO remove, this demo shouldn't need to reset the theme.
+
 
 const defaultTheme = createTheme();
 
@@ -52,7 +36,6 @@ export default function UpdateUser() {
       password: data.get('password'),
     });
 
-
     const validate = (field) => {
       if (field.length === 0) {
         alert(`please enter all fields`);
@@ -70,14 +53,12 @@ export default function UpdateUser() {
       alert("phone number too long");
       return;
     }
-    const user = {id, name, email, address, phoneNumber1, phoneNumber2 }
+    const user = { id, name, email, address, phoneNumber1, phoneNumber2 }
     axios.post('https://localhost:7128/api/User/updateuser', user
-    ,{headers: { Authorization: `Bearer ${context.token}`}})
+      , { headers: { Authorization: `Bearer ${context.token}` } })
       .then(ans => {
         if (ans) {
           alert("הפרטים נשמרו בהצלחה!")
-          console.log(ans);
-          //to do: השינויים לא עודכנו בצד לקוח
         }
       })
 
@@ -120,7 +101,6 @@ export default function UpdateUser() {
                 autoFocus
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 value={email}
@@ -133,7 +113,6 @@ export default function UpdateUser() {
                 autoComplete="email"
               />
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <TextField
                 value={phoneNumber1}

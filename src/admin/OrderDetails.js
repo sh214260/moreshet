@@ -1,9 +1,9 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogTitle, Grid, IconButton, InputLabel, Paper, Typography, createTheme } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogTitle, Grid, IconButton, InputLabel, Link, Paper, Typography, createTheme } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { DataContext, SERVERURL } from "../client/data-context";
-import { Delete } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import { Check, Close, Delete } from "@mui/icons-material";
+import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 
 export default function OrderDetails() {
@@ -17,25 +17,43 @@ export default function OrderDetails() {
     const [orderData, setOrderData] = useState({});
     const [userData, setUserData] = useState({});
     const [productsData, setProductsData] = useState([{}])
+    const [flag, setFlag] = useState(0)
     const params = useParams()
     const [open, setOpen] = React.useState(false);
     const ctx = useContext(DataContext)
+    const navigate = useNavigate()
 
-    function handleDeleteOrder() {
+    const handleDeleteProduct = (productId) => {
+        axios.delete(`${SERVERURL}/api/ItemsForOrder/${orderData.id}/${productId}`
+            , { headers: { Authorization: `Bearer ${ctx.token}` } })
+            .then(ans => {
+                console.log(ans.data);
+                if (ans.data) {
+                    setOpen(false)
+                    alert("המוצר הוסר בהצלחה")
+                    setFlag(flag + 1)
+                }
+                else {
+                    alert("שגיאה בהסרת המוצר")
+                }
+            })
+    }
+    const handleDeleteOrder = () => {
         console.log(orderData);
         axios.delete(`${SERVERURL}/api/Order/${orderData.id}`
             , { headers: { Authorization: `Bearer ${ctx.token}` } })
-            .then(ans=>{
+            .then(ans => {
                 console.log(ans.data);
-                if(ans.data){
+                if (ans.data) {
                     setOpen(false)
                     alert("ההזמנה בוטלה")
                 }
-                else{
+                else {
                     alert("שגיאה בביטול ההזמנה")
                 }
             })
     }
+
     useEffect(() => {
         axios.get(`${SERVERURL}/api/Order/getAllData/${params.id}`
             , { headers: { Authorization: `Bearer ${ctx.token}` } })
@@ -45,7 +63,8 @@ export default function OrderDetails() {
                 setUserData(res.data.user)
                 setProductsData(res.data.products)
             })
-    }, [])
+    }, [flag])
+
     return (
         <div style={{ display: "flex", backgroundColor: theme.palette.customColor }}>
             <Paper sx={{ marginTop: 4, marginRight: 4, }}>
@@ -54,27 +73,26 @@ export default function OrderDetails() {
                         <div>
                             <Typography variant="h4">מוצרים בהזמנה</Typography>
                             <Typography variant="h5">{productsData.length} מוצרים</Typography></div>
-                        <Button variant="contained" sx={{ borderRadius: 3, height: 40, width: 100, fontSize: 16, backgroundColor: theme.palette.blueColor }}>+ מוצר</Button>
+                        <Button
+                            onClick={() => navigate(`album`)}
+                            variant="contained" sx={{ borderRadius: 3, height: 40, width: 100, fontSize: 16, backgroundColor: theme.palette.blueColor }}>+ מוצר</Button>
                     </Grid>
                     <Grid>
                         {productsData.map((product) => (
                             <Card key={product.id - 1} sx={{ display: 'flex', marginTop: 3, marginBottom: 3, flexDirection: 'row', backgroundColor: theme.palette.pink, borderRadius: 3 }}>
-                                <CardMedia>
-                                    <img height={70} src={`${SERVERURL}/Static/${product.image}.png`} alt="image" />
+                                <CardMedia style={{ marginTop: 10 }}>
+                                    <img height={70} src={`${SERVERURL}/Static/${product.image}`} alt="image" />
                                 </CardMedia>
                                 <CardContent sx={{ flexGrow: 1 }}>
                                     <Typography fontWeight="bold" fontSize={20}>
                                         {product.name}
-                                    </Typography>
-                                    <Typography>
-                                        {product.id}
                                     </Typography>
                                     <Typography marginTop={1} fontSize={18}>
                                         {product.price}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <IconButton>
+                                    <IconButton onClick={() => handleDeleteProduct(product.id)}>
                                         <Delete fontSize="large" />
                                     </IconButton>
                                 </CardActions>
@@ -111,14 +129,13 @@ export default function OrderDetails() {
                                 <Grid display="flex" flexDirection="row" width="180">
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >אשראי</Typography>
+                                    }} >{orderData.paymentWay}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
-                                    }}></Typography>
+                                    }}>{orderData.paidUp ? <Check /> : <Close />}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
                                     }} ></Typography>
-
                                 </Grid>
                             </Grid>
                             <Grid item xs={6}>
@@ -142,7 +159,6 @@ export default function OrderDetails() {
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
                                     }} >עד {moment(orderData.toDate).format("HH:mm")}</Typography>
-
                                 </Grid>
                                 <InputLabel>סה"כ לתשלום</InputLabel>
                                 <Typography size="small"
@@ -154,14 +170,16 @@ export default function OrderDetails() {
                                 <Grid display="flex" flexDirection="row" width="180">
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} >על שם</Typography>
+                                    }} >על שם {userData.receiptName}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
-                                    }}></Typography>
+                                    }}>{orderData.receipt ? <Check /> :
+                                        <>
+                                            <Link href="https://app.invoice-maven.co.il/home.jsf" target="_blank">ליצירת קבלה</Link>
+                                        </>}</Typography>
                                     <Typography size="small" sx={{
                                         width: 54, marginBottom: 2, backgroundColor: theme.palette.customColor
                                     }} ></Typography>
-
                                 </Grid>
                             </Grid>
                             <Grid item xs={6}>
@@ -169,7 +187,7 @@ export default function OrderDetails() {
                                 <Typography size="small"
                                     sx={{
                                         height: 80, marginBottom: 2, backgroundColor: theme.palette.customColor
-                                    }} ></Typography></Grid>
+                                    }} >{orderData.notes}</Typography></Grid>
                         </Grid>
                     </Box>
                     <Box>
@@ -207,7 +225,12 @@ export default function OrderDetails() {
                                         '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
                                         width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
                                     }} >{userData.address}</Typography>
-
+                                <InputLabel>שם המוסד</InputLabel>
+                                <Typography size="small"
+                                    sx={{
+                                        '& .MuiOutlinedInput-notchedOutline': { display: 'none' },
+                                        width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
+                                    }} >{userData.institutionalName}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
@@ -231,7 +254,6 @@ export default function OrderDetails() {
                     </Dialog>
                 </Grid>
             </Paper>
-
         </div>
     )
 }

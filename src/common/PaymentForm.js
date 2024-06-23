@@ -7,7 +7,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import { useContext } from "react";
-import { DataContext } from '../client/data-context'
+import { DataContext } from '../client/data-context';
 
 export default function PaymentForm() {
   const ctx = useContext(DataContext)
@@ -34,7 +34,7 @@ export default function PaymentForm() {
         <FormControlLabel value="העברה בנקאית" control={<Radio />} label={<Typography>העברה בנקאית
           ע"ש מורשת החויה המושלמת
           בנק הפועלים-12
-          סניף 446 
+          סניף 446
           מספר חשבון- 215929
           נא לשלוח אסמכתא</Typography>} ></FormControlLabel>
         <FormControlLabel value="כרטיס אשראי" control={<Radio />} label="מספר כרטיס אשראי" />
