@@ -108,7 +108,7 @@ const Product = () => {
   }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems:"center" }}>
       <Paper sx={{ margin: 4 }}>
         <Grid item xs={12} sm={6} md={4} style={{ margin: 10, width: 1000, justifyContent: "center" }}>
           <Box>
@@ -120,7 +120,7 @@ const Product = () => {
               <Typography>ההזמנה לתאריך</Typography>
               <Typography>מ {moment(ctx.cart.fromDate).format("DD.MM HH:mm")}</Typography>
               <Typography>עד ל {moment(ctx.cart.toDate).format("DD.MM HH:mm")}</Typography>
-              <Typography>
+              <Typography >
                 סה"כ מספר שעות בשימוש:
                 {moment(ctx.cart.toDate).diff(ctx.cart.fromDate, 'hours')}
                 {" "}

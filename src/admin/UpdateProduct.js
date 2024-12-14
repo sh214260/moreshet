@@ -14,7 +14,7 @@ const UpdateProduct = () => {
   const theme = createTheme({
     palette: {
       customColor: 'rgba(242, 247, 255, 1)',
-      blueColor: 
+      blueColor: 'rgba(0, 84, 238, 1)'
       
     },
   });

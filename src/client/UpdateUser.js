@@ -15,8 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 
-
-
 const defaultTheme = createTheme();
 
 export default function UpdateUser() {

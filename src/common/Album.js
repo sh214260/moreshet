@@ -241,6 +241,7 @@ export default function Album() {
                         <Typography style={{ order: 1, margin: 14 }}>
                           {card.price} ₪
                         </Typography>
+                        
                         <div>
                           <Button onClick={() => { if (ctx.user != null) navigate(`/product/${card.id}`); else alert("התחבר קודם") }} size="medium" style={{ order: 2, margin: 4 }}>הצג</Button>
                         </div>
