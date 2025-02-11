@@ -1,37 +1,37 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme } from '@mui/material/styles';
+import * as React from "react";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme } from "@mui/material/styles";
 import axios from "axios";
 import { useState, useContext } from "react";
-import { DataContext } from './data-context';
+import { DataContext } from "./data-context";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from 'react';
-import EditIcon from '@mui/icons-material/Edit';
+import { useEffect } from "react";
+import EditIcon from "@mui/icons-material/Edit";
 
 const defaultTheme = createTheme();
 
 export default function UpdateUser() {
-  const context = useContext(DataContext)
-  const navigate = useNavigate()
-  const [id, setId] = useState('')
-  const [name, setName] = useState('')
-  const [phoneNumber1, setPhoneNumber1] = useState('')
-  const [phoneNumber2, setPhoneNumber2] = useState('')
-  const [email, setEmail] = useState('')
-  const [address, setAddress] = useState('')
+  const context = useContext(DataContext);
+  const navigate = useNavigate();
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [phoneNumber1, setPhoneNumber1] = useState("");
+  const [phoneNumber2, setPhoneNumber2] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: data.get("email"),
+      password: data.get("password"),
     });
 
     const validate = (field) => {
@@ -40,7 +40,7 @@ export default function UpdateUser() {
         return false;
       }
       return true;
-    }
+    };
 
     if (validate(name) === false) return;
     if (validate(phoneNumber1) === false) return;
@@ -51,33 +51,38 @@ export default function UpdateUser() {
       alert("phone number too long");
       return;
     }
-    const user = { id, name, email, address, phoneNumber1, phoneNumber2 }
-    axios.post('https://localhost:7128/api/User/updateuser', user
-      , { headers: { Authorization: `Bearer ${context.token}` } })
-      .then(ans => {
-        if (ans) {
-          alert("הפרטים נשמרו בהצלחה!")
+    const user = { id, name, email, address, phoneNumber1, phoneNumber2 };
+    axios
+      .post(
+        "https://moreshetback-hqhac4bzejb2dmas.westeurope-01.azurewebsites.net/api/User/updateuser",
+        user,
+        {
+          headers: { Authorization: `Bearer ${context.token}` },
         }
-      })
-
+      )
+      .then((ans) => {
+        if (ans) {
+          alert("הפרטים נשמרו בהצלחה!");
+        }
+      });
   };
   useEffect(() => {
-    setId(context.user.id)
-    setName(context.user.name)
-    setEmail(context.user.email)
-    setAddress(context.user.address)
-    setPhoneNumber1(context.user.phoneNumber1)
-    setPhoneNumber2(context.user.phoneNumber2)
-  }, [])
+    setId(context.user.id);
+    setName(context.user.name);
+    setEmail(context.user.email);
+    setAddress(context.user.address);
+    setPhoneNumber1(context.user.phoneNumber1);
+    setPhoneNumber2(context.user.phoneNumber2);
+  }, []);
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
         sx={{
           marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Typography component="h1" variant="h5">
@@ -86,7 +91,7 @@ export default function UpdateUser() {
         </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} >
+            <Grid item xs={12}>
               <TextField
                 value={name}
                 onChange={(ev) => setName(ev.target.value)}
@@ -149,8 +154,7 @@ export default function UpdateUser() {
                 id="address"
               />
             </Grid>
-            <Grid item xs={12}>
-            </Grid>
+            <Grid item xs={12}></Grid>
           </Grid>
           <Button
             type="submit"
