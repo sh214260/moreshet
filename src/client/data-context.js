@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 export const DataContext = React.createContext({});
-export const SERVERURL = "https://moreshetback-hqhac4bzejb2dmas.westeurope-01.azurewebsites.net";
+export const SERVERURL =
+  "https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net";
 
 const DataContextProvider = (props) => {
   const [role, setRole] = useState("client");

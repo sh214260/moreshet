@@ -72,7 +72,7 @@ export default function SignUp() {
     };
     axios
       .post(
-        `https://moreshetback-hqhac4bzejb2dmas.westeurope-01.azurewebsites.net/api/User/Signup/${values.password}`,
+        `https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/User/Signup/${values.password}`,
         newUser
       )
       .then((ans) => {

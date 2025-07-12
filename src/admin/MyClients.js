@@ -30,7 +30,7 @@ const MyClients = () => {
     let start = async () => {
       console.log("data");
       const response = await axios.get(
-        `https://moreshetback-hqhac4bzejb2dmas.westeurope-01.azurewebsites.net/api/User`,
+        `https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/User`,
         {
           headers: { Authorization: `Bearer ${ctx.token}` },
         }

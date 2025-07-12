@@ -85,7 +85,7 @@ const AllOrders = () => {
   useEffect(() => {
     let start = async () => {
       const response = await axios.get(
-        `https://moreshetback-hqhac4bzejb2dmas.westeurope-01.azurewebsites.net/api/Order`,
+        `https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/Order`,
         {
           headers: { Authorization: `Bearer ${ctx.token}` },
         }

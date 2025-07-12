@@ -54,7 +54,7 @@ export default function UpdateUser() {
     const user = { id, name, email, address, phoneNumber1, phoneNumber2 };
     axios
       .post(
-        "https://moreshetback-hqhac4bzejb2dmas.westeurope-01.azurewebsites.net/api/User/updateuser",
+        "https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/User/updateuser",
         user,
         {
           headers: { Authorization: `Bearer ${context.token}` },
