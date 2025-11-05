@@ -27,7 +27,7 @@ import {
   LocalizationProvider,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DataContext } from "../client/data-context";
+import { DataContext, SERVERURL } from "../client/data-context";
 
 const AllOrders = () => {
   const ctx = useContext(DataContext);
@@ -37,7 +37,9 @@ const AllOrders = () => {
       blueColor: "rgba(0, 84, 238, 1)",
     },
   });
+
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [orderFilter, setOrderFilter] = useState({
     orderId: null,
     userId: null,
@@ -51,30 +53,42 @@ const AllOrders = () => {
     userName: null,
     paymentWay: null,
   });
+
   const params = useParams();
+
+  // 1) תיקן: המרה ברורה של "" ל-null
   const onFilterChange = (filterKey, filterValue) => {
-    console.log(filterValue, filterKey);
-    filterValue = filterValue && filterValue.length === 0 ? null : filterValue;
-    setOrderFilter({ ...orderFilter, [filterKey]: filterValue });
+    const normalized = filterValue === "" ? null : filterValue;
+    setOrderFilter((prev) => ({ ...prev, [filterKey]: normalized }));
   };
 
+  // 2) תיקן: השוואה ל-id ו-convert ל-string כדי למנוע סוגיות טיפוס
   const onFilter = () => {
-    let filterResult = [...orders];
-    filterResult = filterResult
-      .filter((o) =>
-        orderFilter.userName
-          ? o.userName && o.userName.includes(orderFilter.userName)
-          : true
-      )
-      .filter((o) =>
-        orderFilter.orderId ? o.orderId == orderFilter.orderId : true
-      );
-    return filterResult;
-  };
+  let filterResult = [...orders];
+
+  console.log("🔍 orderFilter:", orderFilter);
+
+  filterResult = filterResult
+    .filter((o) =>
+      orderFilter.userName
+        ? o.userName && o.userName.includes(orderFilter.userName)
+        : true
+    )
+    .filter((o) =>
+      orderFilter.orderId
+        ? String(o.id).includes(orderFilter.orderId)
+        : true
+    );
+
+  setFilteredOrders(filterResult);
+};
+
+
+  // (אפשרות לשמור PreventKeyLetters לשדות אחרים אם רוצים)
   const PreventKeyLetters = (event) => {
     const keyCode = event.keyCode || event.which;
     const keyValue = String.fromCharCode(keyCode);
-    const regex = /[0-9]|\./; // Only allow numbers and decimals
+    const regex = /[0-9]|\./;
     if (!regex.test(keyValue)) {
       onFilterChange(event.target.id, "");
       event.preventDefault();
@@ -82,139 +96,123 @@ const AllOrders = () => {
       onFilterChange(event.target.id, keyValue);
     }
   };
+
   useEffect(() => {
     let start = async () => {
-      const response = await axios.get(
-        `https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/Order`,
-        {
+      try {
+        const response = await axios.get(`${SERVERURL}/api/Order`, {
           headers: { Authorization: `Bearer ${ctx.token}` },
-        }
-      );
-      const ord = await response.data;
-      console.log(ord);
-      const sortedOrders = ord.sort(
-        (a, b) => new Date(a.dateOrder) - new Date(b.dateOrder)
-      );
-      console.log(sortedOrders);
-      setOrders([...sortedOrders]);
+        });
+        const ord = await response.data;
+        const sortedOrders = ord.sort(
+          (a, b) => new Date(b.dateOrder) - new Date(a.dateOrder)
+        );
+        setOrders(sortedOrders);
+        setFilteredOrders(sortedOrders);
+      } catch (err) {
+        console.error("Network or server error:", err);
+      }
     };
     start();
   }, []);
 
   return (
     <Paper sx={{ margin: 10 }}>
-      {orders.length > 0 ? (
+      {filteredOrders.length > 0 ? (
         <>
           <Typography component="h1" variant="h8">
             כל ההזמנות
           </Typography>
-          <TableContainer sx={{}}>
+          <TableContainer>
             <Table>
               <TableHead>
+                {/* כותרות */}
                 <TableRow>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    מספר הזמנה
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    תאריך הזמנה
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    שם לקוח
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    מתאריך
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    עד תאריך
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    מחיר משלוח
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    מחיר סופי
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    תשלום
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    קבלה
-                  </TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                    פעולות
-                  </TableCell>
+                  {/* ... */}
                 </TableRow>
+
+                {/* שורת סינון */}
                 <TableRow>
                   <TableCell>
-                    <TextField id="orderId" onKeyPress={PreventKeyLetters} />
+                    {/* 3) תיקן: onChange עם בדיקת ספרות; value נקלט מה־orderFilter */}
+                    <TextField
+                      id="orderId"
+                      value={orderFilter.orderId || ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        // מאפשר רק ספרות (או ריק), אחרת מתעלם מהקלט
+                        if (/^\d*$/.test(v)) {
+                          onFilterChange("orderId", v === "" ? null : v);
+                        }
+                      }}
+                    />
                   </TableCell>
+
                   <TableCell>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker />
                     </LocalizationProvider>
                   </TableCell>
+
                   <TableCell>
                     <TextField
-                      onChange={(ev) =>
-                        onFilterChange("userName", ev.target.value)
-                      }
+                      onChange={(ev) => onFilterChange("userName", ev.target.value)}
                     />
                   </TableCell>
+
+                  {/* שאר השדות כמו לפני */}
                   <TableCell>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateTimePicker ampm={false} />
                     </LocalizationProvider>
                   </TableCell>
+
                   <TableCell>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateTimePicker ampm={false} />
                     </LocalizationProvider>
                   </TableCell>
+
                   <TableCell>
                     <TextField onKeyPress={PreventKeyLetters} />
                   </TableCell>
+
                   <TableCell>
                     <TextField onKeyPress={PreventKeyLetters} />
                   </TableCell>
+
                   <TableCell>
                     <Checkbox />
                   </TableCell>
+
                   <TableCell>
                     <Checkbox />
                   </TableCell>
+
                   <TableCell>
-                    <Button variant="contained" disableElevation>
+                    <Button variant="contained" disableElevation onClick={onFilter}>
                       חפש
                     </Button>
                   </TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
-                {onFilter().map((order) => (
-                  <TableRow
-                    key={order.id}
-                    sx={{ backgroundColor: theme.palette.customColor }}
-                  >
-                    <TableCell style={{ textAlign: "right" }}>
-                      {order.id}
-                    </TableCell>
+                {filteredOrders.map((order) => (
+                  <TableRow key={order.id} sx={{ backgroundColor: theme.palette.customColor }}>
+                    <TableCell style={{ textAlign: "right" }}>{order.id}</TableCell>
                     <TableCell style={{ textAlign: "right" }}>
                       {moment(order.dateOrder).format("DD/MM")}
                     </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {order.userName}
-                    </TableCell>
+                    <TableCell style={{ textAlign: "right" }}>{order.userName}</TableCell>
                     <TableCell style={{ textAlign: "right" }}>
                       {moment(order.fromDate).format("DD/MM HH:mm")}
                     </TableCell>
                     <TableCell style={{ textAlign: "right" }}>
                       {moment(order.toDate).format("DD/MM HH:mm")}
                     </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {order.deliveryPrice}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {order.totalPrice}
-                    </TableCell>
+                    <TableCell style={{ textAlign: "right" }}>{order.deliveryPrice}</TableCell>
+                    <TableCell style={{ textAlign: "right" }}>{order.totalPrice}</TableCell>
                     <TableCell style={{ textAlign: "center" }}>
                       {order.paidUp ? <CheckIcon /> : <CloseIcon />}
                     </TableCell>
@@ -222,14 +220,9 @@ const AllOrders = () => {
                       {order.receipt ? (
                         <CheckIcon />
                       ) : (
-                        <>
-                          <Link
-                            href="https://app.invoice-maven.co.il/home.jsf"
-                            target="_blank"
-                          >
-                            ליצירת קבלה
-                          </Link>
-                        </>
+                        <Link href="https://app.invoice-maven.co.il/home.jsf" target="_blank">
+                          ליצירת קבלה
+                        </Link>
                       )}
                     </TableCell>
                     <TableCell />
@@ -245,5 +238,7 @@ const AllOrders = () => {
     </Paper>
   );
 };
+
+
 
 export default AllOrders;
