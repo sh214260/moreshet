@@ -48,7 +48,7 @@ export default function Checkout() {
     setActiveStep(activeStep - 1);
   };
   useEffect(() => {
-    alert("הנתונים נמחקו, אנא התחבר מחדש")
+    
     if (activeStep === 3) {
       let order = {
         Id: 0, UserId: ctx.cart.userId, DeliveryPrice: ctx.deliveryPrice, DateOrder: currentDate,
@@ -65,8 +65,8 @@ export default function Checkout() {
           if (ans.data != 1) {
             setOrderId(ans.data)
             order.Id = ans.data
-            axios.post(`${SERVERURL}/api/Email/confirmorder`, { order: order, user: ctx.user, products: [] }
-              , { headers: { Authorization: `Bearer ${ctx.token}` } })
+            // axios.post(`${SERVERURL}/api/Email/confirmorder`, { order: order, user: ctx.user, products: [] }
+            //   , { headers: { Authorization: `Bearer ${ctx.token}` } })
             ctx.addOrder()
           }
 
