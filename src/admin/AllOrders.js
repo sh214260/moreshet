@@ -15,6 +15,8 @@ import {
   Typography,
   TextField,
   Button,
+  Pagination,
+  Stack,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
@@ -53,6 +55,10 @@ const AllOrders = () => {
     userName: null,
     paymentWay: null,
   });
+  
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const ordersPerPage = 10;
 
   const params = useParams();
 
@@ -198,7 +204,9 @@ const AllOrders = () => {
               </TableHead>
 
               <TableBody>
-                {filteredOrders.map((order) => (
+                {filteredOrders
+                  .slice((page - 1) * ordersPerPage, page * ordersPerPage)
+                  .map((order) => (
                   <TableRow key={order.id} sx={{ backgroundColor: theme.palette.customColor }}>
                     <TableCell style={{ textAlign: "right" }}>{order.id}</TableCell>
                     <TableCell style={{ textAlign: "right" }}>
@@ -231,6 +239,14 @@ const AllOrders = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <Stack spacing={2} alignItems="center" sx={{ padding: 2 }}>
+            <Pagination
+              count={Math.ceil(filteredOrders.length / ordersPerPage)}
+              page={page}
+              onChange={(event, newPage) => setPage(newPage)}
+              dir="ltr"
+            />
+          </Stack>
         </>
       ) : (
         <Typography>לא נמצאו הזמנות ללקוח זה</Typography>
