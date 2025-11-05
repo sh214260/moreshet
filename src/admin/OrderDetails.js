@@ -47,6 +47,7 @@ export default function OrderDetails() {
                 if (ans.data) {
                     setOpen(false)
                     alert("ההזמנה בוטלה")
+                    navigate(-1)
                 }
                 else {
                     alert("שגיאה בביטול ההזמנה")
