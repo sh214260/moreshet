@@ -129,28 +129,57 @@ const UpdateProduct = () => {
       });
 
   }
-  const update = () => {
+const update = () => {
+  console.log(imageFile);
+  
+  if (imageFile instanceof File) {
+    
+    // אם יש תמונה חדשה, מעלים אותה קודם
     const formData = new FormData();
     formData.append('image', imageFile);
+
     axios.post(`${SERVERURL}/api/Product/uploadImage`, formData)
       .then(response => {
-        console.log(response.data.imageName);
-        return axios.post(`${SERVERURL}/api/Product/update`, { ...newProduct, image: response.data.imageName }
-          , { headers: { Authorization: `Bearer ${ctx.token}` } });
+        const updatedProduct = { ...newProduct, image: response.data.imageName };
+        return axios.post(`${SERVERURL}/api/Product/update`, updatedProduct, {
+          headers: { Authorization: `Bearer ${ctx.token}` }
+        });
       })
       .then(ans => {
-        console.log(ans);
         if (ans.data) {
+          console.log('Product updated successfully with new image:', ans.data);
+          alert("המוצר עודכן בהצלחה כולל התמונה!");
+        } else {
+          console.log('Product update failed after image upload:', ans.data);
+          alert("יש בעיה בעדכון המוצר לאחר העלאת התמונה");
+        }
+      })
+      .catch(error => {
+        console.error('Error uploading image or updating product:', error);
+        alert("שגיאה בהעלאת התמונה או בעדכון המוצר – בדוק קונסול");
+      });
+  } else {
+    // אין תמונה חדשה, רק מעדכנים את המוצר
+    axios.post(`${SERVERURL}/api/Product/update`, newProduct, {
+      headers: { Authorization: `Bearer ${ctx.token}` }
+    })
+      .then(ans => {
+        if (ans.data) {
+          console.log('Product updated successfully without image:', ans.data);
           alert("המוצר עודכן בהצלחה!");
         } else {
+          console.log('Product update failed without image:', ans.data);
           alert("יש בעיה בעדכון המוצר");
         }
       })
       .catch(error => {
-        console.error('Error uploading image:', error);
-        alert();
+        console.error('Error updating product without image:', error);
+        alert("שגיאה בעדכון המוצר – בדוק קונסול");
       });
   }
+};
+
+
   return (
     <div style={{ display: "flex", justifyContent: "center", backgroundColor: theme.palette.customColor }}>
       <Paper sx={{ marginTop: 4, marginBottom: 2, marginRight: 4, marginLeft: 4 }}>
