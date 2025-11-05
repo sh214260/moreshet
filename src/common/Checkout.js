@@ -97,11 +97,11 @@ export default function Checkout() {
               </Typography>
               <Typography>
                 מספר הזמנה: {orderId}
-                שמור את מספר ההזמנה למקרה הצורך!
+                שמור את מספר ההזמנה למקרה הצורך! 
               </Typography>
-              <Typography>
+              {/* <Typography>
                 אישור הזמנה למייל נשלח אליך בדקות הקרובות
-              </Typography>
+              </Typography> */}
               <Typography>
                 תודה שהזמנת מורשת ☺️
               </Typography>

@@ -97,8 +97,8 @@ export default function OrderByDay() {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper sx={{ marginTop: 4, marginBottom: 2, marginLeft: 4, }}>
-                <Grid sx={{ width: 550, marginRight: 15, marginLeft: 15, marginBottom: 3, marginTop: 5 }}>
+            <Paper sx={{ marginTop: 4, marginBottom: 2, marginLeft: 4 }}>
+                <Grid sx={{ width: 750, marginRight: 10, marginLeft: 10, marginBottom: 3, marginTop: 5 }}>
                     <Grid display="flex" flexDirection="row">
                         <Box>
                             <Typography color={theme.palette.gray} variant="h4">{getFormattedDayMonth(date)}</Typography>
@@ -121,10 +121,25 @@ export default function OrderByDay() {
                             <Typography sx={{ width: 100, fontWeight: "bold" }}>מוצר 4</Typography>
                         </Box>
                         {orders.length > 0 ? orders.map((order, index) => (
-                            <A key={index} to={`/orderdetails/${order.orderId}`} >
+                            <A key={index} to={`/orderdetails/${order.orderId}`} style={{ textDecoration: 'none' }} >
                                 <Box display="flex" flexDirection="row" paddingRight={2}
-                                    sx={{ height: 50, border: "1px solid", borderRadius: 1, borderColor: order.deliveryPrice < 0 ? theme.palette.lightBlue : theme.palette.purple, borderRight: "5px solid", borderRightColor: order.deliveryPrice < 0 ? theme.palette.lightBlue : theme.palette.purple, borderTopRightRadius: 3, borderBottomRightRadius: 3 }}>
-                                    <Typography sx={{ textDecoration: "animatable", width: 100, color: "black", fontSize: "16px" }}>{getFormattedTime(order.fromDate)} - {getFormattedTime(order.toDate)}</Typography>
+                                    sx={{ 
+                                        height: 50, 
+                                        marginBottom: 2, 
+                                        border: "1px solid", 
+                                        borderRadius: 1, 
+                                        borderColor: order.deliveryPrice < 0 ? theme.palette.lightBlue : theme.palette.purple, 
+                                        borderRight: "5px solid", 
+                                        borderRightColor: order.deliveryPrice < 0 ? theme.palette.lightBlue : theme.palette.purple, 
+                                        borderTopRightRadius: 3, 
+                                        borderBottomRightRadius: 3,
+                                        transition: 'transform 0.2s ease-in-out',
+                                        '&:hover': {
+                                            transform: 'scale(1.02)',
+                                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                        }
+                                    }}>
+                                    <Typography sx={{ textDecoration: "none", width: 100, color: "black", fontSize: "16px" }}>{getFormattedTime(order.fromDate)} - {getFormattedTime(order.toDate)}</Typography>
                                     <Typography sx={{ width: 100, color: "black" }}>{order.userName}</Typography>
                                     {order.productsName.slice(0, 4).map((product, index) => (
                                         <Typography sx={{ width: 100, color: "black" }} key={index}>{product}</Typography>
