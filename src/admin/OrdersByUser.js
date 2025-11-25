@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SERVERURL } from "../client/data-context";
 import moment from 'moment';
-import { Button, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, createTheme } from "@mui/material";
+import { Button, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, createTheme, Pagination, Stack } from "@mui/material";
 const OrderByUser = () => {
 
     const theme = createTheme({
@@ -13,14 +13,19 @@ const OrderByUser = () => {
             blueColor: 'rgba(0, 84, 238, 1)'
         }
     })
-    const [orders, setOrders] = useState();
+    const [orders, setOrders] = useState([]);
+    const [page, setPage] = useState(1);
+    const ordersPerPage = 10;
     const params = useParams();
     const navigate = useNavigate()
     useEffect(() => {
         axios.get(`${SERVERURL}/api/Order/getbyuser/${params.id}`)
             .then(ans => {
                 console.log(ans.data)
-                setOrders(ans.data);
+                // Sort by newest first (descending by dateOrder)
+                const sorted = ans.data.sort((a, b) => new Date(b.dateOrder) - new Date(a.dateOrder));
+                setOrders(sorted);
+                setPage(1);
             })
     }, [])
     return (
@@ -38,17 +43,29 @@ const OrderByUser = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {orders ? orders.map((order) => (
+                            {orders && orders.length > 0 ? orders
+                              .slice((page - 1) * ordersPerPage, page * ordersPerPage)
+                              .map((order) => (
                                 <TableRow key={order.id} sx={{ borderBlockColor: theme.palette.blueColor, marginTop: 1, marginBottom: 1 }}>
                                     <TableCell style={{ textAlign: "right" }}>{order.id}</TableCell>
                                     <TableCell style={{ textAlign: "right" }}>{moment(order.dateOrder).format("DD/MM/YYYY")}</TableCell>
                                     <TableCell style={{ textAlign: "right" }}>{moment(order.fromDate).format("DD/MM HH:mm")}</TableCell>
                                     <TableCell style={{ textAlign: "right" }}>{order.totalPrice}</TableCell>
-                                    <Button style={{ textAlign: "right" }} onClick={() => navigate(`/orderdetails/${order.id}`)}>לצפייה בפרטי ההזמנה</Button>
+                                    <TableCell style={{ textAlign: "right" }}>
+                                      <Button onClick={() => navigate(`/orderdetails/${order.id}`)}>לצפייה בפרטי ההזמנה</Button>
+                                    </TableCell>
                                 </TableRow>
-                            )) : <Typography>לא נמצאו הזמנות ללקוח המבוקש</Typography>}
+                            )) : <TableRow><TableCell colSpan={5} style={{ textAlign: "center" }}><Typography>לא נמצאו הזמנות ללקוח המבוקש</Typography></TableCell></TableRow>}
                         </TableBody>
                     </Table>
+                    <Stack spacing={2} alignItems="center" sx={{ padding: 2 }}>
+                      <Pagination
+                        count={Math.ceil(orders.length / ordersPerPage)}
+                        page={page}
+                        onChange={(event, newPage) => setPage(newPage)}
+                        dir="ltr"
+                      />
+                    </Stack>
                 </Grid>
             </Paper>
         </div>

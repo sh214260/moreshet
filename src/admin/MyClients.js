@@ -30,6 +30,7 @@ const MyClients = () => {
   const [filteredClients, setFilteredClients] = useState([]);
   const [page, setPage] = useState(1);
   const clientsPerPage = 10;
+  const [userCarts, setUserCarts] = useState({}); // Map of userId -> cart status
   const [filters, setFilters] = useState({
     id: "",
     name: "",
@@ -55,6 +56,25 @@ const MyClients = () => {
         setClients(response.data);
         setFilteredClients(response.data);
         setPage(1);
+
+        // Fetch cart status for each user to check for incomplete orders
+        const cartMap = {};
+        for (const user of response.data) {
+          try {
+            const cartRes = await axios.get(`${SERVERURL}/api/Cart/getcartbyuser/${user.id}`, {
+              headers: { Authorization: `Bearer ${ctx.token}` },
+            });
+            // Mark if user has an incomplete order (totalPrice > 0)
+            cartMap[user.id] = {
+              hasIncompleteOrder: cartRes.data && cartRes.data.totalPrice && cartRes.data.totalPrice > 0,
+              cart: cartRes.data,
+            };
+          } catch (err) {
+            console.warn(`Could not fetch cart for user ${user.id}:`, err);
+            cartMap[user.id] = { hasIncompleteOrder: false, cart: null };
+          }
+        }
+        setUserCarts(cartMap);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -261,13 +281,42 @@ const MyClients = () => {
                         {user.phoneNumber2}
                       </TableCell>
                       <TableCell style={{ textAlign: "center" }}>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => navigate(`/orderByUser/${user.id}`)}
-                        >
-                          הזמנות
-                        </Button>
+                        <Stack direction="row" spacing={1} justifyContent="center">
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => navigate(`/orderByUser/${user.id}`)}
+                          >
+                            הזמנות
+                          </Button>
+                          <Button
+                            variant={userCarts[user.id]?.hasIncompleteOrder ? "contained" : "contained"}
+                            size="small"
+                            onClick={async () => {
+                              try {
+                                // set the user in context and mark role as secretary
+                                ctx.setUser(user);
+                                ctx.setRole("secretary");
+                                
+                                // fetch cart for that user
+                                const cartRes = await axios.get(`${SERVERURL}/api/Cart/getcartbyuser/${user.id}`, { headers: { Authorization: `Bearer ${ctx.token}` } });
+                                if (cartRes && cartRes.data) {
+                                  ctx.setCart(cartRes.data);
+                                  // fetch products for that cart
+                                  const prods = await axios.get(`${SERVERURL}/api/CartProduct/getproducts/${cartRes.data.id}`, { headers: { Authorization: `Bearer ${ctx.token}` } });
+                                  ctx.setCartProducts(prods.data || []);
+                                }
+                                // navigate to catalog so admin can add products
+                                navigate(`/album`);
+                              } catch (err) {
+                                console.error("Error starting/resuming order for user:", err);
+                                alert('שגיאה בטעינת העגלה של הלקוח');
+                              }
+                            }}
+                          >
+                            {userCarts[user.id]?.hasIncompleteOrder ? "המשך הזמנה" : "התחל הזמנה"}
+                          </Button>
+                        </Stack>
                       </TableCell>
                     </TableRow>
                   ))

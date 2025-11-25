@@ -59,6 +59,7 @@ const AllOrders = () => {
   };
 
   const [orderFilter, setOrderFilter] = useState(defaultFilter);
+  const [dateFilter, setDateFilter] = useState(null);
   
   // Pagination states
   const [page, setPage] = useState(1);
@@ -96,12 +97,22 @@ const AllOrders = () => {
     orderFilter.paidUp !== null ? o.paidUp === orderFilter.paidUp : true
   );
 
+  // סינון לפי תאריך
+  filterResult = filterResult.filter((o) => {
+    if (!dateFilter) return true;
+    const orderDate = moment(o.dateOrder).format("DD/MM");
+    const selectedDate = moment(dateFilter.$d || dateFilter).format("DD/MM");
+    console.log("🗓️ Comparing:", orderDate, "vs", selectedDate);
+    return orderDate === selectedDate;
+  });
+
   setFilteredOrders(filterResult);
 };
 
   // נקה את כל מסנני החיפוש והחזיר את התצוגה למצב ההתחלתי
   const onClearFilters = () => {
     setOrderFilter(defaultFilter);
+    setDateFilter(null);
     setFilteredOrders(orders);
     setPage(1);
   };
@@ -154,9 +165,9 @@ const AllOrders = () => {
                   <TableCell style={{ textAlign: "right", fontWeight: 600 }}>מס' הזמנה</TableCell>
                   <TableCell style={{ textAlign: "right", fontWeight: 600 }}>תאריך</TableCell>
                   <TableCell style={{ textAlign: "right", fontWeight: 600 }}>שם לקוח</TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>התחלה</TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>סיום</TableCell>
-                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>דמי הובלה</TableCell>
+                  {/* <TableCell style={{ textAlign: "right", fontWeight: 600 }}>התחלה</TableCell> */}
+                  {/* <TableCell style={{ textAlign: "right", fontWeight: 600 }}>סיום</TableCell> */}
+                  {/* <TableCell style={{ textAlign: "right", fontWeight: 600 }}>דמי הובלה</TableCell> */}
                   <TableCell style={{ textAlign: "right", fontWeight: 600 }}>סה"כ</TableCell>
                   <TableCell style={{ textAlign: "center", fontWeight: 600 }}>שולם</TableCell>
                   <TableCell style={{ textAlign: "center", fontWeight: 600 }}>קבלה</TableCell>
@@ -182,7 +193,10 @@ const AllOrders = () => {
 
                   <TableCell>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker />
+                      <DatePicker 
+                        value={dateFilter}
+                        onChange={(value) => setDateFilter(value)}
+                      />
                     </LocalizationProvider>
                   </TableCell>
 
@@ -192,8 +206,8 @@ const AllOrders = () => {
                     />
                   </TableCell>
 
-                  {/* שאר השדות כמו לפני */}
-                  <TableCell>
+                  {/* שאר השדות כמו לפני - בהערה */}
+                  {/* <TableCell>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateTimePicker ampm={false} />
                     </LocalizationProvider>
@@ -207,11 +221,11 @@ const AllOrders = () => {
 
                   <TableCell>
                     <TextField onKeyPress={PreventKeyLetters} />
-                  </TableCell>
+                  </TableCell> */}
 
-                  <TableCell>
+                  {/* <TableCell>
                     <TextField onKeyPress={PreventKeyLetters} />
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>
                     <Checkbox
@@ -223,11 +237,13 @@ const AllOrders = () => {
                   </TableCell>
 
                   <TableCell>
-                    <Checkbox />
+                    {/* <Checkbox /> */}
                   </TableCell>
-
-                  <TableCell>
-                    <Stack direction="row" spacing={1} justifyContent="flex-end" alignItems="center">
+ <TableCell>
+                    {/* <Checkbox /> */}
+                  </TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
+                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
                       <Button variant="contained" disableElevation onClick={onFilter}>
                         חפש
                       </Button>
@@ -249,13 +265,13 @@ const AllOrders = () => {
                       {moment(order.dateOrder).format("DD/MM")}
                     </TableCell>
                     <TableCell style={{ textAlign: "right" }}>{order.userName}</TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
+                    {/* <TableCell style={{ textAlign: "right" }}>
                       {moment(order.fromDate).format("DD/MM HH:mm")}
                     </TableCell>
                     <TableCell style={{ textAlign: "right" }}>
                       {moment(order.toDate).format("DD/MM HH:mm")}
                     </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>{order.deliveryPrice}</TableCell>
+                    <TableCell style={{ textAlign: "right" }}>{order.deliveryPrice}</TableCell> */}
                     <TableCell style={{ textAlign: "right" }}>{order.totalPrice}</TableCell>
                     <TableCell style={{ textAlign: "center" }}>
                       {order.paidUp ? <CheckIcon /> : <CloseIcon />}
