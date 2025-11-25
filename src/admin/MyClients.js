@@ -11,7 +11,10 @@ import {
   TableCell,
   Button,
   Paper,
-  Grid,
+  TableContainer,
+  TextField,
+  Stack,
+  Pagination,
 } from "@mui/material";
 import { DataContext, SERVERURL } from "../client/data-context";
 
@@ -24,52 +27,101 @@ const MyClients = () => {
     },
   });
   const [clients, setClients] = useState([]);
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [page, setPage] = useState(1);
+  const clientsPerPage = 10;
+  const [filters, setFilters] = useState({
+    id: "",
+    name: "",
+    email: "",
+    type: "",
+    address: "",
+    phoneNumber1: "",
+    phoneNumber2: "",
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     let start = async () => {
-      console.log("data");
-      const response = await axios.get(
-        `${SERVERURL}/api/User`,
-        {
-          headers: { Authorization: `Bearer ${ctx.token}` },
-        }
-      );
-      console.log(response.data);
-      setClients(response.data);
+      console.log("fetching users...");
+      try {
+        const response = await axios.get(
+          `${SERVERURL}/api/User`,
+          {
+            headers: { Authorization: `Bearer ${ctx.token}` },
+          }
+        );
+        console.log("Users fetched:", response.data);
+        setClients(response.data);
+        setFilteredClients(response.data);
+        setPage(1);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
     };
     start();
   }, []);
 
+  const handleFilterChange = (field, value) => {
+    // וולידציה: אם השדה הוא טלפון, אפשר רק מספרים
+    if ((field === "phoneNumber1" || field === "phoneNumber2" || field === "id") && value && !/^\d*$/.test(value)) {
+      return;
+    }
+
+    const newFilters = { ...filters, [field]: value };
+    setFilters(newFilters);
+  };
+
+  const handleSearch = () => {
+    applyFilters(filters);
+    setPage(1);
+  };
+
+  const applyFilters = (filterObj) => {
+    let filtered = clients.filter((user) => {
+      return (
+        (filterObj.id === "" || user.id.toString().includes(filterObj.id)) &&
+        (filterObj.name === "" || user.name.toLowerCase().includes(filterObj.name.toLowerCase())) &&
+        (filterObj.email === "" || user.email.toLowerCase().includes(filterObj.email.toLowerCase())) &&
+        (filterObj.type === "" || user.type.includes(filterObj.type)) &&
+        (filterObj.address === "" || user.address.toLowerCase().includes(filterObj.address.toLowerCase())) &&
+        (filterObj.phoneNumber1 === "" || (user.phoneNumber1 && user.phoneNumber1.includes(filterObj.phoneNumber1))) &&
+        (filterObj.phoneNumber2 === "" || (user.phoneNumber2 && user.phoneNumber2.includes(filterObj.phoneNumber2)))
+      );
+    });
+    setFilteredClients(filtered);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      id: "",
+      name: "",
+      email: "",
+      type: "",
+      address: "",
+      phoneNumber1: "",
+      phoneNumber2: "",
+    });
+    setFilteredClients(clients);
+    setPage(1);
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        backgroundColor: theme.palette.customColor,
-      }}
-    >
-      <Paper
-        sx={{ marginTop: 4, marginBottom: 2, marginRight: 4, marginLeft: 4 }}
-      >
-        <Grid
-          style={{
-            width: 750,
-            marginTop: 10,
-            marginBottom: 50,
-            marginRight: 170,
-            marginLeft: 170,
-          }}
-        >
+    <Paper sx={{ margin: 0, padding: 3, width: '100%', boxSizing: 'border-box' }}>
+      
+      {clients && clients.length > 0 ? (
+        <>
+        <Typography  component="h1" variant="h8" >
+        הלקוחות שלי
+      </Typography>
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
+              justifyContent: "flex-end",
+              margin: 50,
             }}
           >
-            <Typography variant="h3">הלקוחות שלי</Typography>
+            
             <Button
               onClick={() => navigate(`../signup`)}
               variant="contained"
@@ -78,81 +130,170 @@ const MyClients = () => {
                 height: 40,
                 width: 100,
                 fontSize: 16,
-                backgroundColor: theme.palette.blueColor,
               }}
             >
               + לקוח
             </Button>
           </div>
-          <Table component="table">
-            <TableHead>
-              <TableRow>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  מספר לקוח
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  שם
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  מייל
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  סוג
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  כתובת
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  טלפון1
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  טלפון 2
-                </TableCell>
-                <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
-                  פעולות
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {clients &&
-                clients.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.id}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.name}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.email}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.type}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.address}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.phoneNumber1}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      {user.phoneNumber2}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      <Button
-                        variant="contained"
-                        onClick={() => navigate(`/orderByUser/${user.id}`)}
-                      >
-                        לצפייה בהזמנות קודמות
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    מספר לקוח
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    שם
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    מייל
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    סוג
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    כתובת
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    טלפון1
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    טלפון 2
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: "bold" }}>
+                    פעולות
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.id}
+                      onChange={(e) => handleFilterChange("id", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.name}
+                      onChange={(e) => handleFilterChange("name", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.email}
+                      onChange={(e) => handleFilterChange("email", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.type}
+                      onChange={(e) => handleFilterChange("type", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.address}
+                      onChange={(e) => handleFilterChange("address", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.phoneNumber1}
+                      onChange={(e) => handleFilterChange("phoneNumber1", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      value={filters.phoneNumber2}
+                      onChange={(e) => handleFilterChange("phoneNumber2", e.target.value)}
+                      placeholder="חפש..."
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <Button variant="contained" size="small" onClick={handleSearch}>
+                        חפש
                       </Button>
+                      <Button variant="outlined" size="small" onClick={handleClearFilters}>
+                        נקה
+                      </Button>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredClients && filteredClients.length > 0 ? (
+                  filteredClients
+                    .slice((page - 1) * clientsPerPage, page * clientsPerPage)
+                    .map((user) => (
+                    <TableRow key={user.id} sx={{ backgroundColor: theme.palette.customColor }}>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.id}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.name}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.email}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.type}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.address}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.phoneNumber1}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "right" }}>
+                        {user.phoneNumber2}
+                      </TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => navigate(`/orderByUser/${user.id}`)}
+                        >
+                          הזמנות
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} style={{ textAlign: "center" }}>
+                      לא נמצאו לקוחות
                     </TableCell>
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </Grid>
-      </Paper>
-    </div>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Stack spacing={2} alignItems="center" sx={{ padding: 2 }}>
+            <Pagination
+              count={Math.ceil(filteredClients.length / clientsPerPage)}
+              page={page}
+              onChange={(event, newPage) => setPage(newPage)}
+              dir="ltr"
+            />
+          </Stack>
+        </>
+      ) : (
+        <Typography>לא נמצאו לקוחות</Typography>
+      )}
+    </Paper>
   );
 };
 

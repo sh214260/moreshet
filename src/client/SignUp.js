@@ -138,9 +138,9 @@ export default function SignUp() {
                 value={formik.values.institutionalName}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                name="name"
+                name="institutionalName"
                 fullWidth
-                id="receiptName"
+                id="institutionalName"
                 label="שם המוסד"
                 autoFocus
               />
