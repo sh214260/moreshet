@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { green } from "@mui/material/colors";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { SERVERURL } from "./data-context";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ export default function SignUp() {
     };
     axios
       .post(
-        `https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/User/Signup/${values.password}`,
+        `${SERVERURL}/api/User/Signup/${values.password}`,
         newUser
       )
       .then((ans) => {

@@ -129,9 +129,7 @@ const UpdateProduct = () => {
       });
 
   }
-const update = () => {
-  console.log(imageFile);
-  
+const update = () => {  
   if (imageFile instanceof File) {
     
     // אם יש תמונה חדשה, מעלים אותה קודם

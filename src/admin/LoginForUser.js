@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { green } from '@mui/material/colors';
 import { useFormik } from 'formik';
+import CircularProgress from '@mui/material/CircularProgress';
 import * as yup from 'yup';
 export default function SignIn() {
   const [loading, setLoading] = React.useState(false)
@@ -76,7 +77,12 @@ export default function SignIn() {
   });
   return (
     <div style={{ display: "flex", justifyContent: "center", backgroundColor: theme.palette.customColor }}>
-      {loading ? alert("המתן") :
+      {loading ? (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+      <CircularProgress />
+      <Typography sx={{ mt: 2 }}>המתן...</Typography>
+    </Box>
+  ) :
         <Paper sx={{ marginTop: 4, marginBottom: 2, marginRight: 4, marginLeft: 4 }}>
           <Grid display="flex" flexDirection="column" style={{ width: 750, marginTop: 10, marginBottom: 50, marginRight: 170, marginLeft: 170 }}>
             <Box

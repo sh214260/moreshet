@@ -42,7 +42,9 @@ const AllOrders = () => {
 
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [orderFilter, setOrderFilter] = useState({
+
+  // reusable default filter so we can reset easily
+  const defaultFilter = {
     orderId: null,
     userId: null,
     deliveryPrice: null,
@@ -54,13 +56,16 @@ const AllOrders = () => {
     totalPrice: null,
     userName: null,
     paymentWay: null,
-  });
+  };
+
+  const [orderFilter, setOrderFilter] = useState(defaultFilter);
   
   // Pagination states
   const [page, setPage] = useState(1);
   const ordersPerPage = 10;
 
   const params = useParams();
+  const navigate = useNavigate();
 
   // 1) תיקן: המרה ברורה של "" ל-null
   const onFilterChange = (filterKey, filterValue) => {
@@ -86,8 +91,20 @@ const AllOrders = () => {
         : true
     );
 
+  // סינון לפי שולם: אם ה-filter עבור paidUp מוגדר (true) נחזיר רק הזמנות ששולמו
+  filterResult = filterResult.filter((o) =>
+    orderFilter.paidUp !== null ? o.paidUp === orderFilter.paidUp : true
+  );
+
   setFilteredOrders(filterResult);
 };
+
+  // נקה את כל מסנני החיפוש והחזיר את התצוגה למצב ההתחלתי
+  const onClearFilters = () => {
+    setOrderFilter(defaultFilter);
+    setFilteredOrders(orders);
+    setPage(1);
+  };
 
 
   // (אפשרות לשמור PreventKeyLetters לשדות אחרים אם רוצים)
@@ -134,7 +151,16 @@ const AllOrders = () => {
               <TableHead>
                 {/* כותרות */}
                 <TableRow>
-                  {/* ... */}
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>מס' הזמנה</TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>תאריך</TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>שם לקוח</TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>התחלה</TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>סיום</TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>דמי הובלה</TableCell>
+                  <TableCell style={{ textAlign: "right", fontWeight: 600 }}>סה"כ</TableCell>
+                  <TableCell style={{ textAlign: "center", fontWeight: 600 }}>שולם</TableCell>
+                  <TableCell style={{ textAlign: "center", fontWeight: 600 }}>קבלה</TableCell>
+                  <TableCell style={{ textAlign: "center", fontWeight: 600 }}>פעולות</TableCell>
                 </TableRow>
 
                 {/* שורת סינון */}
@@ -188,7 +214,12 @@ const AllOrders = () => {
                   </TableCell>
 
                   <TableCell>
-                    <Checkbox />
+                    <Checkbox
+                      checked={orderFilter.paidUp === true}
+                      onChange={(e) =>
+                        onFilterChange("paidUp", e.target.checked ? true : null)
+                      }
+                    />
                   </TableCell>
 
                   <TableCell>
@@ -196,9 +227,14 @@ const AllOrders = () => {
                   </TableCell>
 
                   <TableCell>
-                    <Button variant="contained" disableElevation onClick={onFilter}>
-                      חפש
-                    </Button>
+                    <Stack direction="row" spacing={1} justifyContent="flex-end" alignItems="center">
+                      <Button variant="contained" disableElevation onClick={onFilter}>
+                        חפש
+                      </Button>
+                      <Button variant="outlined" onClick={onClearFilters}>
+                        נקה
+                      </Button>
+                    </Stack>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -233,7 +269,15 @@ const AllOrders = () => {
                         </Link>
                       )}
                     </TableCell>
-                    <TableCell />
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => navigate(`/orderdetails/${order.id}`)}
+                      >
+                        צפה
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

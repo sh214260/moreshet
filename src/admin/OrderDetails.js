@@ -75,7 +75,7 @@ export default function OrderDetails() {
                             <Typography variant="h4">מוצרים בהזמנה</Typography>
                             <Typography variant="h5">{productsData.length} מוצרים</Typography></div>
                         <Button
-                            onClick={() => navigate(`album`)}
+                            onClick={() => navigate(`../album`)}
                             variant="contained" sx={{ borderRadius: 3, height: 40, width: 100, fontSize: 16, backgroundColor: theme.palette.blueColor }}>+ מוצר</Button>
                     </Grid>
                     <Grid>

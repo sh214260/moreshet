@@ -62,19 +62,21 @@ function App() {
           {context.role == "client" ?
             <>
               <Nav />
-              <Routes>
-                <>
-                  <Route path="/" element={<MainPage />} exact />
-                  <Route path="/album" element={<Album />} />
-                  <Route path="signin" element={<SignIn />} />
-                  <Route path="signup" element={<SignUp />} />
-                  <Route path="updateuser" element={<UpdateUser />} />
-                  <Route path='product/:id' element={<Product />} />
-                  <Route path='cart/:id' element={<Cart />} />
-                  <Route path='checkout' element={<Checkout />} />
-                  <Route path='contact' element={<Contact />} />
-                </>
-              </Routes>
+              <div style={{ backgroundColor: yellowColor, minHeight: '100vh' }}>
+                <Routes>
+                  <>
+                    <Route path="/" element={<MainPage />} exact />
+                    <Route path="/album" element={<Album />} />
+                    <Route path="signin" element={<SignIn />} />
+                    <Route path="signup" element={<SignUp />} />
+                    <Route path="updateuser" element={<UpdateUser />} />
+                    <Route path='product/:id' element={<Product />} />
+                    <Route path='cart/:id' element={<Cart />} />
+                    <Route path='checkout' element={<Checkout />} />
+                    <Route path='contact' element={<Contact />} />
+                  </>
+                </Routes>
+              </div>
             </> :
             <>
               <DashboardAdmin />

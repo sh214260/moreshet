@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Paper, Tab, Tabs, Typography, createTheme } from "@mui/material";
+import { Box, Button, Grid, Paper, Tab, Tabs, Typography, createTheme, Pagination } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { SERVERURL } from "../client/data-context";
@@ -13,7 +13,13 @@ export default function OrderByDay() {
     const [date, setDate] = useState(() => dayjs().startOf('day').toDate())
     const [dates, setDates] = useState([]);
     const [activeTab, setActiveTab] = useState('day');
+    const [page, setPage] = useState(1);
+    const ordersPerPage = 20;
     const navigate = useNavigate();
+    
+    const handlePageChange = (event, value) => {
+        setPage(value);
+    };
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
         if (newValue === 'week') {

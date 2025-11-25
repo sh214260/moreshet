@@ -13,7 +13,7 @@ import {
   Paper,
   Grid,
 } from "@mui/material";
-import { DataContext } from "../client/data-context";
+import { DataContext, SERVERURL } from "../client/data-context";
 
 const MyClients = () => {
   const ctx = useContext(DataContext);
@@ -30,7 +30,7 @@ const MyClients = () => {
     let start = async () => {
       console.log("data");
       const response = await axios.get(
-        `https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net/api/User`,
+        `${SERVERURL}/api/User`,
         {
           headers: { Authorization: `Bearer ${ctx.token}` },
         }
