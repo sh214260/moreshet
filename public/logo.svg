@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#f5f5f5" stroke="#0054ee" stroke-width="2"/>
+  
+  <!-- Decorative elements -->
+  <rect x="40" y="60" width="120" height="80" fill="none" stroke="#0054ee" stroke-width="2" rx="5"/>
+  
+  <!-- Text -->
+  <text x="100" y="115" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0054ee">מורשת</text>
+  
+  <!-- Decorative lines -->
+  <line x1="50" y1="50" x2="150" y2="50" stroke="#0054ee" stroke-width="1.5" opacity="0.7"/>
+  <line x1="50" y1="150" x2="150" y2="150" stroke="#0054ee" stroke-width="1.5" opacity="0.7"/>
+</svg>
