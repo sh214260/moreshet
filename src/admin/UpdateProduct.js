@@ -29,6 +29,7 @@ const UpdateProduct = () => {
     name: '',
     description: '',
     price: 0,
+    specialPrice: 0,
     length: 0.0,
     width: 0.0,
     height: 0.0,
@@ -53,6 +54,7 @@ const UpdateProduct = () => {
       name: '',
       description: '',
       price: 0,
+      specialPrice: 0,
       length: 0.0,
       width: 0.0,
       height: 0.0,
@@ -247,10 +249,21 @@ const update = () => {
                   endAdornment: <InputAdornment position="end">ש"ח</InputAdornment>,
                 }} sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
-                    display: 'none', // Hides the default outline
+                    display: 'none',
                   }, width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
                 }}
                 onChange={(ev) => handleChange('price', ev.target.value)} />
+              <InputLabel>מחיר מיוחד</InputLabel>
+              <TextField size="small"
+                value={newProduct.specialPrice}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">ש"ח</InputAdornment>,
+                }} sx={{
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    display: 'none',
+                  }, width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
+                }}
+                onChange={(ev) => handleChange('specialPrice', ev.target.value)} />
               <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
               <Select
                 sx={{

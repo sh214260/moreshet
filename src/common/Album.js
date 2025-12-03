@@ -22,6 +22,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { TextField, List, ListItem, ListItemText } from '@mui/material';
 import { green } from '@mui/material/colors';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 export default function Album() {
   const currentDate = dayjs(); // Get the current date
@@ -119,6 +120,13 @@ export default function Album() {
     console.log(products);
   }, [])
 
+  // בדיקה בטוחה אם יש מוצרים בעגלה (מתעלם מאלמנט ברירת המחדל הריק {})
+  const hasCart = !!(ctx?.cart && ctx.cart.id);
+  const cartItemsCount = Array.isArray(ctx.cartProducts)
+    ? ctx.cartProducts.filter(p => p && p.id).length
+    : 0;
+  const hasCartProducts = hasCart && cartItemsCount > 0;
+
   return (<>
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Paper sx={{ margin: 4 , backgroundColor:"transparent"}}>
@@ -127,6 +135,33 @@ export default function Album() {
             <Typography padding={0} component="h1" variant="h2" align="center" color={green[700]} gutterBottom>
               קטלוג מוצרים
             </Typography>
+
+            {ctx.role === 'secretary' && hasCartProducts && (
+              <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={<ShoppingCartIcon />}
+                  onClick={() => navigate(`/cart/${ctx.cart.id}`)}
+                  sx={{
+                    position: 'sticky',
+                    top: 8,
+                    zIndex: 10,
+                    backgroundColor: '#2e7d32',     // Green 800
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    borderRadius: 20,
+                    px: 2,
+                    py: 1.2,
+                    boxShadow: '0 6px 20px rgba(27, 94, 32, 0.35)', // Green shadow
+                    '&:hover': { backgroundColor: '#1b5e20' }       // Darker green on hover
+                  }}
+                >
+                  צפייה בעגלה ({cartItemsCount})
+                </Button>
+              </Grid>
+            )}
+
             <Grid sx={{ marginTop: 5 }} container spacing={1}>
               <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
                 <TextField
@@ -239,7 +274,9 @@ export default function Album() {
                       </CardContent>
                       <CardActions style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography style={{ order: 1, margin: 14 }}>
-                          {card.price} ₪
+                          {ctx.useSpecialPrice && card.specialPrice > 0 
+                            ? `${card.specialPrice} ₪` 
+                            : `${card.price} ₪`}
                         </Typography>
                         
                         <div>

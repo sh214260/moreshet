@@ -26,7 +26,13 @@ export default function Review() {
           {ctx.cartProducts.map((product) => (
             <ListItem key={product.id} >
               <ListItemText primary={product.name} sx={{ textAlign: 'right', paddingLeft: 1 }} />
-              <ListItemText >{product.price} + {product.price / 8 * ctx.additionHours}</ListItemText>
+              <ListItemText >
+                {ctx.useSpecialPrice && product.specialPrice > 0 
+                  ? product.specialPrice 
+                  : product.price} + {ctx.useSpecialPrice && product.specialPrice > 0 
+                    ? (product.specialPrice / 8 * ctx.additionHours) 
+                    : (product.price / 8 * ctx.additionHours)}
+              </ListItemText>
             </ListItem>
           ))}
           <ListItem >

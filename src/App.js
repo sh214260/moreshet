@@ -81,10 +81,10 @@ function App() {
             <>
               <DashboardAdmin />
               <div style={{ display: "flex", justifyContent: "right" }}>
-                <div style={{ flex: 1, width: "20%", backgroundColor: "white" }}>
+                <div style={{ width: "15%", backgroundColor: "white", minHeight: "100vh", overflowY: "auto" }}>
                   <ToolbarDash />
                 </div>
-                <div style={{ flex: 1, backgroundColor: theme.palette.customColor }}>
+                <div style={{ flex: 1, backgroundColor: theme.palette.customColor, overflow: "auto" }}>
                   <Routes >
                     <Route path='/' element={<HomeAd />} />
                     <Route path='loginforuser' element={<LoginForUser />} />

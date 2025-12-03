@@ -40,19 +40,29 @@ export default function Nav() {
                     <ShoppingCartIcon fontSize="large"/>
                 </IconButton>
                 <div>
-                    <IconButton
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        color={red[500]}
-                        onClick={handleMenu}
-                    >
-                        <Box display="flex" flexDirection="row">
-                            <AccountCircle />
-                            {cotx.user != null ? <Typography sx={{fontSize:"large", }}>{cotx.user.name}</Typography> : <Typography sx={{fontSize:"large"}}>התחבר</Typography>}
-                        </Box>
-                    </IconButton>
+                    {cotx.user != null ? (
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            color={red[500]}
+                            onClick={handleMenu}
+                        >
+                            <Box display="flex" flexDirection="row" alignItems="center">
+                                <AccountCircle />
+                                <Typography sx={{fontSize:"large", marginLeft: 1}}>{cotx.user.name}</Typography>
+                            </Box>
+                        </IconButton>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            sx={{fontSize:"large", backgroundColor: red[500]}}
+                            onClick={() => navigation('/signin')}
+                        >
+                            התחבר
+                        </Button>
+                    )}
                     <Menu
                         id="menu-appbar"
                         anchorEl={anchorEl}
@@ -68,19 +78,13 @@ export default function Nav() {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                     >
-                        {cotx.user != null ? <MenuList>
-                            <MenuItem onClick={()=>{handleClose(); cotx.logOut(); navigation('/')}}>התנתק</MenuItem>
-                            <MenuItem onClick={() =>{handleClose(); navigation('/updateuser')}}>עריכת פרופיל</MenuItem>
-                            <MenuItem onClick={() =>{handleClose(); navigation(`../allorders/${cotx.user.id}`)}}>ההזמנות שלי</MenuItem>
-                            {/* <MenuItem onClick={() =>{handleClose(); navigation(`../tasks`)}}>tasks</MenuItem> */}
-                        </MenuList>
-                            :
+                        {cotx.user != null && (
                             <MenuList>
-                                <MenuItem onClick={() => {
-                                    setAnchorEl(null);
-                                    navigation('/signin')
-                                }}>התחבר</MenuItem>
-                            </MenuList>}
+                                <MenuItem onClick={()=>{handleClose(); cotx.logOut(); navigation('/')}}>התנתק</MenuItem>
+                                <MenuItem onClick={() =>{handleClose(); navigation('/updateuser')}}>עריכת פרופיל</MenuItem>
+                                <MenuItem onClick={() =>{handleClose(); navigation(`../allorders/${cotx.user.id}`)}}>ההזמנות שלי</MenuItem>
+                            </MenuList>
+                        )}
                     </Menu>
                 </div>
             </Toolbar>

@@ -151,7 +151,7 @@ const AllOrders = () => {
   }, []);
 
   return (
-    <Paper sx={{ margin: 10 }}>
+    <Paper sx={{ margin: 0, padding: 3, width: '100%', boxSizing: 'border-box' }}>
       {filteredOrders.length > 0 ? (
         <>
           <Typography component="h1" variant="h8">

@@ -131,30 +131,9 @@ const MyClients = () => {
       
       {clients && clients.length > 0 ? (
         <>
-        <Typography  component="h1" variant="h8" >
+        <Typography component="h1" variant="h8">
         הלקוחות שלי
       </Typography>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              margin: 50,
-            }}
-          >
-            
-            <Button
-              onClick={() => navigate(`../signup`)}
-              variant="contained"
-              sx={{
-                borderRadius: 3,
-                height: 40,
-                width: 100,
-                fontSize: 16,
-              }}
-            >
-              + לקוח
-            </Button>
-          </div>
           <TableContainer>
             <Table>
               <TableHead>

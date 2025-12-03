@@ -109,10 +109,17 @@ const Cart = () => {
                                                     </CardContent>
                                                     <CardContent sx={{ flex: '1 0 ', justifyItems: 'flex-end' }}>
                                                         <Typography component="div" variant="h6">
-                                                            {product.price} ₪
+                                                            {ctx.useSpecialPrice && product.specialPrice > 0 
+                                                              ? product.specialPrice 
+                                                              : product.price} ₪
                                                         </Typography>
                                                         <Typography variant="subtitle1" color="text.secondary" component="div">
-                                                            {product.price / 8} * {ctx.additionHours} ={product.price / 8 * ctx.additionHours}₪
+                                                            {ctx.useSpecialPrice && product.specialPrice > 0 
+                                                              ? (product.specialPrice / 8) 
+                                                              : (product.price / 8)} * {ctx.additionHours} =
+                                                            {ctx.useSpecialPrice && product.specialPrice > 0 
+                                                              ? (product.specialPrice / 8 * ctx.additionHours) 
+                                                              : (product.price / 8 * ctx.additionHours)}₪
                                                         </Typography>
                                                     </CardContent>
                                                     <CardContent sx={{ flex: '1 0 ', justifyItems: 'left' }}>

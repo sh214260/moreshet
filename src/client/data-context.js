@@ -2,8 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 export const DataContext = React.createContext({});
 export const SERVERURL =
-"https://localhost:7128"
-  //"https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net";
+ "https://localhost:7128"
+ // "https://moreshetbe-ducmddf2dzgadxcf.northeurope-01.azurewebsites.net";
 
 const DataContextProvider = (props) => {
   const [role, setRole] = useState("client");
@@ -16,6 +16,17 @@ const DataContextProvider = (props) => {
   const [additionHours, setAdditionHour] = useState(0);
   const [paymentWay, setPaymentWay] = useState("מזומן");
   const [notesForOrder, setNotesForOrder] = useState("");
+  const [useSpecialPrice, setUseSpecialPrice] = useState(() => {
+    // טעינה מ-localStorage בעת אתחול
+    const saved = localStorage.getItem("useSpecialPrice");
+    return saved === "true";
+  });
+
+  // שמירה ב-localStorage כל פעם שההגדרה משתנה
+  useEffect(() => {
+    localStorage.setItem("useSpecialPrice", useSpecialPrice.toString());
+  }, [useSpecialPrice]);
+
   const updateDateOrder = (fromValue, toValue) => {
     console.log(fromValue);
     console.log(toValue);
@@ -39,6 +50,7 @@ const DataContextProvider = (props) => {
       JSON.stringify({ admin: null, user: null, cart: null, cartProduct: null })
     );
     localStorage.setItem("token", "");
+    // לא מוחקים את useSpecialPrice כי זו הגדרה גלובלית של המנהל
   };
   function addOrder() {
     axios.get(`${SERVERURL}/api/Cart/getcartbyuser/${user.id}`).then((ans) => {
@@ -116,6 +128,8 @@ const DataContextProvider = (props) => {
         saveCache,
         admin,
         setAdmin,
+        useSpecialPrice,
+        setUseSpecialPrice,
       }}
     >
       {props.children}
