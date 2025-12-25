@@ -7,7 +7,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useContext } from "react";
-import { DataContext, SERVERURL } from '../client/data-context';
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -126,7 +126,7 @@ const Product = () => {
                 <CardMedia
                   component="img"
                   sx={{ width: "40%",  objectFit: "cover" }}
-                  image={`${SERVERURL}/Static/${item.image}`}
+                  image={`${IMAGE_BASE_URL}/Static/${item.image}`}
                   alt={item.name}
                 />
                 <Box sx={{ p: 3, backgroundColor: "#fafafa" }}>

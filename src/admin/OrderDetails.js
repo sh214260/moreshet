@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogTitle, Grid, IconButton, InputLabel, Link, Paper, Typography, createTheme } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { DataContext, SERVERURL } from "../client/data-context";
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from "../client/data-context";
 import { Check, Close, Delete } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
@@ -82,7 +82,7 @@ export default function OrderDetails() {
                         {productsData.map((product) => (
                             <Card key={product.id - 1} sx={{ display: 'flex', marginTop: 3, marginBottom: 3, flexDirection: 'row', backgroundColor: theme.palette.pink, borderRadius: 3 }}>
                                 <CardMedia style={{ marginTop: 10 }}>
-                                    <img height={70} src={`${SERVERURL}/Static/${product.image}`} alt="image" />
+                                    <img height={70} src={`${IMAGE_BASE_URL}/Static/${product.image}`} alt="image" />
                                 </CardMedia>
                                 <CardContent sx={{ flexGrow: 1 }}>
                                     <Typography fontWeight="bold" fontSize={20}>

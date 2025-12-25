@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid';
 import { useContext } from "react";
-import { DataContext, SERVERURL } from '../client/data-context';
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import moment from 'moment';
 import { Paper } from "@mui/material";
@@ -96,7 +96,7 @@ const Cart = () => {
                                                     <CardMedia
                                                         component="img"
                                                         sx={{ width: 70, height: 70 }}
-                                                        image={`${SERVERURL}/Static/${product.image}`}
+                                                        image={`${IMAGE_BASE_URL}/Static/${product.image}`}
                                                         alt="Live from space album cover"
                                                     />
                                                     <CardContent sx={{ flex: '1 0 auto' }}>
