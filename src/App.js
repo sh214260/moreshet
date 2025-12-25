@@ -14,7 +14,7 @@ import Product from './common/Product';
 import SignIn from './common/SignIn';
 import Checkout from './common/Checkout';
 import UpdateUser from './client/UpdateUser';
-import { DataContext, SERVERURL } from './client/data-context';
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from './client/data-context';
 import { useContext } from "react";
 import Nav from './common/Nav';
 import Copyright from './common/Copyright';
@@ -34,7 +34,7 @@ const yellowColor = yellow[50]
 const styles = {
   paperContainer: {
     backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), 
-      url(${SERVERURL}/Static/background.png)`,
+      url(${IMAGE_BASE_URL}/Static/background.png)`,
     backgroundSize: "50%",
   }
 };

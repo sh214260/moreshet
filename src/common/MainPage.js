@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { DataContext, SERVERURL } from '../client/data-context';
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
 import ImageSlider from '../client/SliderImgs';
 import Contact from '../client/Contact';
 import { useEffect, useState } from 'react';
@@ -23,7 +23,7 @@ export default function MainPage() {
     };
 
     const MapNames = (data) => {
-        return data.map((name) => `${SERVERURL}/Static/${name}.png`);
+        return data.map((name) => `${IMAGE_BASE_URL}/Static/${name}.png`);
     };
 
     useEffect(() => {

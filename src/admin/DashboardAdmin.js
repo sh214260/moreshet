@@ -1,7 +1,7 @@
 import { AppBar, Avatar, Box, Grid, IconButton, Link, Typography, createTheme } from "@mui/material";
 import React from "react";
 import { useContext } from "react";
-import { DataContext, SERVERURL } from '../client/data-context';
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
 import { ChatBubble, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 export default function DashboardAdmin() {
@@ -20,7 +20,7 @@ export default function DashboardAdmin() {
                 backgroundColor: "white", alignItems: "center", justifyContent: "space-between", boxShadow: "none"
             }} >
                 <Link href="./" sx={{ marginRight: 1 }}>
-                    <img alt='logo' src={`${SERVERURL}/Static/logo.png`} width={100} style={{ paddingTop: 2 }} />
+                    <img alt='logo' src={`${IMAGE_BASE_URL}/Static/logo.png`} width={100} style={{ paddingTop: 2 }} />
                 </Link>
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <IconButton>
