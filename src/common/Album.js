@@ -15,7 +15,7 @@ import axios from 'axios';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { DataContext, SERVERURL } from '../client/data-context';
+import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
 import { useContext } from "react";
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -261,7 +261,7 @@ export default function Album() {
                       <CardMedia
                         component="div">
                         <A to={ctx.user != null ? `/product/${card.id}` : `/signup`}>
-                          <img height={200} src={`${SERVERURL}/Static/${card.image}`} />
+                          <img height={200} src={card.fullImageUrl} />
                         </A>
                       </CardMedia>
                       <CardContent sx={{ flexGrow: 1 }}>
