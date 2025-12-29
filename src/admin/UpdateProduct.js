@@ -28,8 +28,8 @@ const UpdateProduct = () => {
     image: '',
     name: '',
     description: '',
-    price: 0,
-    specialPrice: 0,
+    price: '',
+    specialPrice: '',
     length: 0.0,
     width: 0.0,
     height: 0.0,
@@ -48,13 +48,25 @@ const UpdateProduct = () => {
     }))
     return true;
   };
+
+  // ולידציה למחירים - רק מספרים
+  const handlePriceChange = (field, value) => {
+    const numValue = value.replace(/[^0-9]/g, '');
+    handleChange(field, numValue);
+  };
+
+  // ולידציה למידות - רק מספרים ונקודה
+  const handleDimensionChange = (field, value) => {
+    const numValue = value.replace(/[^0-9.]/g, '');
+    handleChange(field, numValue);
+  };
   const reset = () => {
     setNewProduct(prevState => ({
       ...prevState,
       name: '',
       description: '',
-      price: 0,
-      specialPrice: 0,
+      price: '',
+      specialPrice: '',
       length: 0.0,
       width: 0.0,
       height: 0.0,
@@ -356,25 +368,31 @@ const UpdateProduct = () => {
               <InputLabel>מחיר</InputLabel>
               <TextField size="small"
                 value={newProduct.price}
+                type="number"
+                placeholder="0"
                 InputProps={{
                   endAdornment: <InputAdornment position="end">ש"ח</InputAdornment>,
+                  inputProps: { min: 0 }
                 }} sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
                     display: 'none',
                   }, width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
                 }}
-                onChange={(ev) => handleChange('price', ev.target.value)} />
+                onChange={(ev) => handlePriceChange('price', ev.target.value)} />
               <InputLabel>מחיר מיוחד</InputLabel>
               <TextField size="small"
                 value={newProduct.specialPrice}
+                type="number"
+                placeholder="0"
                 InputProps={{
                   endAdornment: <InputAdornment position="end">ש"ח</InputAdornment>,
+                  inputProps: { min: 0 }
                 }} sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
                     display: 'none',
                   }, width: 180, marginBottom: 2, backgroundColor: theme.palette.customColor
                 }}
-                onChange={(ev) => handleChange('specialPrice', ev.target.value)} />
+                onChange={(ev) => handlePriceChange('specialPrice', ev.target.value)} />
               <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
               <Select
                 sx={{
@@ -409,41 +427,61 @@ const UpdateProduct = () => {
             </Grid>
             <Grid item xs={4}>
               <InputLabel id="sizes">מידות</InputLabel>
-              <Grid display="flex" flexDirection="row">
-                <TextField
-                  value={newProduct.length} size="small" sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      display: 'none', // Hides the default outline
-                    }, width: 80, marginBottom: 2, backgroundColor: theme.palette.customColor
-                  }}
-                  onChange={(ev) => handleChange('length', ev.target.value)}
-                />
-                <TextField disabled
-                  size="small" defaultValue="x" sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      display: 'none', // Hides the default outline
-                    }, width: 70, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
-                  }} />
-                <TextField
-                  value={newProduct.width} size="small" sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      display: 'none', // Hides the default outline
-                    }, width: 80, marginBottom: 2, marginLeft: 0, backgroundColor: theme.palette.customColor
-                  }}
-                  onChange={(ev) => handleChange('width', ev.target.value)} />
-                <TextField disabled
-                  size="small" defaultValue="x" sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      display: 'none', // Hides the default outline
-                    }, width: 70, marginBottom: 2, marginRight: 1, marginLeft: 1, backgroundColor: theme.palette.customColor
-                  }} />
-                <TextField
-                  value={newProduct.height} size="small" sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      display: 'none', // Hides the default outline
-                    }, width: 80, marginBottom: 2, marginLeft: 0, backgroundColor: theme.palette.customColor
-                  }}
-                  onChange={(ev) => handleChange('height', ev.target.value)} />
+              <Grid display="flex" flexDirection="column" gap={1}>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="body2" sx={{ minWidth: 60, textAlign: 'right', fontWeight: 'bold' }}>אורך:</Typography>
+                  <TextField
+                    value={newProduct.length} 
+                    size="small" 
+                    placeholder="0.0"
+                    sx={{
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        display: 'none',
+                      }, 
+                      width: 100, 
+                      marginRight: 1,
+                      backgroundColor: theme.palette.customColor,
+                      '& input': { textAlign: 'center' }
+                    }}
+                    onChange={(ev) => handleDimensionChange('length', ev.target.value)}
+                  />
+                </Box>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="body2" sx={{ minWidth: 60, textAlign: 'right', fontWeight: 'bold' }}>רוחב:</Typography>
+                  <TextField
+                    value={newProduct.width} 
+                    size="small" 
+                    placeholder="0.0"
+                    sx={{
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        display: 'none',
+                      }, 
+                      width: 100, 
+                      marginRight: 1,
+                      backgroundColor: theme.palette.customColor,
+                      '& input': { textAlign: 'center' }
+                    }}
+                    onChange={(ev) => handleDimensionChange('width', ev.target.value)} 
+                  />
+                </Box>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="body2" sx={{ minWidth: 60, textAlign: 'right', fontWeight: 'bold' }}>גובה:</Typography>
+                  <TextField
+                    value={newProduct.height} 
+                    size="small" 
+                    placeholder="0.0"
+                    sx={{
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        display: 'none',
+                      }, 
+                      width: 100, 
+                      marginRight: 1,
+                      backgroundColor: theme.palette.customColor,
+                      '& input': { textAlign: 'center' }
+                    }}
+                    onChange={(ev) => handleDimensionChange('height', ev.target.value)} 
+                  />
+                </Box>
               </Grid>
               <InputLabel>הערה</InputLabel>
               <TextField multiline
