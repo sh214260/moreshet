@@ -18,7 +18,7 @@ import { useContext } from "react";
 import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import moment from 'moment';
-import { Paper } from "@mui/material";
+import { Paper, Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress, Link } from "@mui/material";
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
         right: -2,
@@ -31,6 +31,15 @@ const Cart = () => {
     const navigate = useNavigate()
     const [flag, setFlag] = useState(0)
     const ctx = useContext(DataContext)
+    const [openQuoteDialog, setOpenQuoteDialog] = useState(false)
+    const [quoteFormData, setQuoteFormData] = useState({
+        fullName: '',
+        email: '',
+        phonenumber1: '',
+        address: ''
+    })
+    const [isCreatingQuote, setIsCreatingQuote] = useState(false)
+    const [quotePdfLink, setQuotePdfLink] = useState(null)
     function DeleteProduct(productId) {
         axios.post(`${SERVERURL}/api/CartProduct/delete/${ctx.cart.id}/${productId}`
             , {}, { headers: { Authorization: `Bearer ${ctx.token}` } }
@@ -70,6 +79,111 @@ const Cart = () => {
             ctx.setAdditionHour(addHours - 4)
         }
     }, [flag])
+
+    // בדיקת שדות חסרים ופתיחת הדיאלוג
+    const handleCreateQuote = () => {
+        const missingFields = {}
+        
+        if (!ctx.user?.name) missingFields.fullName = true
+        if (!ctx.user?.email) missingFields.email = true
+        if (!ctx.user?.phonenumber1) missingFields.phonenumber1 = true
+        if (!ctx.user?.address) missingFields.address = true
+
+        // אם יש שדות חסרים, פתח את הדיאלוג
+        if (Object.keys(missingFields).length > 0) {
+            setQuoteFormData({
+                fullName: ctx.user?.name || '',
+                email: ctx.user?.email || '',
+                phonenumber1: ctx.user?.phonenumber1 || '',
+                address: ctx.user?.address || ''
+            })
+            setOpenQuoteDialog(true)
+        } else {
+            // אם כל השדות קיימים, צור הצעת מחיר ישירות
+            createQuoteDocument({
+                fullName: ctx.user.name,
+                email: ctx.user.email,
+                phonenumber1: ctx.user.phonenumber1,
+                address: ctx.user.address
+            })
+        }
+    }
+
+    // יצירת הצעת מחיר דרך השרת שלנו
+    const createQuoteDocument = async (userData) => {
+        setIsCreatingQuote(true)
+        try {
+            // הכנת נתוני העגלה לשליחה לשרת
+            const quoteData = {
+                cartId: ctx.cart.id,
+                clientInfo: {
+                    fullName: userData.fullName,
+                    email: userData.email,
+                    phone: userData.phonenumber1,  // שינוי ל-phone עבור Invoice Maven
+                    address: userData.address
+                },
+                products: ctx.cartProducts.map((product) => ({
+                    id: product.id,
+                    name: product.name,
+                    price: ctx.useSpecialPrice && product.specialPrice > 0 
+                        ? product.specialPrice 
+                        : product.price,
+                    specialPrice: product.specialPrice,
+                    quantity: 1
+                })),
+                totalPrice: ctx.cart.totalPrice,
+                additionHours: ctx.additionHours,
+                useSpecialPrice: ctx.useSpecialPrice,
+                fromDate: ctx.cart.fromDate,
+                toDate: ctx.cart.toDate,
+                deliveryPrice: ctx.deliveryPrice
+            }
+
+            console.log('נתוני הצעת המחיר שנשלחים:', quoteData)
+            console.log('פרטי לקוח:', quoteData.clientInfo)
+            console.log('פרטי USER', ctx.user.phonenumber1)
+
+            // שליחה לשרת שלנו (לא ישירות ל-Invoice4u)
+            const response = await axios.post(
+                `${SERVERURL}/api/quotes/create`,
+                quoteData,
+                { headers: { Authorization: `Bearer ${ctx.token}` } }
+            )
+
+            if (response.data && response.data.pdf_original) {
+                setQuotePdfLink(response.data.pdf_original)
+                setOpenQuoteDialog(false)
+                alert('הצעת המחיר נוצרה בהצלחה!')
+            } else {
+                alert('אירעה שגיאה ביצירת הצעת המחיר')
+            }
+        } catch (error) {
+            console.error('Error creating quote:', error)
+            alert('אירעה שגיאה ביצירת הצעת המחיר: ' + (error.response?.data?.message || error.message))
+        } finally {
+            setIsCreatingQuote(false)
+        }
+    }
+
+    // שמירת השדות מהטופס
+    const handleQuoteFormChange = (field, value) => {
+        setQuoteFormData(prev => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
+    // שליחת הטופס
+    const handleQuoteFormSubmit = () => {
+        // בדיקת ולידציה
+        if (!quoteFormData.fullName || !quoteFormData.email || 
+            !quoteFormData.phonenumber1 || !quoteFormData.address) {
+            alert('אנא מלא את כל השדות החובה')
+            return
+        }
+
+        createQuoteDocument(quoteFormData)
+    }
 
     return (
         <div>
@@ -137,13 +251,37 @@ const Cart = () => {
                                 </Box>
 
                                 <Box sx={{ display: 'flex', marginRight: 10 }}>
-                                    <Card variant="outlined" sx={{ height: 150, width: 300 }}>
+                                    <Card variant="outlined" sx={{ height: 'auto', width: 300 }}>
                                         <CardContent>
                                             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                                 <Typography variant="h5">סה"כ לתשלום: {ctx.cart.totalPrice}</Typography>
                                                 <Typography variant="h6"></Typography>
                                             </Box>
-                                            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                            
+                                            {quotePdfLink && (
+                                                <Box sx={{ marginTop: 2, marginBottom: 2, padding: 1, bgcolor: '#e3f2fd', borderRadius: 1 }}>
+                                                    <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                                                        הצעת המחיר נוצרה בהצלחה!
+                                                    </Typography>
+                                                    <Link href={quotePdfLink} target="_blank" rel="noopener">
+                                                        <Button variant="outlined" size="small" fullWidth>
+                                                            צפייה בהצעת מחיר
+                                                        </Button>
+                                                    </Link>
+                                                </Box>
+                                            )}
+
+                                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                                <Button
+                                                    variant="outlined"
+                                                    size="large"
+                                                    disabled={ctx.cart.totalPrice === 0}
+                                                    sx={{ width: '100%', marginTop: 2 }}
+                                                    onClick={handleCreateQuote}
+                                                >
+                                                    צור הצעת מחיר
+                                                </Button>
+                                                
                                                 <Button
                                                     variant="contained"
                                                     size="large"
@@ -162,7 +300,7 @@ const Cart = () => {
                                                     variant="outlined"
                                                     size="large"
                                                     disabled={false}
-                                                    sx={{ width: '100%', marginTop: 2, marginRight: 1 }}
+                                                    sx={{ width: '100%', marginTop: 2 }}
                                                     onClick={() => navigate('../album')}
                                                 >
                                                     המשך קנייה
@@ -172,7 +310,79 @@ const Cart = () => {
                                     </Card>
                                 </Box></Grid>
                         </Box></Grid>
-                </Paper>:<Typography>עליך להתחבר קודם</Typography>}</div>)
+                </Paper>:<Typography>עליך להתחבר קודם</Typography>}
+            
+            {/* Dialog למילוי פרטים חסרים */}
+            <Dialog 
+                open={openQuoteDialog} 
+                onClose={() => !isCreatingQuote && setOpenQuoteDialog(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>השלמת פרטים להצעת מחיר</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" sx={{ marginBottom: 2 }}>
+                        אנא השלם את הפרטים הבאים ליצירת הצעת מחיר:
+                    </Typography>
+                    
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="שם מלא *"
+                        value={quoteFormData.fullName}
+                        onChange={(e) => handleQuoteFormChange('fullName', e.target.value)}
+                        disabled={isCreatingQuote}
+                        required
+                    />
+                    
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="אימייל *"
+                        type="email"
+                        value={quoteFormData.email}
+                        onChange={(e) => handleQuoteFormChange('email', e.target.value)}
+                        disabled={isCreatingQuote}
+                        required
+                    />
+                    
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="טלפון *"
+                        value={quoteFormData.phonenumber1}
+                        onChange={(e) => handleQuoteFormChange('phonenumber1', e.target.value)}
+                        disabled={isCreatingQuote}
+                        required
+                    />
+                    
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="כתובת *"
+                        value={quoteFormData.address}
+                        onChange={(e) => handleQuoteFormChange('address', e.target.value)}
+                        disabled={isCreatingQuote}
+                        required
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        onClick={() => setOpenQuoteDialog(false)}
+                        disabled={isCreatingQuote}
+                    >
+                        ביטול
+                    </Button>
+                    <Button 
+                        onClick={handleQuoteFormSubmit}
+                        variant="contained"
+                        disabled={isCreatingQuote}
+                    >
+                        {isCreatingQuote ? <CircularProgress size={24} /> : 'צור הצעת מחיר'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>)
     ;
 };
 

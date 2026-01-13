@@ -49,9 +49,9 @@ const UpdateProduct = () => {
     return true;
   };
 
-  // ולידציה למחירים - רק מספרים
+  // ולידציה למחירים - רק מספרים ונקודה עשרונית
   const handlePriceChange = (field, value) => {
-    const numValue = value.replace(/[^0-9]/g, '');
+    const numValue = value.replace(/[^0-9.]/g, '');
     handleChange(field, numValue);
   };
 
@@ -123,7 +123,15 @@ const UpdateProduct = () => {
 
   // שמירת מוצר חדש
   const saveNewProduct = async (imageUrl) => {
-    const productToAdd = { ...newProduct, image: imageUrl };
+    const productToAdd = {
+      ...newProduct,
+      image: imageUrl,
+      price: newProduct.price === '' ? null : parseFloat(newProduct.price),
+      specialPrice: newProduct.specialPrice === '' ? null : parseFloat(newProduct.specialPrice),
+      length: newProduct.length === '' ? null : parseFloat(newProduct.length),
+      width: newProduct.width === '' ? null : parseFloat(newProduct.width),
+      height: newProduct.height === '' ? null : parseFloat(newProduct.height)
+    };
     
     try {
       const response = await axios.post(
@@ -148,7 +156,15 @@ const UpdateProduct = () => {
 
   // עדכון מוצר קיים
   const updateExistingProduct = async (imageUrl) => {
-    const productToUpdate = { ...newProduct, image: imageUrl };
+    const productToUpdate = {
+      ...newProduct,
+      image: imageUrl,
+      price: newProduct.price === '' ? null : parseFloat(newProduct.price),
+      specialPrice: newProduct.specialPrice === '' ? null : parseFloat(newProduct.specialPrice),
+      length: newProduct.length === '' ? null : parseFloat(newProduct.length),
+      width: newProduct.width === '' ? null : parseFloat(newProduct.width),
+      height: newProduct.height === '' ? null : parseFloat(newProduct.height)
+    };
     
     try {
       const response = await axios.put(

@@ -3,13 +3,13 @@ import Box from '@mui/material/Box';
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { DataContext, SERVERURL, IMAGE_BASE_URL } from '../client/data-context';
-import ImageSlider from '../client/SliderImgs';
+// import ImageSlider from '../client/SliderImgs';
 import Contact from '../client/Contact';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 export default function MainPage() {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [pictures, setPictures] = useState([]);
+    // const [pictures, setPictures] = useState([]);
     const navigation = useNavigate();
     const cotx = useContext(DataContext);
 
@@ -22,25 +22,25 @@ export default function MainPage() {
         setAnchorEl(null);
     };
 
-    const MapNames = (data) => {
-        return data.map((name) => `${IMAGE_BASE_URL}/Static/${name}.png`);
-    };
+    // const MapNames = (data) => {
+    //     return data.map((name) => `${IMAGE_BASE_URL}/Static/${name}.png`);
+    // };
 
-    useEffect(() => {
-        axios.get(`${SERVERURL}/api/Product/getimages`)
-            .then((response) => {
-                const images = response.data;
-                const mappedImages = MapNames(images);
-                setPictures(mappedImages);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
+    // useEffect(() => {
+    //     axios.get(`${SERVERURL}/api/Product/getimages`)
+    //         .then((response) => {
+    //             const images = response.data;
+    //             const mappedImages = MapNames(images);
+    //             setPictures(mappedImages);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // }, []);
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <ImageSlider images={pictures} />
+            {/* <ImageSlider images={pictures} /> */}
             <Contact />
         </Box>
     );
