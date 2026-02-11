@@ -84,7 +84,7 @@ export default function Album() {
     const value = e.target.value;
     setSearchTerm(value);
     const filteredProducts = products.filter((product) =>
-      product.name?.includes(value)
+      product.name && product.name.includes(value)
     );
     setSearchResults(filteredProducts);
     if (value.length > 1) {
@@ -97,7 +97,7 @@ export default function Album() {
   const handleListItemClick = (selectedProduct) => {
     setSearchTerm(selectedProduct.name);
     const filteredProducts = products.filter((product) =>
-      product.name?.includes(selectedProduct.name)
+      product.name && product.name.includes(selectedProduct.name)
     );
     setSearchResults(filteredProducts);
     setAnchorEl(null);
