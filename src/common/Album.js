@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Link as A } from 'react-router-dom';
-import { ClickAwayListener, Paper, Popper } from '@mui/material';
+import { ClickAwayListener, Paper, Popper, Chip, useTheme } from '@mui/material';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -20,27 +20,30 @@ import { useContext } from "react";
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import { TextField, List, ListItem, ListItemText } from '@mui/material';
-import { green } from '@mui/material/colors';
+import { TextField, List, ListItem, ListItemText, Box, Badge } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 export default function Album() {
-  const currentDate = dayjs(); // Get the current date
-  const navigate = useNavigate()
-  const ctx = useContext(DataContext)
-  const [products, setProducts] = useState([{}])
+  const currentDate = dayjs();
+  const navigate = useNavigate();
+  const ctx = useContext(DataContext);
+  const theme = useTheme();
+  const [products, setProducts] = useState([{}]);
   const [displayedProducts, setDisplayedProducts] = useState(8);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loadProducts, setLoadProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
   const [onlyAvailable, setOnlyAvailable] = useState(false);
-  const [from, setFrom] = useState(null)
-  const [to, setTo] = useState(null)
+  const [from, setFrom] = useState(null);
+  const [to, setTo] = useState(null);
   const [categorys, setCategorys] = useState([]);
-  const [categoryId, setCategoryId] = useState('')
+  const [categoryId, setCategoryId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  
   async function fetchAvailableProducts() {
     const ans = await axios.get(`${SERVERURL}/api/Product/getavailable/${from}/${to}`);
     const data = await ans.data;
@@ -57,7 +60,7 @@ export default function Album() {
             .filter(product => categoryId ? product.categoryId === categoryId : true)
             .sort((p1, p2) => sortOrder === 'asc' ? p1.price - p2.price : p2.price - p1.price);
           setFilteredProducts(filtered.slice(0, displayedProducts));
-          setLoadProducts(filtered)
+          setLoadProducts(filtered);
         })
         .catch(error => {
           console.log(error);
@@ -68,20 +71,20 @@ export default function Album() {
         .filter(product => categoryId ? product.categoryId === categoryId : true)
         .sort((p1, p2) => sortOrder === 'asc' ? p1.price - p2.price : p2.price - p1.price);
       setFilteredProducts(filtered.slice(0, displayedProducts));
-      setLoadProducts(filtered)
-
+      setLoadProducts(filtered);
     }
   }
 
   const handleSearch = () => {
-    setFilteredProducts(searchResults.slice(0, displayedProducts))
-    setLoadProducts(searchResults)
-  }
+    setFilteredProducts(searchResults.slice(0, displayedProducts));
+    setLoadProducts(searchResults);
+  };
+  
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     const filteredProducts = products.filter((product) =>
-      product.name.includes(value)
+      product.name && product.name.includes(value)
     );
     setSearchResults(filteredProducts);
     if (value.length > 1) {
@@ -94,7 +97,7 @@ export default function Album() {
   const handleListItemClick = (selectedProduct) => {
     setSearchTerm(selectedProduct.name);
     const filteredProducts = products.filter((product) =>
-      product.name.includes(selectedProduct.name)
+      product.name && product.name.includes(selectedProduct.name)
     );
     setSearchResults(filteredProducts);
     setAnchorEl(null);
@@ -103,199 +106,334 @@ export default function Album() {
   useEffect(() => {
     axios.get(`${SERVERURL}/api/Category/Get`)
       .then(res => {
-        console.log(res.data)
-        setCategorys(res.data)
+        console.log(res.data);
+        setCategorys(res.data);
       })
-  }, [])
+      .catch(err => console.log(err));
+  }, []);
+  
   useEffect(() => {
     let start = async () => {
-      const response = await axios.get(`${SERVERURL}/api/Product/getall`)
-      const data = await response.data
-      setProducts(data)
+      const response = await axios.get(`${SERVERURL}/api/Product/getall`);
+      const data = await response.data;
+      setProducts(data);
       console.log(data);
-      setFilteredProducts(data.slice(0, displayedProducts))
-      setLoadProducts(data)
-    }
-    start()
-    console.log(products);
-  }, [])
+      setFilteredProducts(data.slice(0, displayedProducts));
+      setLoadProducts(data);
+    };
+    start().catch(err => console.log(err));
+  }, []);
 
-  // בדיקה בטוחה אם יש מוצרים בעגלה (מתעלם מאלמנט ברירת המחדל הריק {})
   const hasCart = !!(ctx?.cart && ctx.cart.id);
   const cartItemsCount = Array.isArray(ctx.cartProducts)
     ? ctx.cartProducts.filter(p => p && p.id).length
     : 0;
   const hasCartProducts = hasCart && cartItemsCount > 0;
 
-  return (<>
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <Paper sx={{ margin: 4 , backgroundColor:"transparent"}}>
-        <Grid style={{ width: 1000, justifyContent: "center" }}>
-          <Container sx={{ py: 2 }} maxWidth="md">
-            <Typography padding={0} component="h1" variant="h2" align="center" color={green[700]} gutterBottom>
-              קטלוג מוצרים
-            </Typography>
+  return (
+    <Box sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
+      <Container sx={{ py: 4 }} maxWidth="lg">
+        <Typography 
+          variant="h2" 
+          align="center" 
+          sx={{ 
+            mb: 1,
+            fontWeight: 800,
+            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          קטלוג מוצרים
+        </Typography>
+        <Typography 
+          variant="subtitle1" 
+          align="center" 
+          sx={{ mb: 4, color: theme.palette.text.secondary }}
+        >
+          גלה את המגוון המלא של המוצרים שלנו
+        </Typography>
 
-            {ctx.role === 'secretary' && hasCartProducts && (
-              <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  startIcon={<ShoppingCartIcon />}
-                  onClick={() => navigate(`/cart/${ctx.cart.id}`)}
-                  sx={{
-                    position: 'sticky',
-                    top: 8,
-                    zIndex: 10,
-                    backgroundColor: '#2e7d32',     // Green 800
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    borderRadius: 20,
-                    px: 2,
-                    py: 1.2,
-                    boxShadow: '0 6px 20px rgba(27, 94, 32, 0.35)', // Green shadow
-                    '&:hover': { backgroundColor: '#1b5e20' }       // Darker green on hover
-                  }}
-                >
-                  צפייה בעגלה ({cartItemsCount})
-                </Button>
-              </Grid>
-            )}
+        {ctx.role === 'secretary' && hasCartProducts && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<ShoppingCartIcon />}
+              onClick={() => navigate(`/cart/${ctx.cart.id}`)}
+              sx={{
+                position: 'sticky',
+                top: 8,
+                zIndex: 10,
+                background: `linear-gradient(135deg, ${theme.palette.success.main}, ${theme.palette.success.dark})`,
+                fontWeight: 700,
+                borderRadius: 3,
+                px: 3,
+                boxShadow: `0px 8px 24px ${theme.palette.success.main}40`,
+                '&:hover': { 
+                  background: `linear-gradient(135deg, ${theme.palette.success.dark}, ${theme.palette.success.main})`,
+                  boxShadow: `0px 12px 32px ${theme.palette.success.main}60`,
+                }
+              }}
+            >
+              עגלת קניות ({cartItemsCount})
+            </Button>
+          </Box>
+        )}
 
-            <Grid sx={{ marginTop: 5 }} container spacing={1}>
+        {/* Search and Filters */}
+        <Paper 
+          elevation={2} 
+          sx={{ 
+            p: 3, 
+            mb: 4, 
+            borderRadius: 3,
+            backgroundColor: 'white'
+          }}
+        >
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={6} md={3}>
               <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
                 <TextField
-                  size='small'
-                  style={{ width: 150 }}
-                  label="חפש מוצר"
+                  fullWidth
+                  size="medium"
+                  label="חיפוש מוצר"
+                  placeholder="הקלד לחיפוש..."
                   value={searchTerm}
                   onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: <SearchIcon color="action" />,
+                  }}
                 />
               </ClickAwayListener>
               {searchResults.length > 0 && (
                 <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-end">
-                  <Paper>
-                    <List >
+                  <Paper sx={{ mt: 1, maxHeight: 300, overflow: 'auto', borderRadius: 2 }}>
+                    <List>
                       {searchResults.map((product) => (
-                        <ListItem key={product.id} button onClick={() => handleListItemClick(product)}>
-                          <ListItemText style={{ textAlign: 'right', width: 150 }} primary={product.name} />
+                        <ListItem 
+                          key={product.id} 
+                          button 
+                          onClick={() => handleListItemClick(product)}
+                          sx={{ '&:hover': { backgroundColor: theme.palette.primary.light + '20' } }}
+                        >
+                          <ListItemText primary={product.name} />
                         </ListItem>
                       ))}
                     </List>
                   </Paper>
                 </Popper>
               )}
-              <Button variant="contained" onClick={handleSearch}>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Button 
+                fullWidth
+                variant="contained" 
+                onClick={handleSearch}
+                sx={{ 
+                  height: 56,
+                  fontWeight: 600,
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                }}
+              >
                 חפש
               </Button>
             </Grid>
-            <Grid sx={{ marginBottom: 7 }} display="flex" flexDirection="row" alignItems="center" container spacing={2} >
-              <Grid display="flex" flexDirection="column" item lg={2} >
-                <InputLabel id="demo-simple-select-filled-label">קטגוריה</InputLabel>
-                <Select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  displayEmpty
-                  size='small'
-                >
-                  <MenuItem value="" >
-                    הכל
+            <Grid item xs={12} sm={6} md={2}>
+              <InputLabel>קטגוריה</InputLabel>
+              <Select
+                fullWidth
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value="">הכל</MenuItem>
+                {categorys.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
                   </MenuItem>
-                  {categorys.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-              <Grid display="flex" flexDirection="column" item lg={2}>
-                <InputLabel id="demo-simple-select-filled-label">מחיר</InputLabel>
-                <Select
-                  size='small'
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  displayEmpty
-                >
-                  <MenuItem value='asc'>מהנמוך לגבוה</MenuItem>
-                  <MenuItem value='des'>מהגבוה לנמוך</MenuItem>
-                </Select>
-              </Grid>
-              <Grid display="flex" flexDirection="column" item lg={2}>
-                <InputLabel id="demo-simple-select-filled-label">תאריך</InputLabel>
-                <Select
-                  size='small'
-                  value={onlyAvailable}
-                  onChange={(e) => setOnlyAvailable(e.target.value)}
-                  displayEmpty
-                >
-                  <MenuItem value={false} >כל המוצרים</MenuItem>
-                  <MenuItem value={true}>הצג רק מוצרים זמינים</MenuItem>
-                </Select>
-              </Grid>
-              {onlyAvailable == true &&
-                <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                  <Grid display="flex" flexDirection="column" item sm={2}>
-                    <InputLabel>מ</InputLabel>
-                    <DateTimePicker ampm={false} onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} />
-                  </Grid>
-                  <Grid display="flex" flexDirection="column" item sm={2}>
-                    <InputLabel>עד</InputLabel>
-                    <DateTimePicker ampm={false} onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} />
-                  </Grid>
-                </LocalizationProvider>
-              }
-              <Grid display="flex" flexDirection="column" >
-                <Button
-                  sx={{ height: '70%', width: '100%', fontSize: '1rem', marginTop: 5 }}
-                  onClick={filter} variant="contained">בצע סינון
-                </Button>
-              </Grid>
+                ))}
+              </Select>
             </Grid>
-            {filteredProducts.length > 0 ?
-              <Grid container spacing={4}>
-                {filteredProducts.map((card) => (
-                  <Grid key={card.id} item xs={12} sm={6} md={4}>
-                    <Card
-                      sx={{ display: 'flex', flexDirection: 'column' }}
-                    >
-                      <CardMedia
-                        component="div">
-                        <A to={ctx.user != null ? `/product/${card.id}` : `/signup`}>
-                          <img height={200} src={card.fullImageUrl} />
-                        </A>
-                      </CardMedia>
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {card.name}
-                        </Typography>
-                        <Typography>
-                          {card.description}
-                        </Typography>
-                      </CardContent>
-                      <CardActions style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography style={{ order: 1, margin: 14 }}>
-                          {ctx.useSpecialPrice && card.specialPrice > 0 
-                            ? `${card.specialPrice} ₪` 
-                            : `${card.price} ₪`}
-                        </Typography>
-                        
-                        <div>
-                          <Button onClick={() => { if (ctx.user != null) navigate(`/product/${card.id}`); else alert("התחבר קודם") }} size="medium" style={{ order: 2, margin: 4 }}>הצג</Button>
-                        </div>
-                      </CardActions>
+            <Grid item xs={12} sm={6} md={2}>
+              <InputLabel>מיון לפי מחיר</InputLabel>
+              <Select
+                fullWidth
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value='asc'>נמוך לגבוה</MenuItem>
+                <MenuItem value='des'>גבוה לנמוך</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <InputLabel>זמינות</InputLabel>
+              <Select
+                fullWidth
+                value={onlyAvailable}
+                onChange={(e) => setOnlyAvailable(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value={false}>כל המוצרים</MenuItem>
+                <MenuItem value={true}>רק זמינים</MenuItem>
+              </Select>
+            </Grid>
+            {onlyAvailable && (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Grid item xs={12} sm={6} md={3}>
+                  <InputLabel>תאריך התחלה</InputLabel>
+                  <DateTimePicker 
+                    ampm={false} 
+                    onChange={(value) => setFrom(value.format("YYYY-MM-DDTHH:mm"))} 
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <InputLabel>תאריך סיום</InputLabel>
+                  <DateTimePicker 
+                    ampm={false} 
+                    onChange={(value) => setTo(value.format("YYYY-MM-DDTHH:mm"))} 
+                  />
+                </Grid>
+              </LocalizationProvider>
+            )}
+            <Grid item xs={12}>
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<FilterListIcon />}
+                onClick={filter}
+                sx={{ 
+                  fontWeight: 600,
+                  borderWidth: 2,
+                  '&:hover': { borderWidth: 2 }
+                }}
+              >
+                החל סינון
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
 
-                    </Card>
-                  </Grid>))}
-              </Grid> : (<Typography>לא נמצאו מוצרים</Typography>)}
-            <Button variant="contained" disabled={displayedProducts != filteredProducts.length}
-              style={{ margin: 'auto', marginTop: 30, display: 'block', fontSize: '1.2em' }} onClick={() => {
-                const updatedDisplayedProducts = displayedProducts + 3;
+        {/* Products Grid */}
+        {filteredProducts.length > 0 ? (
+          <Grid container spacing={3}>
+            {filteredProducts.map((card) => (
+              <Grid key={card.id} item xs={12} sm={6} md={4} lg={3}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: `0px 12px 32px ${theme.palette.primary.main}30`,
+                    }
+                  }}
+                >
+                  <CardMedia component="div" sx={{ position: 'relative' }}>
+                    <A to={ctx.user != null ? `/product/${card.id}` : `/signup`}>
+                      <img 
+                        height={220} 
+                        width="100%"
+                        src={card.fullImageUrl} 
+                        alt={card.name}
+                        style={{ 
+                          objectFit: 'cover',
+                          borderRadius: '12px 12px 0 0'
+                        }}
+                      />
+                    </A>
+                  </CardMedia>
+                  <CardContent sx={{ flexGrow: 1, p: 2.5 }}>
+                    <Typography 
+                      gutterBottom 
+                      variant="h6" 
+                      component="h2"
+                      sx={{ fontWeight: 700, mb: 1 }}
+                    >
+                      {card.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ p: 2.5, pt: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography 
+                      variant="h6" 
+                      sx={{ 
+                        fontWeight: 700,
+                        color: theme.palette.primary.main
+                      }}
+                    >
+                      {ctx.useSpecialPrice && card.specialPrice > 0 
+                        ? `₪${card.specialPrice}` 
+                        : `₪${card.price}`}
+                    </Typography>
+                    <Button 
+                      onClick={() => { 
+                        if (ctx.user != null) navigate(`/product/${card.id}`); 
+                        else alert("עליך להתחבר תחילה") 
+                      }} 
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        fontWeight: 600,
+                        background: `linear-gradient(135deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.dark})`,
+                      }}
+                    >
+                      פרטים
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Paper 
+            elevation={1} 
+            sx={{ 
+              p: 6, 
+              textAlign: 'center', 
+              borderRadius: 3,
+              backgroundColor: theme.palette.background.light
+            }}
+          >
+            <Typography variant="h6" color="text.secondary">
+              לא נמצאו מוצרים התואמים את החיפוש
+            </Typography>
+          </Paper>
+        )}
+
+        {filteredProducts.length > 0 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <Button 
+              variant="contained" 
+              disabled={displayedProducts >= loadProducts.length}
+              size="large"
+              onClick={() => {
+                const updatedDisplayedProducts = displayedProducts + 8;
                 setDisplayedProducts(updatedDisplayedProducts);
-                setFilteredProducts(loadProducts.slice(0, updatedDisplayedProducts))
-              }}>טען עוד</Button>
-          </Container>
-        </Grid>
-      </Paper>
-    </div>
-  </>)
+                setFilteredProducts(loadProducts.slice(0, updatedDisplayedProducts));
+              }}
+              sx={{
+                px: 6,
+                py: 1.5,
+                fontSize: '1.1rem',
+                fontWeight: 700,
+                background: displayedProducts >= loadProducts.length 
+                  ? undefined 
+                  : `linear-gradient(135deg, ${theme.palette.accent.main}, ${theme.palette.accent.dark})`,
+              }}
+            >
+              טען עוד מוצרים
+            </Button>
+          </Box>
+        )}
+      </Container>
+    </Box>
+  );
 }

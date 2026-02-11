@@ -18,9 +18,10 @@ import { DataContext, SERVERURL, IMAGE_BASE_URL } from './client/data-context';
 import { useContext } from "react";
 import Nav from './common/Nav';
 import Copyright from './common/Copyright';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { indigo, yellow } from '@mui/material/colors';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 import '@fontsource/varela-round';
+import theme from './theme';
 import LoginForUser from './admin/LoginForUser';
 import DashboardAdmin from './admin/DashboardAdmin';
 import OrderByDay from './admin/OrdersByDay';
@@ -30,7 +31,6 @@ import MyClients from './admin/MyClients';
 import OrderByUser from './admin/OrdersByUser';
 import AllProducts from './admin/AllProducts';
 
-const yellowColor = yellow[50]
 const styles = {
   paperContainer: {
     backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), 
@@ -39,30 +39,19 @@ const styles = {
   }
 };
 
-const theme = createTheme({
-  typography: {
-    fontFamily: 'Assistant',
-    direction: 'rtl',
-  },
-  palette: {
-    customColor: 'rgba(242, 247, 255, 1)',
-    blueColor: 'rgba(0, 84, 238, 1)'
-  },
-});
-
 function App() {
-  const color = indigo[50]
   const context = useContext(DataContext)
   console.log(context.role);
 
   return (
-    <div style={styles.paperContainer}>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div style={styles.paperContainer}>
         <Router>
           {context.role == "client" ?
             <>
               <Nav />
-              <div style={{ backgroundColor: yellowColor, minHeight: '100vh' }}>
+              <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
                 <Routes>
                   <>
                     <Route path="/" element={<MainPage />} exact />
@@ -84,7 +73,7 @@ function App() {
                 <div style={{ width: "15%", backgroundColor: "white", minHeight: "100vh", overflowY: "auto" }}>
                   <ToolbarDash />
                 </div>
-                <div style={{ flex: 1, backgroundColor: theme.palette.customColor, overflow: "auto" }}>
+                <div style={{ flex: 1, backgroundColor: theme.palette.background.light, overflow: "auto" }}>
                   <Routes >
                     <Route path='/' element={<HomeAd />} />
                     <Route path='loginforuser' element={<LoginForUser />} />
@@ -107,8 +96,8 @@ function App() {
             </>}
           <Copyright />
         </Router>
-      </ThemeProvider>
-    </div >
+      </div >
+    </ThemeProvider>
   )
 }
 
